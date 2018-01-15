@@ -18,6 +18,7 @@ namespace LinqCheck
 	/// <summary>
 	/// Attribute to mark test cases.
 	/// </summary>
+	[AttributeUsage(AttributeTargets.Method)]
 	public class TestAttribute : Attribute
 	{
 		public TestAttribute ()
@@ -211,19 +212,26 @@ namespace LinqCheck
 			Console.WriteLine ();
 		}
 
+		private static void WriteInColor (ConsoleColor color, string output,
+			params object[] args)
+		{
+			Console.ForegroundColor = color;
+			if (args == null || args.Length == 0)
+				Console.WriteLine (output);
+			else
+				Console.WriteLine (output, args);
+			Console.ResetColor ();
+		}
+
 		/// <summary>
 		/// Outputs the failure information.
 		/// </summary>
 		private static void OutputFailure (string test, Exception ex)
 		{
 			Console.WriteLine ();
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine ("Test '{0}' failed.", test);
-			Console.ResetColor ();
+			WriteInColor (ConsoleColor.Red, "Test '{0}' failed.", test);
 			Console.Write ("Reason: ");
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine (ex.Message);
-			Console.ResetColor ();
+			WriteInColor (ConsoleColor.Yellow, ex.Message);
 			var st = ex.StackTrace.Split ('\n');
 			for (int i = 1; i < st.Length - 2; i++)
 				Console.WriteLine (st [i]);

@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8B11A61B-E672-4921-A290-82D9A25A7C4D}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LinqCheck</RootNamespace>
-    <AssemblyName>LinqCheck</AssemblyName>
+    <ProjectGuid>{5D470F37-BDEF-41C3-8159-15B0AF54E808}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Examples</RootNamespace>
+    <AssemblyName>Examples</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -31,25 +33,28 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExtensionCord, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\ExtensionCord.1.0.0\lib\net461\ExtensionCord.dll</HintPath>
+      <HintPath>..\packages\ExtensionCord.1.0.0\lib\net461\ExtensionCord.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Arbitrary.cs" />
-    <Compile Include="src\Container.cs" />
-    <Compile Include="src\DefaultArbitrary.cs" />
-    <Compile Include="src\Gen.cs" />
-    <Compile Include="src\TestCase.cs" />
-    <Compile Include="src\Tester.cs" />
-    <Compile Include="src\TestState.cs" />
+    <Compile Include="MathTests.cs" />
+    <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="index.md" />
+    <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LinqCheck.csproj">
+      <Project>{8b11a61b-e672-4921-a290-82d9a25a7c4d}</Project>
+      <Name>LinqCheck</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

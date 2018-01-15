@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("LinqCheck")]
-[assembly: AssemblyDescription("Property based testing library with LINQ syntax.")]
+[assembly: AssemblyDescription("Property based testing with LINQ expressions.")]
 [assembly: AssemblyCopyright("Copyright © 2015 Tommi Johtela")]
 [assembly: AssemblyCompany ("Tommi Johtela")]
 
