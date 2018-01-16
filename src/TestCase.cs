@@ -3,6 +3,7 @@
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
+	using System.Linq.Expressions;
 	using System.Diagnostics;
 	using ExtensionCord;
 
@@ -17,42 +18,42 @@
 	/// The property monad wraps a function that tests some property. A property represents
 	/// arbitrarily complex expression that describes how the code to be tested should behave.
 	/// </summary>
-	public delegate Tuple<TestResult, T> TestCase<T> (TestState state);
+	public delegate Tuple<TestResult, T> Prop<T> (TestState state);
 
 	/// <summary>
 	/// The primitives and combinators dealing with properties.
 	/// </summary>
-	public static class TestCase
+	public static class Prop
 	{
 		/// <summary>
 		/// Wrap a value in the Property monad.
 		/// </summary>
-		public static TestCase<T> ToTestCase<T> (this T value)
+		private static Prop<T> ToProp<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Succeeded, value);
 		}
 
-		public static TestCase<T> Fail<T> (this T value)
+		public static Prop<T> Fail<T> (this T value)
 		{
 			return state =>
 			{
-				throw new TestFailed (string.Format ("Test case '{0}' failed for input {1}",
+				throw new TestFailed (string.Format ("Property '{0}' failed for input:\n{1}",
 					state.Label, value)
 				);
 			};
 		}
 
-		public static TestCase<T> Discard<T> (this T value)
+		public static Prop<T> Discard<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Discarded, value);
 		}
 
-		public static TestCase<T> ForAll<T> (this Gen<T> gen)
+		public static Prop<T> ForAll<T> (this Gen<T> gen)
 		{
 			return ForAll (new Arbitrary<T> (gen));
 		}
 
-		public static TestCase<T> ForAll<T> (this IArbitrary<T> arbitrary)
+		public static Prop<T> ForAll<T> (this IArbitrary<T> arbitrary)
 		{
 			return state => 
 			{
@@ -74,55 +75,55 @@
 			};
 		}
 
-		public static TestCase<T> ForAll<T> ()
+		public static Prop<T> ForAll<T> ()
 		{
 			return ForAll (Arbitrary.Get<T> ());
 		}
 
-		public static TestCase<T> Restrict<T> (this TestCase<T> testcase, int size)
+		public static Prop<T> Restrict<T> (this Prop<T> prop, int size)
 		{
 			return state =>
 			{
 				var oldSize = state.Size;
 				state.Size = size;
-				var res = testcase (state);
+				var res = prop (state);
 				state.Size = oldSize;
 				return res;
 			};
 		}
 
-		public static TestCase<U> Bind<T, U> (this TestCase<T> testcase, Func<T, TestCase<U>> func)
+		public static Prop<U> Bind<T, U> (this Prop<T> prop, Func<T, Prop<U>> func)
 		{
 			return state =>
 			{
-				var res = testcase (state);
+				var res = prop (state);
 				if (res.Item1 == TestResult.Succeeded)
 					return func (res.Item2) (state);
 				return Tuple.Create (res.Item1, default(U));
 			};
 		}
 
-		public static TestCase<U> Select<T, U> (this TestCase<T> testcase, Func<T, U> select)
+		public static Prop<U> Select<T, U> (this Prop<T> prop, Func<T, U> select)
 		{
-			return testcase.Bind (a => select (a).ToTestCase ());
+			return prop.Bind (a => select (a).ToProp ());
 		}
 
-		public static TestCase<V> SelectMany<T, U, V> (this TestCase<T> testcase,
-			Func<T, TestCase<U>> project, Func<T, U, V> select)
+		public static Prop<V> SelectMany<T, U, V> (this Prop<T> prop,
+			Func<T, Prop<U>> project, Func<T, U, V> select)
 		{
-			return testcase.Bind (a => project (a).Bind (b => select (a, b).ToTestCase ()));
+			return prop.Bind (a => project (a).Bind (b => select (a, b).ToProp ()));
 		}
 
-		public static TestCase<T> Where<T> (this TestCase<T> testcase, Func<T, bool> predicate)
+		public static Prop<T> Where<T> (this Prop<T> prop, Func<T, bool> predicate)
 		{
-			return testcase.Bind (value => predicate (value) ? value.ToTestCase () : value.Discard ());
+			return prop.Bind (value => predicate (value) ? value.ToProp () : value.Discard ());
 		}
 
-		public static TestCase<T> OrderBy<T, U> (this TestCase<T> testcase, Func<T, U> classify)
+		public static Prop<T> OrderBy<T, U> (this Prop<T> prop, Func<T, U> classify)
 		{
 			return state => 
 			{
-				var res = testcase (state);
+				var res = prop (state);
 				var cl = classify (res.Item2).ToString ();
                 var cnt = 0;
                 if (state.Classes.TryGetValue (cl, out cnt))
@@ -133,26 +134,26 @@
 			};
 		}
 
-		public static TestCase<T> FailIf<T> (this TestCase<T> testcase, Func<T, bool> predicate)
+		public static Prop<T> FailIf<T> (this Prop<T> prop, Func<T, bool> predicate)
 		{
-			return testcase.Bind (value => predicate (value) ? value.ToTestCase () : value.Fail ());
+			return prop.Bind (value => predicate (value) ? value.ToProp () : value.Fail ());
 		}
 
-		public static TestCase<T> Label<T> (this TestCase<T> testcase, string label)
+		public static Prop<T> Label<T> (this Prop<T> prop, string label)
 		{
 			return state =>
 			{
 				state.Label = label;
-				return testcase (state);
+				return prop (state);
 			};
 		}
 
-        public static TestCase<T> Label<T> (this TestCase<T> testcase, string label, params object[] args)
+        public static Prop<T> Label<T> (this Prop<T> prop, string label, params object[] args)
         {
-            return testcase.Label (string.Format (label, args));
+            return prop.Label (string.Format (label, args));
         }
 
-        private static bool Test<T> (TestCase<T> testcase, int tries, TestState state)
+        private static bool Test<T> (Prop<T> prop, int tries, TestState state)
 		{
 			try
 			{
@@ -160,7 +161,7 @@
 				{
 					state.ResetValues ();
 
-					switch (testcase (state).Item1)
+					switch (prop (state).Item1)
 					{
 						case TestResult.Succeeded:
 							state.SuccessfulTests++;
@@ -195,7 +196,7 @@
 			return false;
 		}
 
-		private static List<object> Optimize<T> (TestCase<T> testcase, List<List<object>> shrunkValues, 
+		private static List<object> Optimize<T> (Prop<T> prop, List<List<object>> shrunkValues, 
 			List<object> values)
 		{
 			var current = new List<int> (shrunkValues.Select (l => l.Count - 1));
@@ -205,7 +206,7 @@
 			while (NextCandidate (shrunkValues, current))
 			{
 				values = GenerateValues (shrunkValues, current);
-				if (!Test (testcase, 1, new TestState (TestPhase.Shrink, 0, 0, values, shrunkValues)))
+				if (!Test (prop, 1, new TestState (TestPhase.Shrink, 0, 0, values, shrunkValues)))
 				{
 					var weight = current.Sum ();
 					if (weight <= bestWeight)
@@ -219,11 +220,12 @@
 			return best;
 		}
 
-		public static void Check<T> (this TestCase<T> testcase, Func<T, bool> prop, int tries = 100)
+		public static Prop<T> Check<T> (this Prop<T> prop, Expression<Func<T, bool>> condition, 
+			int tries = 100)
 		{
 			var seed = DateTime.Now.Millisecond;
 			var size = 10;
-			var testProp = testcase.FailIf (prop);
+			var testProp = prop.Label(condition.Body.ToString ()).FailIf (condition.Compile ());
 			var state = new TestState (TestPhase.Generate, seed, size);
 
 			// Testing phase.
@@ -241,7 +243,7 @@
 				state = new TestState (TestPhase.Shrink, 0, 0, optimized, null);
 				// Fail again with optimized input without catching the exception.
 				testProp (state);
-				throw new TestFailed ("The failed propety was re-evaluated, but the error did not reoccur. "
+				throw new TestFailed ("The failed property was re-evaluated, but the error did not reoccur. "
 					+ "This probably means that the property has side effects which supress the error "
 					+ "under some conditions and make the test case undeterministic.");
 			}
@@ -256,6 +258,7 @@
 					Console.WriteLine ("{0}: {1:p}", cl.Key, (double)cl.Value / tries);
 			}
 			Console.ResetColor ();
+			return prop;
 		}
 	}
 }
