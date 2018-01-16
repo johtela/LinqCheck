@@ -43,7 +43,7 @@
     <Compile Include="src\Container.cs" />
     <Compile Include="src\DefaultArbitrary.cs" />
     <Compile Include="src\Gen.cs" />
-    <Compile Include="src\TestCase.cs" />
+    <Compile Include="src\Prop.cs" />
     <Compile Include="src\Tester.cs" />
     <Compile Include="src\TestState.cs" />
   </ItemGroup>
