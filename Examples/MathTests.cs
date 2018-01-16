@@ -28,7 +28,7 @@
 					_.minxy == _.minyx);
 			tc.Label ("min (min (x, y), z) = z ==> z <= x and z <= y")
 				.Check (_ => 
-					(_.min_minxy_z == _.z).Implies (_.z <= _.x && _.z < _.y));
+					(_.min_minxy_z == _.z).Implies (_.z <= _.x && _.z <= _.y));
 		}
 	}
 }
