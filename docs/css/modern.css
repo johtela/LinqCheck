@@ -78,7 +78,7 @@
 }
 .markdown code,
 .markdown pre {
-  font-family: 'Lucida Sans Typewriter', monospace;
+  font-family: 'Lucida Sans Typewriter', 'Lucida Console', monospace;
   background-color: transparent;
   font-size: 0.95em;
   line-height: 1.5em;

@@ -38,8 +38,7 @@
 			return state =>
 			{
 				throw new TestFailed (string.Format ("Property '{0}' failed for input:\n{1}",
-					state.Label, value)
-				);
+					state.Label, value));
 			};
 		}
 
