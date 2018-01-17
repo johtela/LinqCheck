@@ -40,21 +40,21 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MathTests.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="BasicTests.cs" />
+    <Compile Include="RunTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\LinqCheck.csproj">
       <Project>{8b11a61b-e672-4921-a290-82d9a25a7c4d}</Project>
       <Name>LinqCheck</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

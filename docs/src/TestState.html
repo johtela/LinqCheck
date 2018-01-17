@@ -1,0 +1,266 @@
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>TestState - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    
+
+
+
+<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../css/modern.min.css" />
+<link rel="stylesheet" href="../syntax-highlight/son-of-obsidian.min.css" />
+<link rel="stylesheet" href="../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html">LinqCheck</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                
+<ul>
+
+	<li><a href="../index.html">Home</a></li>
+
+	<ul>
+
+		<li>LinqCheck home page.</li>
+
+	</ul>
+
+	<li><a href="../Examples/BasicTests.html">BasicTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../Examples/RunTests.html">RunTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Arbitrary.html">Arbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Container.html">Container</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Gen.html">Gen</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Prop.html">Prop</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Tester.html">Tester</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/TestState.html" class="selected">TestState</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../License.html">License</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+</ul>
+
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+				
+<ul class="pager">
+	<li class="previous"><a href="../src/Tester.html">Previous: Tester</a></li>
+	<li class="next"><a href="../License.html">Next: License</a></li>
+</ul>
+				<div id="static-content" class="markdown">
+					<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
+<span class="punctuation">{</span>
+    <span class="keyword">using</span> System<span class="punctuation">;</span>
+    <span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
+
+    <span class="keyword" id="LinqCheck.TestPhase">public</span> <span class="keyword">enum</span> <span class="typename">TestPhase</span> <span class="punctuation">{</span> <span id="LinqCheck.TestPhase.Generate">Generate</span><span class="punctuation">,</span> <span id="LinqCheck.TestPhase.StartShrink">StartShrink</span><span class="punctuation">,</span> <span id="LinqCheck.TestPhase.Shrink">Shrink</span> <span class="punctuation">}</span>
+
+    <span class="keyword" id="LinqCheck.TestState">public</span> <span class="keyword">class</span> <span class="typename">TestState</span>
+    <span class="punctuation">{</span>
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestPhase">TestPhase</a></span> <span id="LinqCheck.TestState.Phase">Phase</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="System.Random">Random</span> <span id="LinqCheck.TestState.Random">Random</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="LinqCheck.TestState.Size">Size</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span id="LinqCheck.TestState.Label">Label</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="LinqCheck.TestState.SuccessfulTests">SuccessfulTests</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="LinqCheck.TestState.DiscardedTests">DiscardedTests</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, int>">Dictionary</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span id="LinqCheck.TestState.Classes">Classes</span> <span class="punctuation">=</span> <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, int>">new</span> <span class="typename">Dictionary</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">,</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="LinqCheck.TestState.CurrentValue">CurrentValue</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<object>">List</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span> <span id="LinqCheck.TestState.Values">Values</span><span class="punctuation">;</span>
+        <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.List<object>>">List</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<object>">List</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> <span id="LinqCheck.TestState.ShrunkValues">ShrunkValues</span><span class="punctuation">;</span>
+
+        <span class="keyword" id="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int)" data-toggle="tooltip" title="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int)">public</span> <span data-toggle="tooltip" title="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int)">TestState</span><span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestPhase">TestPhase</a></span> phase<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> seed<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> size<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="void">:</span>
+            <span class="keyword" data-toggle="tooltip" title="void">this</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestPhase">phase</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">seed</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">size</span><span class="punctuation">,</span> <span class="keyword">null</span><span class="punctuation">,</span> <span class="keyword">null</span><span class="punctuation">)</span>
+        <span class="punctuation">{</span><span class="punctuation">}</span>
+
+        <span class="keyword" id="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int, System.Collections.Generic.List<object>, System.Collections.Generic.List<System.Collections.Generic.List<object>>)" data-toggle="tooltip" title="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int, System.Collections.Generic.List<object>, System.Collections.Generic.List<System.Collections.Generic.List<object>>)">public</span> <span data-toggle="tooltip" title="LinqCheck.TestState.TestState(LinqCheck.TestPhase, int, int, System.Collections.Generic.List<object>, System.Collections.Generic.List<System.Collections.Generic.List<object>>)">TestState</span><span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestPhase">TestPhase</a></span> phase<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> seed<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> size<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<object>">List</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span> values<span class="punctuation">,</span> 
+            <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.List<object>>">List</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<object>">List</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> shrunkValues<span class="punctuation">)</span>
+        <span class="punctuation">{</span>
+            <span data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestState.Phase">Phase</a></span> <span class="punctuation" data-toggle="tooltip" title="LinqCheck.TestPhase">=</span> <span data-toggle="tooltip" title="LinqCheck.TestPhase">phase</span><span class="punctuation">;</span>
+            <span data-toggle="tooltip" title="System.Random"><a href="../src/TestState.html#LinqCheck.TestState.Random">Random</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Random">=</span> <span class="keyword" data-toggle="tooltip" title="System.Random">new</span> <span class="typename">Random</span><span class="punctuation">(</span><span data-toggle="tooltip" title="int">seed</span><span class="punctuation">)</span><span class="punctuation">;</span>
+            <span data-toggle="tooltip" title="int"><a href="../src/TestState.html#LinqCheck.TestState.Size">Size</a></span> <span class="punctuation" data-toggle="tooltip" title="int">=</span> <span data-toggle="tooltip" title="int">size</span><span class="punctuation">;</span>
+            <span data-toggle="tooltip" title="System.Collections.Generic.List<object>"><a href="../src/TestState.html#LinqCheck.TestState.Values">Values</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>">=</span> <span data-toggle="tooltip" title="System.Collections.Generic.List<object>">values</span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>">??</span> <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.List<object>">new</span> <span class="typename">List</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+            <span data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.List<object>>"><a href="../src/TestState.html#LinqCheck.TestState.ShrunkValues">ShrunkValues</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.List<object>>">=</span> <span data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.List<object>>">shrunkValues</span><span class="punctuation">;</span>
+        <span class="punctuation">}</span>
+
+        <span class="keyword" id="LinqCheck.TestState.ResetValues()" data-toggle="tooltip" title="LinqCheck.TestState.ResetValues()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.TestState.ResetValues()">ResetValues</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+        <span class="punctuation">{</span>
+            <span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestState.Phase">Phase</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestPhase">TestPhase</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.TestPhase">.</span><span data-toggle="tooltip" title="LinqCheck.TestPhase"><a href="../src/TestState.html#LinqCheck.TestPhase.Generate">Generate</a></span><span class="punctuation">)</span>
+            <span class="punctuation">{</span>
+                <span data-toggle="tooltip" title="int"><a href="../src/TestState.html#LinqCheck.TestState.CurrentValue">CurrentValue</a></span> <span class="punctuation" data-toggle="tooltip" title="int">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+                <span data-toggle="tooltip" title="System.Collections.Generic.List<object>"><a href="../src/TestState.html#LinqCheck.TestState.Values">Values</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>.Clear()">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<object>.Clear()">Clear</span><span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+            <span class="punctuation">}</span>
+        <span class="punctuation">}</span>
+
+    <span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+
+				</div>
+				
+<ul class="pager">
+	<li class="previous"><a href="../src/Tester.html">Previous: Tester</a></li>
+	<li class="next"><a href="../License.html">Next: License</a></li>
+</ul>
+			</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <p>Copyright © 2018 Tommi Johtela</p>
+    </footer>
+
+
+    
+
+
+
+
+    <script src="../bootstrap/js/jquery.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../sidebar/sidebar.js"></script>
+    <script src="../syntax-highlight/syntax.js"></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+
+	<script src="../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

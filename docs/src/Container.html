@@ -1,0 +1,316 @@
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Container - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    
+
+
+
+<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../css/modern.min.css" />
+<link rel="stylesheet" href="../syntax-highlight/son-of-obsidian.min.css" />
+<link rel="stylesheet" href="../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html">LinqCheck</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                
+<ul>
+
+	<li><a href="../index.html">Home</a></li>
+
+	<ul>
+
+		<li>LinqCheck home page.</li>
+
+	</ul>
+
+	<li><a href="../Examples/BasicTests.html">BasicTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../Examples/RunTests.html">RunTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Arbitrary.html">Arbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Container.html" class="selected">Container</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Gen.html">Gen</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Prop.html">Prop</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Tester.html">Tester</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/TestState.html">TestState</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../License.html">License</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+</ul>
+
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+				
+<ul class="pager">
+	<li class="previous"><a href="../src/Arbitrary.html">Previous: Arbitrary</a></li>
+	<li class="next"><a href="../src/DefaultArbitrary.html">Next: DefaultArbitrary</a></li>
+</ul>
+				<div id="static-content" class="markdown">
+					<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
+<span class="punctuation">{</span>
+	<span class="keyword">using</span> System<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Reflection<span class="punctuation">;</span>
+
+	<span class="keyword" id="LinqCheck.Container">public</span> <span class="keyword">class</span> <span class="typename">Container</span>
+	<span class="punctuation">{</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span id="LinqCheck.Container._interface">_interface</span><span class="punctuation">;</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>">Dictionary</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">&gt;</span> <span id="LinqCheck.Container._types">_types</span><span class="punctuation">;</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>">Dictionary</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span> <span id="LinqCheck.Container._objects">_objects</span><span class="punctuation">;</span>
+
+		<span class="keyword" id="LinqCheck.Container.Container(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.Container(System.Type)">public</span> <span data-toggle="tooltip" title="LinqCheck.Container.Container(System.Type)">Container</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> intf<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span data-toggle="tooltip" title="System.Type">intf</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsInterface</span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span> <span data-toggle="tooltip" title="System.Type">intf</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsGenericType</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Given type must be generic interface.&quot;</span><span class="punctuation">,</span> <span class="string" data-toggle="tooltip" title="string">&quot;intf&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Type"><a href="../src/Container.html#LinqCheck.Container._interface">_interface</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Type">=</span> <span data-toggle="tooltip" title="System.Type">intf</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>"><a href="../src/Container.html#LinqCheck.Container._types">_types</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>">=</span> <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>">new</span> <span class="typename">Dictionary</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>"><a href="../src/Container.html#LinqCheck.Container._objects">_objects</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>">=</span> <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>">new</span> <span class="typename">Dictionary</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.Register(System.Reflection.Assembly)" data-toggle="tooltip" title="LinqCheck.Container.Register(System.Reflection.Assembly)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Container.Register(System.Reflection.Assembly)">Register</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Reflection.Assembly">Assembly</span> assembly<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">foreach</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="System.Type">var</span> type <span class="keyword">in</span> <span data-toggle="tooltip" title="System.Reflection.Assembly">assembly</span><span class="punctuation" data-toggle="tooltip" title="System.Reflection.Assembly.GetTypes()">.</span><span data-toggle="tooltip" title="System.Reflection.Assembly.GetTypes()">GetTypes</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="LinqCheck.Container.Register(System.Type)"><a href="../src/Container.html#LinqCheck.Container.Register(System.Type)">Register</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.Register(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.Register(System.Type)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Container.Register(System.Type)">Register</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> type<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>"><a href="../src/Container.html#LinqCheck.Container._types">_types</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.ContainsKey(System.Type)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.ContainsKey(System.Type)">ContainsKey</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object)">Format</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Type {0} is already registered&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetConstructors()">.</span><span data-toggle="tooltip" title="System.Type.GetConstructors()">GetConstructors</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Reflection.ConstructorInfo>.Any<System.Reflection.ConstructorInfo>(System.Func<System.Reflection.ConstructorInfo, bool>)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Reflection.ConstructorInfo>.Any<System.Reflection.ConstructorInfo>(System.Func<System.Reflection.ConstructorInfo, bool>)">Any</span> <span class="punctuation">(</span>x <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Reflection.ConstructorInfo">x</span><span class="punctuation" data-toggle="tooltip" title="System.Reflection.MethodBase.GetParameters()">.</span><span data-toggle="tooltip" title="System.Reflection.MethodBase.GetParameters()">GetParameters</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Length</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object)">Format</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Type {0} does not contain a default constructor&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+
+			<span class="keyword">foreach</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="System.Type">var</span> argType <span class="keyword">in</span> <span data-toggle="tooltip" title="LinqCheck.Container.ArgumentTypes(System.Type)"><a href="../src/Container.html#LinqCheck.Container.ArgumentTypes(System.Type)">ArgumentTypes</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>"><a href="../src/Container.html#LinqCheck.Container._types">_types</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.Add(System.Type, System.Type)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.Add(System.Type, System.Type)">Add</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)"><a href="../src/Container.html#LinqCheck.Container.GenericDef(System.Type)">GenericDef</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">)</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)"><a href="../src/Container.html#LinqCheck.Container.GenericDef(System.Type)">GenericDef</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.Register(object)" data-toggle="tooltip" title="LinqCheck.Container.Register(object)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Container.Register(object)">Register</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> obj<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword" data-toggle="tooltip" title="System.Type">var</span> <span id="type">type</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="object">obj</span><span class="punctuation" data-toggle="tooltip" title="object.GetType()">.</span><span data-toggle="tooltip" title="object.GetType()">GetType</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>"><a href="../src/Container.html#LinqCheck.Container._objects">_objects</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.ContainsKey(System.Type)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.ContainsKey(System.Type)">ContainsKey</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object)">Format</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Type {0} is already registered&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+
+			<span class="keyword">foreach</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="System.Type">var</span> argType <span class="keyword">in</span> <span data-toggle="tooltip" title="LinqCheck.Container.ArgumentTypes(System.Type)"><a href="../src/Container.html#LinqCheck.Container.ArgumentTypes(System.Type)">ArgumentTypes</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>"><a href="../src/Container.html#LinqCheck.Container._objects">_objects</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.Add(System.Type, object)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.Add(System.Type, object)">Add</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object">obj</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.GetImplementation(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.GetImplementation(System.Type)">public</span> <span class="keyword" data-toggle="tooltip" title="object">object</span> <span data-toggle="tooltip" title="LinqCheck.Container.GetImplementation(System.Type)">GetImplementation</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> argType<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword" data-toggle="tooltip" title="object">object</span> <span id="result">result</span><span class="punctuation">;</span>
+
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>"><a href="../src/Container.html#LinqCheck.Container._objects">_objects</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.TryGetValue(System.Type, out object)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.TryGetValue(System.Type, out object)">TryGetValue</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">,</span> <span class="keyword">out</span> <span data-toggle="tooltip" title="object">result</span><span class="punctuation">)</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span id="implementingType">implementingType</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="LinqCheck.Container.ImplementingType(System.Type)"><a href="../src/Container.html#LinqCheck.Container.ImplementingType(System.Type)">ImplementingType</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="object">result</span> <span class="punctuation" data-toggle="tooltip" title="object">=</span> <span class="typename" data-toggle="tooltip" title="System.Activator">Activator</span><span class="punctuation" data-toggle="tooltip" title="System.Activator.CreateInstance(System.Type)">.</span><span data-toggle="tooltip" title="System.Activator.CreateInstance(System.Type)">CreateInstance</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">implementingType</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>"><a href="../src/Container.html#LinqCheck.Container._objects">_objects</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.Add(System.Type, object)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, object>.Add(System.Type, object)">Add</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object">result</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="object">result</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.GenericDef(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)">static</span> <span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)">GenericDef</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> type<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsArray</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">?</span> 
+				<span class="keyword" data-toggle="tooltip" title="System.Type">typeof</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">(</span><span class="typename" data-toggle="tooltip" title="System.Array">Array</span><span class="punctuation" data-toggle="tooltip" title="System.Type">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">:</span>
+				<span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsGenericType</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">?</span> 
+					<span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetGenericTypeDefinition()">.</span><span data-toggle="tooltip" title="System.Type.GetGenericTypeDefinition()">GetGenericTypeDefinition</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">:</span> 
+					<span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.ArgumentTypes(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.ArgumentTypes(System.Type)">private</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Type>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Container.ArgumentTypes(System.Type)">ArgumentTypes</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> type<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">return</span> <span class="keyword">from</span> i <span class="keyword">in</span> <span data-toggle="tooltip" title="System.Type">type</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetInterfaces()">.</span><span data-toggle="tooltip" title="System.Type.GetInterfaces()">GetInterfaces</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+				   <span class="keyword">where</span> <span data-toggle="tooltip" title="System.Type">i</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsGenericType</span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span> <span data-toggle="tooltip" title="System.Type">i</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetGenericTypeDefinition()">.</span><span data-toggle="tooltip" title="System.Type.GetGenericTypeDefinition()">GetGenericTypeDefinition</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span data-toggle="tooltip" title="System.Type"><a href="../src/Container.html#LinqCheck.Container._interface">_interface</a></span>
+				   <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Type>">select</span> <span data-toggle="tooltip" title="System.Type">i</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetGenericArguments()">.</span><span data-toggle="tooltip" title="System.Type.GetGenericArguments()">GetGenericArguments</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Type>.First<System.Type>()">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Type>.First<System.Type>()">First</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Container.ImplementingType(System.Type)" data-toggle="tooltip" title="LinqCheck.Container.ImplementingType(System.Type)">private</span> <span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span data-toggle="tooltip" title="LinqCheck.Container.ImplementingType(System.Type)">ImplementingType</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Type">Type</span> argType<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span id="generic">generic</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="LinqCheck.Container.GenericDef(System.Type)"><a href="../src/Container.html#LinqCheck.Container.GenericDef(System.Type)">GenericDef</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.Type">Type</span> <span id="implementor">implementor</span><span class="punctuation">;</span>
+
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>"><a href="../src/Container.html#LinqCheck.Container._types">_types</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.TryGetValue(System.Type, out System.Type)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<System.Type, System.Type>.TryGetValue(System.Type, out System.Type)">TryGetValue</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">generic</span><span class="punctuation">,</span> <span class="keyword">out</span> <span data-toggle="tooltip" title="System.Type">implementor</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.InvalidOperationException">new</span> <span class="typename">InvalidOperationException</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;Could not find a generator for &quot;</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span> <span data-toggle="tooltip" title="System.Type">generic</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span> <span class="string" data-toggle="tooltip" title="string">&quot;, please register one.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Type">generic</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword" data-toggle="tooltip" title="System.Type">typeof</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">(</span><span class="typename" data-toggle="tooltip" title="System.Array">Array</span><span class="punctuation" data-toggle="tooltip" title="System.Type">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">?</span>
+				<span data-toggle="tooltip" title="System.Type">implementor</span><span class="punctuation" data-toggle="tooltip" title="System.Type.MakeGenericType(params System.Type[])">.</span><span data-toggle="tooltip" title="System.Type.MakeGenericType(params System.Type[])">MakeGenericType</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetElementType()">.</span><span data-toggle="tooltip" title="System.Type.GetElementType()">GetElementType</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">:</span>
+				<span data-toggle="tooltip" title="System.Type">implementor</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">IsGenericTypeDefinition</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">?</span>
+					<span data-toggle="tooltip" title="System.Type">implementor</span><span class="punctuation" data-toggle="tooltip" title="System.Type.MakeGenericType(params System.Type[])">.</span><span data-toggle="tooltip" title="System.Type.MakeGenericType(params System.Type[])">MakeGenericType</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Type">argType</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetGenericArguments()">.</span><span data-toggle="tooltip" title="System.Type.GetGenericArguments()">GetGenericArguments</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">:</span>
+					<span data-toggle="tooltip" title="System.Type">implementor</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+
+				</div>
+				
+<ul class="pager">
+	<li class="previous"><a href="../src/Arbitrary.html">Previous: Arbitrary</a></li>
+	<li class="next"><a href="../src/DefaultArbitrary.html">Next: DefaultArbitrary</a></li>
+</ul>
+			</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <p>Copyright © 2018 Tommi Johtela</p>
+    </footer>
+
+
+    
+
+
+
+
+    <script src="../bootstrap/js/jquery.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../sidebar/sidebar.js"></script>
+    <script src="../syntax-highlight/syntax.js"></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+
+	<script src="../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

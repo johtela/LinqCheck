@@ -1,3 +1,9 @@
+/*
+# Random Value Generator
+
+[Gen](src/Gen.html) lifts a random number generator to a monad, which can 
+produce random values of any type.
+*/
 namespace LinqCheck
 {
 	using System;

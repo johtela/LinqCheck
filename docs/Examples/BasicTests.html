@@ -1,0 +1,371 @@
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>BasicTests - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    
+
+
+
+<link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../css/modern.min.css" />
+<link rel="stylesheet" href="../syntax-highlight/son-of-obsidian.min.css" />
+<link rel="stylesheet" href="../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html">LinqCheck</a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                
+<ul>
+
+	<li><a href="../index.html">Home</a></li>
+
+	<ul>
+
+		<li>LinqCheck home page.</li>
+
+	</ul>
+
+	<li><a href="../Examples/BasicTests.html" class="selected">BasicTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../Examples/RunTests.html">RunTests</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Arbitrary.html">Arbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Container.html">Container</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Gen.html">Gen</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Prop.html">Prop</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/Tester.html">Tester</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../src/TestState.html">TestState</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+	<li><a href="../License.html">License</a></li>
+
+	<ul>
+
+		<li>TODO! Add page description.</li>
+
+	</ul>
+
+</ul>
+
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+				
+<ul class="pager">
+	<li class="previous"><a href="../index.html">Previous: Home</a></li>
+	<li class="next"><a href="../Examples/RunTests.html">Next: RunTests</a></li>
+</ul>
+				<div id="static-content" class="markdown">
+					<h1 id="writing-simple-tests">Writing Simple Tests</h1>
+<p>So, how does one begin property based testing with LinqCheck. Let's look at
+few very basic tests first. Suppose we want to test the System.Math class. It
+is unlikely we find any bugs in it, but it is a simple static class that
+everyone knows.</p>
+<p>First we need to reference the code we are testing, in this case the System
+namespace, as well as the LinqCheck library itself. The third namespace we
+reference is <a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>
+which is a general helper library that contains useful extensions for the
+.NET types. That library is optional, but helps writing the properties in
+a more compact way.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
+<span class="punctuation">{</span>
+	<span class="keyword">using</span> System<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
+	<span class="keyword">using</span> ExtensionCord<span class="punctuation">;</span>
+	<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
+</code></pre>
+<p>We can use any unit testing framework such as <a href="http://nunit.org/">NUnit</a>,
+<a href="https://xunit.github.io/">xUnit</a>,
+<a href="https://msdn.microsoft.com/en-us/library/hh694602.aspx">MSTest</a>, etc. to
+run our tests. In this case, we are using the built-in command line test
+runner included in LinqCheck. This is the simplest and fastest way to run
+your tests, but it does not scale up very well. For larger test suites a
+more complete framework is recommended.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="Examples.BasicTests">public</span> <span class="keyword">class</span> <span class="typename">BasicTests</span>
+	<span class="punctuation">{</span>
+</code></pre>
+<p>As in other unit testing tools, the tests are put in a class which
+methods	are annotated with a special attribute indicating that they
+are tests. In LinqCheck the attribute is simply <code>Test</code>.</p>
+<pre class="csharp"><code class="csharp">		<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../src/Tester.html#LinqCheck.TestAttribute.TestAttribute()">Test</a></span><span class="punctuation">]</span>
+		<span class="keyword" id="Examples.BasicTests.TestMin()" data-toggle="tooltip" title="Examples.BasicTests.TestMin()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.BasicTests.TestMin()">TestMin</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+</code></pre>
+<p>The first method we test is the <code>Math.Min</code>. It returns the
+minimum of two numbers. So, let's generate two random integers
+to test it. We do this by writing a LINQ expression which
+calls the <code>Prop.ForAll</code> method twice. The random integers are
+assigned to variables <code>x</code> and <code>y</code>.</p>
+<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">(</span><span class="keyword">from</span> x <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<int>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+			 <span class="keyword">from</span> y <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<int>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<p>Now we can call the <code>Math.Min</code> to calculate the minimum of <code>x</code>
+and <code>y</code>. We assign the result to variable <code>minxy</code>. Notice that
+this time we are not generating a random value but just evaluating
+an expression, so we use the <code>let</code> clause instead of <code>from</code>.</p>
+<pre class="csharp"><code class="csharp">			 <span class="keyword">let</span> minxy <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">x</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">y</span><span class="punctuation">)</span>
+</code></pre>
+<p>Let's still generate a thrird arbitrary integer <code>z</code> and calculate
+the minimum of <code>x</code>, <code>y</code>, and <code>z</code>.</p>
+<pre class="csharp"><code class="csharp">			 <span class="keyword">from</span> z <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<int>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+			 <span class="keyword">let</span> minxyz <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">minxy</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">z</span><span class="punctuation">)</span>
+</code></pre>
+<p>We now got all the values we need, so we complete the LINQ
+expression with the <code>select</code> clause that returns our values to the
+next phase.</p>
+<pre class="csharp"><code class="csharp">			 <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">select</span> <span class="keyword" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">new</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">{</span> <span data-toggle="tooltip" title="int">x</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">y</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">z</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">minxy</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">minxyz</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">}</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">)</span>
+</code></pre>
+<p>Essentially, we have now a test case dispenser that produces
+three random integers and calculates their minima. Now we can
+start thinking about what properties these values should have.
+The first property is obvious: <code>minxy</code> should contain the minimum
+of <code>x</code> and <code>y</code>. Let's check that this is true.</p>
+<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.minxy">minxy</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="punctuation" data-toggle="tooltip" title="int">(</span><span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span> <span class="punctuation" data-toggle="tooltip" title="int">?</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span> <span class="punctuation" data-toggle="tooltip" title="int">:</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span><span class="punctuation" data-toggle="tooltip" title="int">)</span><span class="punctuation">)</span>
+</code></pre>
+<p>The previous line defines a property that should hold for all input
+values. The <code>Prop.Check</code> extension method takes a lambda expression
+to which the randomly generated test cases are fed, and the expression
+should evaluate to true if the property holds. If it returns false or
+throws an exception, the property fails. The input values are
+wrapped in anonymous object that we assign to parameter <code>t</code>. The
+actual values are in the fields of this object.</p>
+<p>Naturally we should not use the <code>Math.Min</code> function to check the
+property, since that is the function we are testing. Instead we
+use the ternary <code>?</code> operator to do it.</p>
+<p>We don't need to stop here. Let's check that the Min method is
+symmetric, that is, the order of the arguments should not matter.</p>
+<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.minxy">minxy</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span><span class="punctuation">)</span><span class="punctuation">)</span>
+</code></pre>
+<p>Lastly we check that the minimum operation is transitive as the
+<code>&lt;=</code> operator is. For this we need the third random value <code>z</code>. We
+check that the minimum of <code>x</code>, <code>y</code>, <code>z</code> is the smallest of them. For
+that we utilize the <code>Enumerable.Min</code> function and a helper function
+from the ExtensionCord library.</p>
+<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.minxyz">minxyz</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="typename" data-toggle="tooltip" title="ExtensionCord.EnumerableExt">EnumerableExt</span><span class="punctuation" data-toggle="tooltip" title="ExtensionCord.EnumerableExt.Enumerate<int>(params int[])">.</span><span data-toggle="tooltip" title="ExtensionCord.EnumerableExt.Enumerate<int>(params int[])">Enumerate</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.z">z</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Min()">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Min()">Min</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>If we now run the tests with the built-in test runner, we should get an
+output similar to this:</p>
+<pre><code>Executing tests for fixture: BasicTests
+'(t.minxy == IIF((t.x &lt; t.y), t.x, t.y))' passed 100 tests. Discarded: 0
+'(t.minxy == Min(t.y, t.x))' passed 100 tests. Discarded: 0
+'(t.minxyz == Enumerate(new [] {t.x, t.y, t.z}).Min())' passed 100 tests. Discarded: 0
+00:00:00.0275867 - TestMin
+
+All tests passed. 1 tests run in 00:00:00.0307409.		
+</code></pre>
+<p>The output tells that each property was tested with hundred random
+inputs. So, we basically covered 300 test cases in about 0.03 seconds.</p>
+<h2 id="failing-example">Failing Example</h2>
+<p>Let's now look at what happen's when a property fails. We test the
+<code>Math.Sin</code> function in a similar manner.</p>
+<pre class="csharp"><code class="csharp">		<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../src/Tester.html#LinqCheck.TestAttribute.TestAttribute()">Test</a></span><span class="punctuation">]</span>
+		<span class="keyword" id="Examples.BasicTests.TestSin()" data-toggle="tooltip" title="Examples.BasicTests.TestSin()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.BasicTests.TestSin()">TestSin</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>">(</span><span class="keyword">from</span> x <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<double>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<double>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<double>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+			 <span class="keyword">let</span> sinx <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Sin(double)">.</span><span data-toggle="tooltip" title="System.Math.Sin(double)">Sin</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double">x</span><span class="punctuation">)</span>
+			 <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>">select</span> <span class="keyword" data-toggle="tooltip" title="<anonymous type: double x, double sinx>">new</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: double x, double sinx>">{</span> <span data-toggle="tooltip" title="double">x</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: double x, double sinx>">,</span> <span data-toggle="tooltip" title="double">sinx</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: double x, double sinx>">}</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>">)</span>
+			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: double x, double sinx>">t</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../Examples/BasicTests.html#<anonymous type: double x, double sinx>.sinx">sinx</a></span><span class="punctuation" data-toggle="tooltip" title="double.IsBetween(double, double)">.</span><span data-toggle="tooltip" title="double.IsBetween(double, double)">IsBetween</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="double">-</span><span class="number" data-toggle="tooltip" title="double">1.0</span><span class="punctuation">,</span> <span class="number" data-toggle="tooltip" title="double">1.0</span><span class="punctuation">)</span><span class="punctuation">)</span>
+			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop<<anonymous type: double x, double sinx>>.Check<<anonymous type: double x, double sinx>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: double x, double sinx>, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: double x, double sinx>">t</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../Examples/BasicTests.html#<anonymous type: double x, double sinx>.sinx">sinx</a></span><span class="punctuation" data-toggle="tooltip" title="double.ApproxEquals<double>(double)">.</span><span data-toggle="tooltip" title="double.ApproxEquals<double>(double)">ApproxEquals</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Cos(double)">.</span><span data-toggle="tooltip" title="System.Math.Cos(double)">Cos</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="double">-</span><span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">PI</span> <span class="punctuation" data-toggle="tooltip" title="double">/</span> <span class="number" data-toggle="tooltip" title="int">2</span> <span class="punctuation" data-toggle="tooltip" title="double">+</span> <span data-toggle="tooltip" title="<anonymous type: double x, double sinx>">t</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../Examples/BasicTests.html#<anonymous type: double x, double sinx>.x">x</a></span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>In this case we generate random values of type <code>double</code>, and pass that
+value to the <code>Math.Sin</code> method. Then we test that the following
+properties are true:</p>
+<ul>
+<li><span class="math">\sin (x)</span> is in range <span class="math">[-1, 1]</span>.</li>
+<li>Since cosine function is out-of-phase by <span class="math">\pi \over 2</span> with sine
+function, we test that <span class="math">\sin (x) = \cos ({\pi \over 2} + x)</span>.</li>
+</ul>
+<p>However, when we run this test we get an error:</p>
+<pre><code>'t.sinx.IsBetween(-1, 1)' passed 100 tests. Discarded: 0
+Falsifiable after 1 tests. Shrinking input..
+Test 'TestSin' failed.
+Reason: Property 't.sinx.ApproxEquals(Cos((1,5707963267949 + t.x)))' failed for input:
+{ x = 3, sinx = 0,141120008059867 }
+   at LinqCheck.Prop.&lt;&gt;c__DisplayClass7_0`2.&lt;Bind&gt;b__0(TestState state) in ...
+</code></pre>
+<p>When LinqCheck finds a failing input, it first shrinks the test case
+into a minimal example that still fails. This means that if we remove
+anything from the input, the test will pass. Then it reports the
+faling property, and the input which made the property false.</p>
+<p>In this case the problem is not in the function we are testing, but our
+property is wrong. Cosine is out of phase with sine not by
+<span class="math">\pi \over 2</span> but <span class="math">-\pi \over 2</span>. So, if we change the term to
+<code>-Math.PI / 2 + t.x</code> the test should pass.</p>
+<p>It is quite typical that we sometimes get the conditions wrong. However,
+the mistake is quickly pointed out to us by LinqCheck, and it is usually
+easy to spot the error once you see a failing example.</p>
+<pre class="csharp"><code class="csharp">	<span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>The basic principle of LinqCheck is quite well captured by these few examples.
+If you are testing pure functions such as the methods defined in the <code>System.Math</code>
+class, writing properties is usually very straightforward.</p>
+<p>However, when testing your own code it is often necessary to define your own
+random value generators, or otherwise restrict what values LinqCheck will
+generate. In the following sections we will look at more complex scenarios and
+additional features.</p>
+
+				</div>
+				
+<ul class="pager">
+	<li class="previous"><a href="../index.html">Previous: Home</a></li>
+	<li class="next"><a href="../Examples/RunTests.html">Next: RunTests</a></li>
+</ul>
+			</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <p>Copyright © 2018 Tommi Johtela</p>
+    </footer>
+
+
+    
+
+
+
+
+    <script src="../bootstrap/js/jquery.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../sidebar/sidebar.js"></script>
+    <script src="../syntax-highlight/syntax.js"></script>
+
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+
+	<script src="../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

@@ -7,11 +7,11 @@ using LinqCheck;
 
 namespace Examples
 {
-	class Program
+	class RunTests
 	{
 		static void Main (string[] args)
 		{
-			Tester.RunTestsTimed (new MathTests ());
+			Tester.RunTestsTimed (new BasicTests ());
 		}
 	}
 }

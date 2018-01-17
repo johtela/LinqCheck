@@ -49,7 +49,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="index.md" />
+    <None Include="License.md" />
     <None Include="packages.config" />
+    <None Include="TOC.yml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="docs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
