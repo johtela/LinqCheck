@@ -1,7 +1,7 @@
 ﻿.markdown {
   color: #333;
-  font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Geneva, Verdana, sans-serif;
-  font-size: 16px;
+  font-family: Geneva, Verdana, sans-serif;
+  font-size: 1.1em;
   line-height: 1.7em;
 }
 .markdown a {
@@ -78,10 +78,8 @@
 }
 .markdown code,
 .markdown pre {
-  font-family: 'Lucida Sans Typewriter', monospace;
   background-color: transparent;
-  font-size: 0.95em;
-  line-height: 1.5em;
+  font-size: 1.05em;
   tab-size: 4;
   overflow-x: auto;
   overflow-y: hidden;
