@@ -1,5 +1,5 @@
 ﻿---
-ProjectName: <span><img src="images/LinqCheck.svg" width="24" height="24" /> LinqCheck</span>
+ProjectName: <span><img src="images/LinqCheck.svg" height="24" /> LinqCheck</span>
 GitHub: https://github.com/johtela/LinqCheck
 Footer: "Copyright © 2018 Tommi Johtela"
 License: License.html
