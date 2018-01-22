@@ -11,7 +11,7 @@ namespace Examples
 	{
 		static void Main (string[] args)
 		{
-			Tester.RunTestsTimed (new BasicTests ());
+			Tester.RunTestsTimed (new BasicTests (), new SeqTests ());
 		}
 	}
 }

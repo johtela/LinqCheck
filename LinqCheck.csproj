@@ -53,8 +53,9 @@
     <None Include="packages.config" />
     <None Include="TOC.yml" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="docs\" />
+    <Content Include="docs\images\LinqCheck.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

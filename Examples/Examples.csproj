@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="BasicTests.cs" />
     <Compile Include="RunTests.cs" />
+    <Compile Include="SeqTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
