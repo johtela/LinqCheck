@@ -7,6 +7,10 @@
     file: Examples\BasicTests.cs
     desc: TODO! Add page description.
 
+  - page: SeqTests
+    file: Examples\SeqTests.cs
+    desc: TODO! Add page description.
+
   - page: RunTests
     file: Examples\RunTests.cs
     desc: TODO! Add page description.
