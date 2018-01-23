@@ -10,7 +10,7 @@
 		internal static void Register ()
 		{
 			Arbitrary.Register (new Arbitrary<char> (
-				Gen.Elements (CharCandidates ().ToArray ()), 
+				Gen.ChooseFrom (CharCandidates ().ToArray ()), 
 				ShrinkChar));
 
 			Arbitrary.Register (new Arbitrary<int> (
@@ -67,8 +67,8 @@
 
 		private static IEnumerable<int> ShrinkInteger (int x)
 		{
-			if (x < 0) yield return -x;
 			yield return 0;
+			if (x < 0) yield return -x;
 			for (var i = x / 2; Math.Abs (x - i) < Math.Abs (x); i = i / 2)
 				yield return x - i;
 		}
@@ -110,7 +110,6 @@
 					from xs in ShrinkOne (e.Skip (1))
 					select xs.Append (first));
 		}
-
 
 		private class Enumerable<T> : ArbitraryBase<IEnumerable<T>>
 		{

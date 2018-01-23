@@ -28,7 +28,6 @@ namespace Examples
 	{
 		/*
 		## Implementing IArbitrary<T>
-
 		There needs to be an implementation of `IArbitrary<T>` interface for 
 		each type `T` we wish to use in our tests. This implementation generates 
 		random values of type `T`, and shrinks them when LinqCheck is looking 
@@ -42,26 +41,24 @@ namespace Examples
 		public static Arbitrary<Seq<T>> ArbitrarySeq<T> ()
 		{
 			/*
-			We don't know yet what is the item type `T` which will be contained
-			in the Seq list. Luckily we don't have to, since we can get the 
-			`IArbitrary<T>` implementation from LinqCheck assuming that one 
-			is already registered for type `T`.
-			*/
-			var arb = Arbitrary.Get<T> ();
-			/*
-			Now we need to define the generator for `Seq<T>` type. Generators
+			First we need to define the generator for `Seq<T>` type. Generators
 			have the type `Gen<T>` where T is the type of data produced. They 
 			are defined as Linq expressions where complex types are constructed
 			with built-in or user-defined combinators. In this case we can 
 			utilize the combinator that creates an `Gen<IEnumerable<T>>` given 
 			a generator of type `Gen<T>`.
+
+			We don't know yet what is the item type `T` which will be contained
+			in the seqeuence. Luckily we don't have to. We can assume that the 
+			generator for `T` is already registered with LinqCheck, and get it
+			by calling `Arbitrary.Gen<T> ()`.
 			*/
 			return new Arbitrary<Seq<T>> (
-				from e in arb.Generate.EnumerableOf ()
+				from e in Arbitrary.Gen<T> ().EnumerableOf ()
 				select e.ToSeq (),
 				/*
 				We also need to provide a way to shrink the failed sequence
-				to simpler examples. Again, we take advantage of the fact
+				to simpler versions. Again, we take advantage of the fact
 				that `Seq<T>` implements `IEnumerable<T>`, so we can use
 				the built-in combinator to do the shrinking. Lastly, we
 				convert the shrinked IEnumerables back to Seqs.
@@ -77,9 +74,8 @@ namespace Examples
 		implementation for `IArbitrary<T>`.
 
 		## Testing Properties of Sequences
-
 		So, what properties should all sequences have? Let's start with the 
-		simple ones. First let's check that the First and Rest properties
+		easy ones. First we'll check that the First and Rest properties
 		are correct. Note that our test method is generic, it can basically
 		test this property for any sequences of any item type.
 		*/
@@ -154,6 +150,101 @@ namespace Examples
 		the `Check` method. The other option is to implement new `ArbitrarySeq` 
 		so, that it never creates an empty sequence. This would not be desireable 
 		in all tests, though.
+
+		## Testing Addition
+		So, now we are convinced that an arbitrary sequence generated from 
+		IEnumerable is well-formed. What happens if we add an item to it? 
+		Let's find out.
 		*/
+		public void CheckAddition<T> ()
+		{
+			/*
+			First we generate an arbitrary sequence the same way as in the
+			previous example.
+			*/
+			(from seq in Prop.ForAll (ArbitrarySeq<T> ())
+			 /*
+			 Then we construct a new sequence by adding an arbitrary item to it.
+			 */
+			 from item in Prop.ForAll<T> ()
+			 let newSeq = item | seq
+			 /*
+			 Then we return all three in the test case.
+			 */
+			 select new { seq, item, newSeq })
+			/*
+			Let's first check that the new sequence is one item longer than
+			the original. As before, we need to prepare for the possibility
+			that the sequence might be `null`. In that case, we cannot use
+			the `Count` extension method.
+			*/
+			.Check (t => t.newSeq.Count () == 
+				(t.seq.IsEmpty () ? 0 : t.seq.Count ()) + 1)
+			/*
+			Then we should verify that the added item is the first item of
+			the new sequence.
+			*/
+			.Check (t => t.newSeq.First.Equals (t.item))
+			/*
+			Last we should check that the rest of the new sequence is the
+			same as the original one. Empty sequences need to be accounted
+			for in this check too.
+			*/
+			.Check (t => t.newSeq.Rest.IsEmpty () || 
+				t.newSeq.Rest.SequenceEqual (t.seq));
+		}
+		/*
+		As before, we need to use instantiate few sequences to run the checks.
+		*/
+		[Test]
+		public void TestAddition ()
+		{
+			CheckAddition<int> ();
+			CheckAddition<double> ();
+			CheckAddition<string> ();
+		}
+		/*
+		## Testing Removal
+		The last feature we test is removing an item.
+		*/
+		public void CheckRemoval<T> ()
+		{
+			/*
+			Let's again generate an arbitrary sequence and make sure it is not
+			empty.
+			*/
+			(from seq in Prop.ForAll (ArbitrarySeq<T> ())
+			 where !seq.IsEmpty ()
+			 /*
+			 Next we need to select an arbitrary item from the sequence to be
+			 removed.
+			 */
+			 from item in Prop.ElementOf (seq)
+			 /*
+			 Now we can remove the chosen item and return the test case.
+			 */
+			 let newSeq = seq.Remove (item)
+			 select new { seq, item, newSeq })
+			/*
+			The new sequence should be one item shorter than the original one.
+			*/
+			.Check (t => t.newSeq.IsEmpty ().Implies (t.seq.Count () == 1) ||
+				t.newSeq.Count () == t.seq.Count () - 1)
+			/*
+			If we still find the same item that was removed in the new sequence,
+			it must be a duplicate, and thus appear at least twice.
+			*/
+			.Check (t => !t.newSeq.Contains (t.item) ||
+				t.seq.Count (i => i.Equals (t.item)) > 1);
+		}
+		/*
+		Let's call our check with a few different item types.
+		*/
+		[Test]
+		public void TestRemoval ()
+		{
+			CheckRemoval<int> ();
+			CheckRemoval<char> ();
+		}
 	}
 }

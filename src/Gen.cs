@@ -133,7 +133,7 @@ namespace LinqCheck
 		/// <summary>
 		/// Randomly choose an value from an array.
 		/// </summary>
-		public static Gen<T> Elements<T> (T[] values)
+		public static Gen<T> ChooseFrom<T> (params T[] values)
 		{
 			return (rnd, size) => values[rnd.Next (values.Length)];
 		}

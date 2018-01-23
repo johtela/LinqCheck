@@ -28,7 +28,7 @@
 		/// <summary>
 		/// Wrap a value in the Property monad.
 		/// </summary>
-		private static Prop<T> ToProp<T> (this T value)
+		public static Prop<T> ToProp<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Succeeded, value);
 		}
@@ -45,11 +45,6 @@
 		public static Prop<T> Discard<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Discarded, value);
-		}
-
-		public static Prop<T> ForAll<T> (this Gen<T> gen)
-		{
-			return ForAll (new Arbitrary<T> (gen));
 		}
 
 		public static Prop<T> ForAll<T> (this IArbitrary<T> arbitrary)
@@ -77,6 +72,16 @@
 		public static Prop<T> ForAll<T> ()
 		{
 			return ForAll (Arbitrary.Get<T> ());
+		}
+
+		public static Prop<T> ElementOf<T> (IEnumerable<T> values)
+		{
+			return state =>
+			{
+				var count = values.Count ();
+				var i = state.Random.Next (0, count);
+				return Tuple.Create (TestResult.Succeeded, values.Skip (i).First ());
+			};
 		}
 
 		public static Prop<T> Restrict<T> (this Prop<T> prop, int size)
@@ -205,16 +210,20 @@
 			while (NextCandidate (shrunkValues, current))
 			{
 				values = GenerateValues (shrunkValues, current);
-				if (!Test (prop, 1, new TestState (TestPhase.Shrink, 0, 0, values, shrunkValues)))
+				try
 				{
-					var weight = current.Sum ();
-					if (weight <= bestWeight)
+					if (!Test (prop, 1, new TestState (TestPhase.Shrink, 0, 0, values, shrunkValues)))
 					{
-						best = values;
-						bestWeight = weight;
-						Console.Write (".");
+						var weight = current.Sum ();
+						if (weight <= bestWeight)
+						{
+							best = values;
+							bestWeight = weight;
+							Console.Write (".");
+						}
 					}
 				}
+				catch (Exception) { }
 			}
 			return best;
 		}

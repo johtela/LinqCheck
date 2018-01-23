@@ -4,9 +4,8 @@ function GenerateDocs ()
 {
 	& {
 		$ErrorActionPreference = "SilentlyContinue"
-		& $csweavedir\csweave.exe src\*.cs Examples\*.cs *.md -s LinqCheck.sln -o md -f md -t -v
+		& $csweavedir\csweave.exe src\*.cs Examples\*.cs *.md -s LinqCheck.sln -o docs -f html -tvu
 	}
 }
 
-Get-Location
 GenerateDocs
