@@ -74,14 +74,9 @@
 			return ForAll (Arbitrary.Get<T> ());
 		}
 
-		public static Prop<T> ElementOf<T> (IEnumerable<T> values)
+		public static Prop<T> Any<T> (this Gen<T> gen)
 		{
-			return state =>
-			{
-				var count = values.Count ();
-				var i = state.Random.Next (0, count);
-				return Tuple.Create (TestResult.Succeeded, values.Skip (i).First ());
-			};
+			return state => Tuple.Create (TestResult.Succeeded, gen (new Random (state.Seed), state.Size));
 		}
 
 		public static Prop<T> Restrict<T> (this Prop<T> prop, int size)
@@ -200,19 +195,20 @@
 			return false;
 		}
 
-		private static List<object> Optimize<T> (Prop<T> prop, List<List<object>> shrunkValues, 
-			List<object> values)
+		private static List<object> Optimize<T> (Prop<T> prop, TestState state)
 		{
-			var current = new List<int> (shrunkValues.Select (l => l.Count - 1));
-			var best = values;
+			var current = new List<int> (state.ShrunkValues.Select (l => l.Count - 1));
+			var values = state.Values;
+			var best = state.Values;
 			var bestWeight = current.Sum ();
 
-			while (NextCandidate (shrunkValues, current))
+			while (NextCandidate (state.ShrunkValues, current))
 			{
-				values = GenerateValues (shrunkValues, current);
+				values = GenerateValues (state.ShrunkValues, current);
 				try
 				{
-					if (!Test (prop, 1, new TestState (TestPhase.Shrink, 0, 0, values, shrunkValues)))
+					if (!Test (prop, 1, new TestState (TestPhase.Shrink, state.Seed, state.Size, 
+						values, state.ShrunkValues)))
 					{
 						var weight = current.Sum ();
 						if (weight <= bestWeight)
@@ -246,9 +242,9 @@
 					new List<List<object>> ());
 				Test (testProp, 1, state);
 				Debug.Assert (state.Values.Count == state.ShrunkValues.Count);
-				var optimized = Optimize (testProp, state.ShrunkValues, state.Values);
+				var optimized = Optimize (testProp, state);
 				Console.ResetColor ();
-				state = new TestState (TestPhase.Shrink, 0, 0, optimized, null);
+				state = new TestState (TestPhase.Shrink, seed, size, optimized, null);
 				// Fail again with optimized input without catching the exception.
 				testProp (state);
 				throw new TestFailed ("The failed property was re-evaluated, but the error did not reoccur. "

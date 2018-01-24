@@ -138,6 +138,11 @@ namespace LinqCheck
 			return (rnd, size) => values[rnd.Next (values.Length)];
 		}
 
+		public static Gen<T> ElementOf<T> (IEnumerable<T> enumerable)
+		{
+			return ChooseFrom (enumerable.ToArray ());
+		}
+
 		/// <summary>
 		/// Cast the gen to its base type.
 		/// </summary>

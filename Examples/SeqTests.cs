@@ -200,7 +200,6 @@ namespace Examples
 		public void TestAddition ()
 		{
 			CheckAddition<int> ();
-			CheckAddition<double> ();
 			CheckAddition<string> ();
 		}
 		/*
@@ -211,15 +210,36 @@ namespace Examples
 		{
 			/*
 			Let's again generate an arbitrary sequence and make sure it is not
-			empty.
+			empty. This time we use the `SuchThat` combinator defined for the 
+			`IArbitrary` interface, which filters out all the randomly generated
+			values that do not match a given predicate. This has the benefit 
+			that no test cases are discarded, but it also makes the test run
+			a bit longer. Also, if the predicate is too strict, `SuchThat` 
+			might not find a suitable value. In this case the generator will
+			fail and throw an exception.
 			*/
-			(from seq in Prop.ForAll (ArbitrarySeq<T> ())
-			 where !seq.IsEmpty ()
+			(from seq in Prop.ForAll (ArbitrarySeq<T> ().SuchThat (
+				s => !s.IsEmpty ()))
 			 /*
-			 Next we need to select an arbitrary item from the sequence to be
-			 removed.
+			 Next we need to select from the sequence an arbitrary item that we
+			 can remove. We do this by calling `Prop.Any`. It differs from
+			 `Prop.ForAll` in that it takes `Gen<T>` as an argument instead
+			 of `IArbitrary<T>`. This means that the random values generated
+			 by `Any` are not shrunk, if the test fails. 
+			 
+			 Also, the values produced by `Any` might depend on the other 
+			 generated values. As in this case, the chosen element must be 
+			 inside the sequence that we generated previously. It would not 
+			 make sense to shrink this value, because then we would probably 
+			 loose the failing test case. 
+			 
+			 In general, we need to make sure that the same input data 
+			 provides always the same result, and that our test case is 
+			 deterministic. Given the same parameters, `Any` produces always 
+			 the same result, whereas `ForAll` will produce a different value 
+			 every time it is called.
 			 */
-			 from item in Prop.ElementOf (seq)
+			 from item in Prop.Any (Gen.ElementOf (seq))
 			 /*
 			 Now we can remove the chosen item and return the test case.
 			 */
@@ -243,8 +263,14 @@ namespace Examples
 		[Test]
 		public void TestRemoval ()
 		{
-			CheckRemoval<int> ();
 			CheckRemoval<char> ();
+			CheckRemoval<int> ();
 		}
 	}
 }
+/*
+## Next Steps
+We went through some simple but powerfull constructs of LinqCheck. Next we 
+will show how you can test code which has mutable state, and review few special
+constructs provided by the library.
+*/

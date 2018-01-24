@@ -100,5 +100,24 @@
 		{
 			return Get<T> ().Generate (rnd, size);
 		}
+
+		public static IArbitrary<T> SuchThat<T> (this IArbitrary<T> arbitrary, 
+			Func<T, bool> predicate)
+		{
+			return new Arbitrary<T> (
+				(rnd, size) =>
+				{
+					T res;
+					var tries = 0;
+					do
+						res = arbitrary.Generate (rnd, size);
+					while (!predicate (res) && ++tries < 100);
+					if (tries >= 100)
+						throw new ArgumentException ("Could not generate a " +
+							"random value which satisfies the predicate.");
+					return res;
+				},
+				val => arbitrary.Shrink (val).Where (predicate));
+		}
 	}
 }

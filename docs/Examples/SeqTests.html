@@ -293,7 +293,6 @@ for in this check too.</p>
 		<span class="keyword" id="Examples.SeqTests.TestAddition()" data-toggle="tooltip" title="Examples.SeqTests.TestAddition()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.SeqTests.TestAddition()">TestAddition</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.SeqTests.CheckAddition<int>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckAddition<T>()">CheckAddition</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="Examples.SeqTests.CheckAddition<double>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckAddition<T>()">CheckAddition</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span data-toggle="tooltip" title="Examples.SeqTests.CheckAddition<string>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckAddition<T>()">CheckAddition</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 </code></pre>
@@ -303,13 +302,32 @@ for in this check too.</p>
 		<span class="punctuation">{</span>
 </code></pre>
 <p>Let's again generate an arbitrary sequence and make sure it is not
-empty.</p>
-<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>>">(</span><span class="keyword">from</span> seq <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<ExtensionCord.Seq<T>>(LinqCheck.IArbitrary<ExtensionCord.Seq<T>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<ExtensionCord.Seq<T>>(LinqCheck.IArbitrary<ExtensionCord.Seq<T>>)"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">ForAll</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.SeqTests.ArbitrarySeq<T>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.ArbitrarySeq<T>()">ArbitrarySeq</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../Examples/SeqTests.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
-			 <span class="keyword">where</span> <span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>">seq</span><span class="punctuation" data-toggle="tooltip" title="ExtensionCord.Seq<T>.IsEmpty<T>()">.</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>.IsEmpty<T>()">IsEmpty</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+empty. This time we use the <code>SuchThat</code> combinator defined for the
+<code>IArbitrary</code> interface, which filters out all the randomly generated
+values that do not match a given predicate. This has the benefit
+that no test cases are discarded, but it also makes the test run
+a bit longer. Also, if the predicate is too strict, <code>SuchThat</code>
+might not find a suitable value. In this case the generator will
+fail and throw an exception.</p>
+<pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>>">(</span><span class="keyword">from</span> seq <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<ExtensionCord.Seq<T>>(LinqCheck.IArbitrary<ExtensionCord.Seq<T>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<ExtensionCord.Seq<T>>(LinqCheck.IArbitrary<ExtensionCord.Seq<T>>)"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">ForAll</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.SeqTests.ArbitrarySeq<T>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.ArbitrarySeq<T>()">ArbitrarySeq</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../Examples/SeqTests.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<ExtensionCord.Seq<T>>.SuchThat<ExtensionCord.Seq<T>>(System.Func<ExtensionCord.Seq<T>, bool>)">.</span><span data-toggle="tooltip" title="LinqCheck.IArbitrary<ExtensionCord.Seq<T>>.SuchThat<ExtensionCord.Seq<T>>(System.Func<ExtensionCord.Seq<T>, bool>)"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">SuchThat</a></span> <span class="punctuation">(</span>
+				s <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>">s</span><span class="punctuation" data-toggle="tooltip" title="ExtensionCord.Seq<T>.IsEmpty<T>()">.</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>.IsEmpty<T>()">IsEmpty</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span>
 </code></pre>
-<p>Next we need to select an arbitrary item from the sequence to be
-removed.</p>
-<pre class="csharp"><code class="csharp">			 <span class="keyword">from</span> item <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)"><a href="../src/Prop.html#LinqCheck.Prop.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)">ElementOf</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>">seq</span><span class="punctuation">)</span>
+<p>Next we need to select from the sequence an arbitrary item that we
+can remove. We do this by calling <code>Prop.Any</code>. It differs from
+<code>Prop.ForAll</code> in that it takes <code>Gen&lt;T&gt;</code> as an argument instead
+of <code>IArbitrary&lt;T&gt;</code>. This means that the random values generated
+by <code>Any</code> are not shrunk, if the test fails.</p>
+<p>Also, the values produced by <code>Any</code> might depend on the other
+generated values. As in this case, the chosen element must be
+inside the sequence that we generated previously. It would not
+make sense to shrink this value, because then we would probably
+loose the failing test case.</p>
+<p>In general, we need to make sure that the same input data
+provides always the same result, and that our test case is
+deterministic. Given the same parameters, <code>Any</code> produces always
+the same result, whereas <code>ForAll</code> will produce a different value
+every time it is called.</p>
+<pre class="csharp"><code class="csharp">			 <span class="keyword">from</span> item <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.Any<T>(LinqCheck.Gen<T>)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.Any<T>(LinqCheck.Gen<T>)"><a href="../src/Prop.html#LinqCheck.Prop.Any<T>(LinqCheck.Gen<T>)">Any</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)"><a href="../src/Gen.html#LinqCheck.Gen.ElementOf<T>(System.Collections.Generic.IEnumerable<T>)">ElementOf</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>">seq</span><span class="punctuation">)</span><span class="punctuation">)</span>
 </code></pre>
 <p>Now we can remove the chosen item and return the test case.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword">let</span> newSeq <span class="punctuation">=</span> <span data-toggle="tooltip" title="ExtensionCord.Seq<T>">seq</span><span class="punctuation" data-toggle="tooltip" title="ExtensionCord.Seq<T>.Remove<T>(T)">.</span><span data-toggle="tooltip" title="ExtensionCord.Seq<T>.Remove<T>(T)">Remove</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">item</span><span class="punctuation">)</span>
@@ -329,12 +347,16 @@ it must be a duplicate, and thus appear at least twice.</p>
 <pre class="csharp"><code class="csharp">		<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../src/Tester.html#LinqCheck.TestAttribute.TestAttribute()">Test</a></span><span class="punctuation">]</span>
 		<span class="keyword" id="Examples.SeqTests.TestRemoval()" data-toggle="tooltip" title="Examples.SeqTests.TestRemoval()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.SeqTests.TestRemoval()">TestRemoval</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span data-toggle="tooltip" title="Examples.SeqTests.CheckRemoval<int>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckRemoval<T>()">CheckRemoval</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span data-toggle="tooltip" title="Examples.SeqTests.CheckRemoval<char>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckRemoval<T>()">CheckRemoval</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="char">char</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="Examples.SeqTests.CheckRemoval<int>()"><a href="../Examples/SeqTests.html#Examples.SeqTests.CheckRemoval<T>()">CheckRemoval</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>We went through some simple but powerfull constructs of LinqCheck. Next we
+will show how you can test code which has mutable state, and review few special
+constructs provided by the library.</p>
 
 				</div>
 				<ul class="pager">

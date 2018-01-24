@@ -9,6 +9,7 @@
     {
         public readonly TestPhase Phase;
         public readonly Random Random;
+		public int Seed;
         public int Size;
         public string Label;
         public int SuccessfulTests;
@@ -27,6 +28,7 @@
         {
             Phase = phase;
             Random = new Random(seed);
+			Seed = seed;
             Size = size;
             Values = values ?? new List<object>();
             ShrunkValues = shrunkValues;

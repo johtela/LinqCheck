@@ -81,13 +81,17 @@
 
 		public static IEnumerable<IEnumerable<T>> ShrinkEnumerable<T> (this IEnumerable<T> e)
 		{
-			return RemoveUntil (e).SelectMany (Fun.Identity).Concat (ShrinkOne (e)).Prepend (new T[0]);
+			return (from removed in RemoveUntil (e)
+					from s in removed
+					from shrinked in ShrinkOne (s)
+					select shrinked)
+				   .Concat (ShrinkOne (e)).Prepend (new T[0]);
 		}
 
 		private static IEnumerable<IEnumerable<IEnumerable<T>>> RemoveUntil<T> (IEnumerable<T> e)
 		{
 			var len = e.Count ();
-			for (var k = len - 1; k > 0; k = k / 2)
+			for (var k = len - 1; k > 0; k = k - 1)
 				yield return RemoveK (e, k, len);
 		}
 
