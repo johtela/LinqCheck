@@ -101,6 +101,11 @@
 			return Get<T> ().Generate (rnd, size);
 		}
 
+		public static IEnumerable<T> Shrink<T> (T value)
+		{
+			return Get<T> ().Shrink (value);
+		}
+
 		public static IArbitrary<T> SuchThat<T> (this IArbitrary<T> arbitrary, 
 			Func<T, bool> predicate)
 		{

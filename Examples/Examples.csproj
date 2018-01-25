@@ -38,11 +38,16 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationTypes" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicTests.cs" />
     <Compile Include="RunTests.cs" />
     <Compile Include="SeqTests.cs" />
+    <Compile Include="UITests\Calculator.cs" />
+    <Compile Include="UITests\CalculatorTests.cs" />
+    <Compile Include="UITests\Win7Calculator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

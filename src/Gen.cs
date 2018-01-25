@@ -222,7 +222,7 @@ namespace LinqCheck
 		/// </summary>
 		public static Gen<T> OneOf<T> (params Gen<T>[] gens)
 		{
-			return ChooseInt (0, gens.Length - 1).Bind (i => gens[i]);
+			return ChooseInt (0, gens.Length).Bind (i => gens[i]);
 		}
 
 		/// <summary>

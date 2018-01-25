@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LinqCheck;
-
-namespace Examples
+﻿namespace Examples
 {
+	using LinqCheck;
+	using System.Diagnostics;
+	using UITests;
+
 	class RunTests
 	{
 		static void Main (string[] args)
 		{
-			Tester.RunTestsTimed (new BasicTests (), new SeqTests ());
+			Tester.RunTestsTimed (new CalculatorTests ());
 		}
+
 	}
 }
