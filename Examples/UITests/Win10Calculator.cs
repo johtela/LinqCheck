@@ -1,17 +1,24 @@
 ﻿namespace Examples.UITests
 {
 	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Diagnostics;
+	using System.Threading;
 	using System.Windows.Automation;
 
-	class Win7Calculator : Automated, ICalculator
+	class Win10Calculator : Automated, ICalculator
 	{
 		private AutomationElement _result;
 
-		public Win7Calculator ()
+		public Win10Calculator ()
 		{
-			StartApp ("Calc.exe", "Calculator");
-			_result = _root.FindFirst (TreeScope.Descendants, 
-				new PropertyCondition (AutomationElement.AutomationIdProperty, "150"));
+			StartApp ("calc.exe", "Calculator");
+			Thread.Sleep (1000);
+			_result = _root.FindFirst (TreeScope.Descendants,
+				new PropertyCondition (
+					AutomationElement.AutomationIdProperty,
+					"CalculatorResults"));
 			if (_result == null)
 				throw new Exception ("Could not find result box");
 			Clear ();
@@ -19,7 +26,7 @@
 
 		public void Dispose ()
 		{
-			QuitApp ();
+			PushButton ("Close Calculator");
 		}
 
 		public void PushDigitButton (byte digit)
@@ -27,11 +34,14 @@
 			GetInvokePattern (GetDigitButton (digit)).Invoke ();
 		}
 
+		private readonly string[] _digitButtons = { "Zero", "One", "Two",
+			"Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+
 		public AutomationElement GetDigitButton (byte number)
 		{
 			if ((number < 0) || (number > 9))
 				throw new ArgumentException ("mumber must be a digit 0-9");
-			return GetButton (number.ToString ());
+			return GetButton (_digitButtons[number]);
 		}
 
 		public string GetResult ()
@@ -40,9 +50,9 @@
 				AutomationElement.NameProperty).ToString ();
 		}
 
-		public double Display => 
-			double.TryParse (GetResult (), out double result) ? 
-				result : 
+		public double Display =>
+			double.TryParse (GetResult (), out double result) ?
+				result :
 				double.NaN;
 
 		public bool ResultAvailable =>
@@ -50,7 +60,7 @@
 
 		public void Add ()
 		{
-			PushButton ("Add");
+			PushButton ("Plus");
 		}
 
 		public void Clear ()
@@ -60,7 +70,7 @@
 
 		public void Divide ()
 		{
-			PushButton ("Divide");
+			PushButton ("Divide by");
 		}
 
 		public void Digit (byte number)
@@ -72,12 +82,12 @@
 
 		public void Multiply ()
 		{
-			PushButton ("Multiply");
+			PushButton ("Multiply by");
 		}
 
 		public void Subtract ()
 		{
-			PushButton ("Subtract");
+			PushButton ("Minus");
 		}
 
 		public void Equals ()

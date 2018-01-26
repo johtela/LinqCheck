@@ -10,11 +10,20 @@
 
 	public class CalculatorTests
 	{
+		private ICalculator GetWinCalculator ()
+		{
+			if (Environment.OSVersion.Version.Major == 6 &&
+				Environment.OSVersion.Version.Minor == 2)
+				return new Win10Calculator ();
+			else
+				return new Win7Calculator ();
+		}
+
 		[Test]
 		public void TestRandomSequence ()
 		{
 			Command.Register ();
-			using (var wincalc = new Win7Calculator ())
+			using (var wincalc = GetWinCalculator ())
 			using (var modcalc = new ModelCalculator ())
 			{
 				(from commands in Prop.ForAll<List<Command>> ()

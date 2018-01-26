@@ -45,9 +45,11 @@
     <Compile Include="BasicTests.cs" />
     <Compile Include="RunTests.cs" />
     <Compile Include="SeqTests.cs" />
+    <Compile Include="UITests\Automated.cs" />
     <Compile Include="UITests\Calculator.cs" />
     <Compile Include="UITests\CalculatorTests.cs" />
     <Compile Include="UITests\ModelCalculator.cs" />
+    <Compile Include="UITests\Win10Calculator.cs" />
     <Compile Include="UITests\Win7Calculator.cs" />
   </ItemGroup>
   <ItemGroup>

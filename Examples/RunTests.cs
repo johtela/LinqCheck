@@ -14,7 +14,7 @@
 
 		private static void RunCalcTest ()
 		{
-			using (var calc = new ModelCalculator ())
+			using (var calc = new Win10Calculator ())
 			{
 				calc.Digit (6);
 				calc.Divide ();
@@ -24,6 +24,6 @@
 				calc.Digit (4);
 				calc.Digit (0);
 			}
-		}
+			}
 	}
 }
