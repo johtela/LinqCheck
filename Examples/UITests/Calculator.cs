@@ -15,7 +15,8 @@
 		void Multiply ();
 		void Divide ();
 		void Equals ();
-		double Value { get; }
+		double Display { get; }
+		bool ResultAvailable { get; }
 	}
 
 	public abstract class Command
@@ -82,7 +83,7 @@
 			calculator.Clear ();
 			foreach (var command in commands)
 				command.Do (calculator);
-			return calculator.Value;
+			return calculator.Display;
 		}
 
 		public static void Register () { }
@@ -92,7 +93,7 @@
 			Arbitrary.Register (new Arbitrary<Command> (
 				Gen.OneOf (
 					from i in Gen.ChooseInt (0, 10)
-					select Digit ((byte)i),
+					select Digit (i),
 					Gen.ChooseFrom (Add, Subtract, Multiply, Divide, Equals)
 				),
 				com => com is _Digit n ?

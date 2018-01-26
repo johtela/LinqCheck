@@ -77,11 +77,19 @@
 			return GetButton (number.ToString ());
 		}
 
-		public double Value => 
-			double.TryParse (_result.GetCurrentPropertyValue(
-				AutomationElement.NameProperty).ToString (), out double result) ? 
+		public string GetResult ()
+		{
+			return _result.GetCurrentPropertyValue (
+				AutomationElement.NameProperty).ToString ();
+		}
+
+		public double Display => 
+			double.TryParse (GetResult (), out double result) ? 
 				result : 
 				double.NaN;
+
+		public bool ResultAvailable =>
+			double.TryParse (GetResult (), out double result);
 
 		public void Add ()
 		{
