@@ -46,3 +46,27 @@
   - page: License
     file: License.md
     desc: TODO! Add page description.
+
+  - page: Automated
+    file: Examples\UITests\Automated.cs
+    desc: TODO! Add page description.
+
+  - page: Calculator
+    file: Examples\UITests\Calculator.cs
+    desc: TODO! Add page description.
+
+  - page: CalculatorTests
+    file: Examples\UITests\CalculatorTests.cs
+    desc: TODO! Add page description.
+
+  - page: ModelCalculator
+    file: Examples\UITests\ModelCalculator.cs
+    desc: TODO! Add page description.
+
+  - page: Win10Calculator
+    file: Examples\UITests\Win10Calculator.cs
+    desc: TODO! Add page description.
+
+  - page: Win7Calculator
+    file: Examples\UITests\Win7Calculator.cs
+    desc: TODO! Add page description.

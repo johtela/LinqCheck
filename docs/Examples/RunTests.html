@@ -109,6 +109,30 @@
 	<ul>
 		<li>TODO! Add page description.</li>
 	</ul>
+	<li><a href="../Examples/UITests/Automated.html">Automated</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Calculator.html">Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/CalculatorTests.html">CalculatorTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/ModelCalculator.html">ModelCalculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Win10Calculator.html">Win10Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Win7Calculator.html">Win7Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
 </ul>
             </div>
         </div>
@@ -120,20 +144,20 @@
 	<li class="next"><a href="../src/Arbitrary.html">Next: Arbitrary</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword">using</span> System<span class="punctuation">;</span>
-<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
-<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
-<span class="keyword">using</span> System<span class="punctuation">.</span>Text<span class="punctuation">;</span>
-<span class="keyword">using</span> System<span class="punctuation">.</span>Threading<span class="punctuation">.</span>Tasks<span class="punctuation">;</span>
-<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
-
-<span class="keyword" id="Examples">namespace</span> Examples
+					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
 <span class="punctuation">{</span>
+	<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Diagnostics<span class="punctuation">;</span>
+	<span class="keyword">using</span> UITests<span class="punctuation">;</span>
+
 	<span class="keyword" id="Examples.RunTests">class</span> <span class="typename">RunTests</span>
 	<span class="punctuation">{</span>
 		<span class="keyword" id="Examples.RunTests.Main(string[])" data-toggle="tooltip" title="Examples.RunTests.Main(string[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.RunTests.Main(string[])">Main</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">[</span><span class="punctuation">]</span> args<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="typename" data-toggle="tooltip" title="LinqCheck.Tester"><a href="../src/Tester.html#LinqCheck.Tester">Tester</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">.</span><span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])"><a href="../src/Tester.html#LinqCheck.Tester.RunTestsTimed(object[])">RunTestsTimed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="Examples.BasicTests">new</span> <span class="typename"><a href="../Examples/BasicTests.html#Examples.BasicTests">BasicTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="Examples.SeqTests">new</span> <span class="typename"><a href="../Examples/SeqTests.html#Examples.SeqTests">SeqTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="LinqCheck.Tester"><a href="../src/Tester.html#LinqCheck.Tester">Tester</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">.</span><span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])"><a href="../src/Tester.html#LinqCheck.Tester.RunTestsTimed(object[])">RunTestsTimed</a></span> <span class="punctuation">(</span>
+				<span class="keyword" data-toggle="tooltip" title="Examples.BasicTests">new</span> <span class="typename"><a href="../Examples/BasicTests.html#Examples.BasicTests">BasicTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span>
+				<span class="keyword" data-toggle="tooltip" title="Examples.SeqTests">new</span> <span class="typename"><a href="../Examples/SeqTests.html#Examples.SeqTests">SeqTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span>
+				<span class="keyword" data-toggle="tooltip" title="Examples.UITests.CalculatorTests">new</span> <span class="typename"><a href="../../Examples/UITests/CalculatorTests.html#Examples.UITests.CalculatorTests">CalculatorTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>

@@ -1,0 +1,260 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Automated - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../../css/modern.min.css" />
+<link rel="stylesheet" href="../../syntax-highlight/son-of-obsidian.min.css" />
+<link rel="stylesheet" href="../../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html"><span><img src="../../images/LinqCheck.svg" height="24" />  LinqCheck</span></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                <ul>
+	<li><a href="../../index.html">Home</a></li>
+	<ul>
+		<li>LinqCheck home page.</li>
+	</ul>
+	<li><a href="../../Examples/BasicTests.html">BasicTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/SeqTests.html">SeqTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/RunTests.html">RunTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Arbitrary.html">Arbitrary</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Container.html">Container</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Gen.html">Gen</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Prop.html">Prop</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Tester.html">Tester</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/TestState.html">TestState</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../License.html">License</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Automated.html" class="selected">Automated</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Calculator.html">Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/CalculatorTests.html">CalculatorTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/ModelCalculator.html">ModelCalculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Win10Calculator.html">Win10Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Win7Calculator.html">Win7Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+</ul>
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+				<ul class="pager">
+	<li class="previous"><a href="../../License.html">Previous: License</a></li>
+	<li class="next"><a href="../../Examples/UITests/Calculator.html">Next: Calculator</a></li>
+</ul>
+				<div id="static-content" class="markdown">
+					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
+<span class="punctuation">{</span>
+	<span class="keyword">using</span> System<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Diagnostics<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Threading<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Windows<span class="punctuation">.</span>Automation<span class="punctuation">;</span>
+
+	<span class="keyword" id="Examples.UITests.Automated">public</span> <span class="keyword">class</span> <span class="typename">Automated</span>
+	<span class="punctuation">{</span>
+		<span class="keyword">protected</span> <span class="typename" data-toggle="tooltip" title="System.Diagnostics.Process">Process</span> <span id="Examples.UITests.Automated._process">_process</span><span class="punctuation">;</span>
+		<span class="keyword">protected</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span id="Examples.UITests.Automated._root">_root</span><span class="punctuation">;</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>">Dictionary</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation">&gt;</span> <span id="Examples.UITests.Automated._elements">_elements</span> <span class="punctuation">=</span>
+			<span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>">new</span> <span class="typename">Dictionary</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">Stopwatch</span> <span id="Examples.UITests.Automated.stopwatch">stopwatch</span> <span class="punctuation">=</span> <span class="keyword" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">new</span> <span class="typename">Stopwatch</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.StartApp(string, string)" data-toggle="tooltip" title="Examples.UITests.Automated.StartApp(string, string)">protected</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.StartApp(string, string)">StartApp</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> appName<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> rootElem<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Process"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._process">_process</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Process">=</span> <span class="typename" data-toggle="tooltip" title="System.Diagnostics.Process">Process</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Process.Start(string)">.</span><span data-toggle="tooltip" title="System.Diagnostics.Process.Start(string)">Start</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">appName</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword" data-toggle="tooltip" title="int">var</span> <span id="cnt">cnt</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span class="keyword">do</span>
+			<span class="punctuation">{</span>
+				<span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._root">_root</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">=</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">RootElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">FindFirst</span> <span class="punctuation">(</span>
+					<span class="typename" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">TreeScope</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">.</span><span data-toggle="tooltip" title="System.Windows.Automation.TreeScope">Children</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="System.Windows.Automation.PropertyCondition">new</span> <span class="typename">PropertyCondition</span> <span class="punctuation">(</span>
+						<span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">NameProperty</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="string">rootElem</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span class="typename" data-toggle="tooltip" title="System.Threading.Thread">Thread</span><span class="punctuation" data-toggle="tooltip" title="System.Threading.Thread.Sleep(int)">.</span><span data-toggle="tooltip" title="System.Threading.Thread.Sleep(int)">Sleep</span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">100</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">while</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._root">_root</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span> <span class="punctuation" data-toggle="tooltip" title="int">++</span><span data-toggle="tooltip" title="int">cnt</span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span class="number" data-toggle="tooltip" title="int">50</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._root">_root</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.Exception">new</span> <span class="typename">Exception</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">appName</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span> <span class="string" data-toggle="tooltip" title="string">&quot; could not be started&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.QuitApp()" data-toggle="tooltip" title="Examples.UITests.Automated.QuitApp()">protected</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.QuitApp()">QuitApp</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Process"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._process">_process</a></span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Process.CloseMainWindow()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Process.CloseMainWindow()">CloseMainWindow</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Process"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._process">_process</a></span><span class="punctuation" data-toggle="tooltip" title="System.ComponentModel.Component.Dispose()">.</span><span data-toggle="tooltip" title="System.ComponentModel.Component.Dispose()">Dispose</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.PushButton(string)" data-toggle="tooltip" title="Examples.UITests.Automated.PushButton(string)">protected</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.PushButton(string)">PushButton</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> name<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)">GetInvokePattern</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetButton(string)">GetButton</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">name</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">.</span><span data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">Invoke</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)" data-toggle="tooltip" title="Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)">protected</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)">IsEnabled</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> element<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">return</span> <span class="punctuation" data-toggle="tooltip" title="bool">(</span><span class="keyword" data-toggle="tooltip" title="bool">bool</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">element</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPropertyValue(System.Windows.Automation.AutomationProperty)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPropertyValue(System.Windows.Automation.AutomationProperty)">GetCurrentPropertyValue</span> <span class="punctuation">(</span>
+				<span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">IsEnabledProperty</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)" data-toggle="tooltip" title="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)">protected</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)">WaitEnabled</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> element<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> timeoutInMs<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.stopwatch">stopwatch</a></span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">Reset</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.stopwatch">stopwatch</a></span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">Start</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">while</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)">IsEnabled</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">element</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span>
+				<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.stopwatch">stopwatch</a></span><span class="punctuation" data-toggle="tooltip" title="long">.</span><span data-toggle="tooltip" title="long">ElapsedMilliseconds</span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span data-toggle="tooltip" title="int">timeoutInMs</span><span class="punctuation">)</span>
+				<span class="typename" data-toggle="tooltip" title="System.Threading.Thread">Thread</span><span class="punctuation" data-toggle="tooltip" title="System.Threading.Thread.Sleep(int)">.</span><span data-toggle="tooltip" title="System.Threading.Thread.Sleep(int)">Sleep</span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">10</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.stopwatch">stopwatch</a></span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">Stop</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.IsEnabled(System.Windows.Automation.AutomationElement)">IsEnabled</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">element</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.TimeoutException">new</span> <span class="typename">TimeoutException</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;Timed out when waiting the element to get enabled.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)" data-toggle="tooltip" title="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)">protected</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern">InvokePattern</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)">GetInvokePattern</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> element<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)">WaitEnabled</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">element</span><span class="punctuation">,</span> <span class="number" data-toggle="tooltip" title="int">1000</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">element</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPattern(System.Windows.Automation.AutomationPattern)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPattern(System.Windows.Automation.AutomationPattern)">GetCurrentPattern</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern">InvokePattern</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationPattern">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationPattern">Pattern</span><span class="punctuation">)</span> <span class="keyword" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern">as</span>
+				<span class="typename" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern">InvokePattern</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="Examples.UITests.Automated.GetButton(string)" data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)">protected</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)">GetButton</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> name<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._elements">_elements</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>.TryGetValue(string, out System.Windows.Automation.AutomationElement)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>.TryGetValue(string, out System.Windows.Automation.AutomationElement)">TryGetValue</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">name</span><span class="punctuation">,</span> <span class="keyword">out</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> elem<span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">elem</span><span class="punctuation">;</span>
+			<span class="keyword" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">var</span> <span id="result">result</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._root">_root</a></span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">FindFirst</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">TreeScope</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">.</span><span data-toggle="tooltip" title="System.Windows.Automation.TreeScope">Descendants</span><span class="punctuation">,</span>
+				<span class="keyword" data-toggle="tooltip" title="System.Windows.Automation.PropertyCondition">new</span> <span class="typename">PropertyCondition</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">NameProperty</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="string">name</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">result</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;No function button found with name: &quot;</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span> <span data-toggle="tooltip" title="string">name</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._elements">_elements</a></span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>.Add(string, System.Windows.Automation.AutomationElement)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.Dictionary<string, System.Windows.Automation.AutomationElement>.Add(string, System.Windows.Automation.AutomationElement)">Add</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">name</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">result</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">result</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+
+				</div>
+				<ul class="pager">
+	<li class="previous"><a href="../../License.html">Previous: License</a></li>
+	<li class="next"><a href="../../Examples/UITests/Calculator.html">Next: Calculator</a></li>
+</ul>
+			</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <p>Copyright © 2018 Tommi Johtela</p>
+    </footer>
+
+
+    
+    <script src="../../bootstrap/js/jquery.min.js"></script>
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../sidebar/sidebar.js"></script>
+    <script src="../../syntax-highlight/syntax.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+	<script src="../../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

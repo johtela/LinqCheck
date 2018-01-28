@@ -8,22 +8,10 @@
 	{
 		static void Main (string[] args)
 		{
-			Tester.RunTestsTimed (new CalculatorTests ());
-			//RunCalcTest ();
+			Tester.RunTestsTimed (
+				new BasicTests (),
+				new SeqTests (),
+				new CalculatorTests ());
 		}
-
-		private static void RunCalcTest ()
-		{
-			using (var calc = new Win10Calculator ())
-			{
-				calc.Digit (6);
-				calc.Divide ();
-				calc.Digit (0);
-				calc.Divide ();
-				calc.Digit (0);
-				calc.Digit (4);
-				calc.Digit (0);
-			}
-			}
 	}
 }

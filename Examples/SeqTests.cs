@@ -19,7 +19,6 @@ First let's import all the required libraries and namespaces.
 */
 namespace Examples
 {
-	using System;
 	using System.Linq;
 	using ExtensionCord;
 	using LinqCheck;

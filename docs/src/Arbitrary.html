@@ -109,6 +109,30 @@
 	<ul>
 		<li>TODO! Add page description.</li>
 	</ul>
+	<li><a href="../Examples/UITests/Automated.html">Automated</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Calculator.html">Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/CalculatorTests.html">CalculatorTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/ModelCalculator.html">ModelCalculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Win10Calculator.html">Win10Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../Examples/UITests/Win7Calculator.html">Win7Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
 </ul>
             </div>
         </div>
@@ -221,6 +245,11 @@
 		<span class="keyword" id="LinqCheck.Arbitrary.Generate<T>(System.Random, int)" data-toggle="tooltip" title="LinqCheck.Arbitrary.Generate<T>(System.Random, int)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary.Generate<T>(System.Random, int)">static</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.Generate<T>(System.Random, int)">Generate</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Random">Random</span> rnd<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> size<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.Get<T>()"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary.Get<T>()">Get</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>.Generate">Generate</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Random">rnd</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">size</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Arbitrary.Shrink<T>(T)" data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<T>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<T>(T)">Shrink</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> value<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.Get<T>()"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary.Get<T>()">Get</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">.</span><span data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>.Shrink(T)">Shrink</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">value</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 
 		<span class="keyword" id="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)" data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">SuchThat</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> arbitrary<span class="punctuation">,</span> 

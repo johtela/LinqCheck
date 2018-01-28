@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>CalculatorTests - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+    <link rel="stylesheet" href="../../bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="../../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../../css/modern.min.css" />
+<link rel="stylesheet" href="../../syntax-highlight/son-of-obsidian.min.css" />
+<link rel="stylesheet" href="../../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../../index.html"><span><img src="../../images/LinqCheck.svg" height="24" />  LinqCheck</span></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                <ul>
+	<li><a href="../../index.html">Home</a></li>
+	<ul>
+		<li>LinqCheck home page.</li>
+	</ul>
+	<li><a href="../../Examples/BasicTests.html">BasicTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/SeqTests.html">SeqTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/RunTests.html">RunTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Arbitrary.html">Arbitrary</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Container.html">Container</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Gen.html">Gen</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Prop.html">Prop</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/Tester.html">Tester</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../src/TestState.html">TestState</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../License.html">License</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Automated.html">Automated</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Calculator.html">Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/CalculatorTests.html" class="selected">CalculatorTests</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/ModelCalculator.html">ModelCalculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Win10Calculator.html">Win10Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+	<li><a href="../../Examples/UITests/Win7Calculator.html">Win7Calculator</a></li>
+	<ul>
+		<li>TODO! Add page description.</li>
+	</ul>
+</ul>
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+				<ul class="pager">
+	<li class="previous"><a href="../../Examples/UITests/Calculator.html">Previous: Calculator</a></li>
+	<li class="next"><a href="../../Examples/UITests/ModelCalculator.html">Next: ModelCalculator</a></li>
+</ul>
+				<div id="static-content" class="markdown">
+					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
+<span class="punctuation">{</span>
+	<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
+	<span class="keyword">using</span> ExtensionCord<span class="punctuation">;</span>
+
+	<span class="keyword" id="Examples.UITests.CalculatorTests">public</span> <span class="keyword">class</span> <span class="typename">CalculatorTests</span>
+	<span class="punctuation">{</span>
+		<span class="keyword" id="Examples.UITests.CalculatorTests.GetWinCalculator()" data-toggle="tooltip" title="Examples.UITests.CalculatorTests.GetWinCalculator()">private</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> <span data-toggle="tooltip" title="Examples.UITests.CalculatorTests.GetWinCalculator()">GetWinCalculator</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Environment">Environment</span><span class="punctuation" data-toggle="tooltip" title="System.OperatingSystem">.</span><span data-toggle="tooltip" title="System.OperatingSystem">OSVersion</span><span class="punctuation" data-toggle="tooltip" title="System.Version">.</span><span data-toggle="tooltip" title="System.Version">Version</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Major</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="number" data-toggle="tooltip" title="int">6</span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span>
+				<span class="typename" data-toggle="tooltip" title="System.Environment">Environment</span><span class="punctuation" data-toggle="tooltip" title="System.OperatingSystem">.</span><span data-toggle="tooltip" title="System.OperatingSystem">OSVersion</span><span class="punctuation" data-toggle="tooltip" title="System.Version">.</span><span data-toggle="tooltip" title="System.Version">Version</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Minor</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="number" data-toggle="tooltip" title="int">2</span><span class="punctuation">)</span>
+				<span class="keyword">return</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Win10Calculator">new</span> <span class="typename"><a href="../../Examples/UITests/Win10Calculator.html#Examples.UITests.Win10Calculator">Win10Calculator</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">else</span>
+				<span class="keyword">return</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Win7Calculator">new</span> <span class="typename"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator">Win7Calculator</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../src/Tester.html#LinqCheck.TestAttribute.TestAttribute()">Test</a></span><span class="punctuation">]</span>
+		<span class="keyword" id="Examples.UITests.CalculatorTests.TestRandomSequence()" data-toggle="tooltip" title="Examples.UITests.CalculatorTests.TestRandomSequence()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.CalculatorTests.TestRandomSequence()">TestRandomSequence</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Register()">.</span><span data-toggle="tooltip" title="Examples.UITests.Command.Register()"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Register()">Register</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">using</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="Examples.UITests.ICalculator">var</span> <span id="wincalc">wincalc</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="Examples.UITests.CalculatorTests.GetWinCalculator()"><a href="../../Examples/UITests/CalculatorTests.html#Examples.UITests.CalculatorTests.GetWinCalculator()">GetWinCalculator</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
+			<span class="keyword">using</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="Examples.UITests.ModelCalculator">var</span> <span id="modcalc">modcalc</span> <span class="punctuation">=</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.ModelCalculator">new</span> <span class="typename"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator">ModelCalculator</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>">(</span><span class="keyword">from</span> commands <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<System.Collections.Generic.List<Examples.UITests.Command>>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<System.Collections.Generic.List<Examples.UITests.Command>>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<T>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Collections.Generic.List<Examples.UITests.Command>">List</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+				 <span class="keyword">let</span> realres <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">Execute</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator">wincalc</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Collections.Generic.List<Examples.UITests.Command>">commands</span><span class="punctuation">)</span>
+				 <span class="keyword">let</span> modres <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">Execute</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator">modcalc</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Collections.Generic.List<Examples.UITests.Command>">commands</span><span class="punctuation">)</span>
+				 <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>">select</span> <span class="keyword" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">new</span>
+				 <span class="punctuation" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">{</span>
+					 <span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/CalculatorTests.html#<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>.ok">ok</a></span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="Examples.UITests.ICalculator">wincalc</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator.ResultAvailable">ResultAvailable</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">&amp;&amp;</span>  <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator">modcalc</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.ResultAvailable">ResultAvailable</a></span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">,</span>
+					 <span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>"><a href="../../Examples/UITests/CalculatorTests.html#<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>.commands">commands</a></span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="System.Collections.Generic.List<Examples.UITests.Command>">commands</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>.AsPrintable<Examples.UITests.Command>()">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>.AsPrintable<Examples.UITests.Command>()">AsPrintable</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">,</span>
+					 <span data-toggle="tooltip" title="double">realres</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">,</span>
+					 <span data-toggle="tooltip" title="double">modres</span>
+				 <span class="punctuation" data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">}</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>">)</span>
+				<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>.Check<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>.Check<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop.Check<T>(LinqCheck.Prop<T>, System.Linq.Expressions.Expression<System.Func<T, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">t</span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/CalculatorTests.html#<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>.ok">ok</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">t</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/CalculatorTests.html#<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>.realres">realres</a></span><span class="punctuation" data-toggle="tooltip" title="double.ApproxEquals<double>(double)">.</span><span data-toggle="tooltip" title="double.ApproxEquals<double>(double)">ApproxEquals</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>">t</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/CalculatorTests.html#<anonymous type: bool ok, System.Collections.Generic.IEnumerable<Examples.UITests.Command> commands, double realres, double modres>.modres">modres</a></span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+
+				</div>
+				<ul class="pager">
+	<li class="previous"><a href="../../Examples/UITests/Calculator.html">Previous: Calculator</a></li>
+	<li class="next"><a href="../../Examples/UITests/ModelCalculator.html">Next: ModelCalculator</a></li>
+</ul>
+			</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <p>Copyright © 2018 Tommi Johtela</p>
+    </footer>
+
+
+    
+    <script src="../../bootstrap/js/jquery.min.js"></script>
+    <script src="../../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../sidebar/sidebar.js"></script>
+    <script src="../../syntax-highlight/syntax.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+	<script src="../../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

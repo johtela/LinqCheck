@@ -1,9 +1,6 @@
 ﻿namespace Examples.UITests
 {
 	using System;
-	using System.Collections.Generic;
-	using System.Linq;
-	using System.Diagnostics;
 	using System.Threading;
 	using System.Windows.Automation;
 
