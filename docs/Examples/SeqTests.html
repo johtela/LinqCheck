@@ -155,8 +155,8 @@ complex data from simpler types. To demonstrate this idea we will generate some
 tests for the <a href="https://johtela.github.io/ExtensionCord/src/Seq.html">Seq</a>
 class defined in the <a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>
 library. This is an immutable, singly-linked list designed to be as simple as
-possible, so it serves as a good example. The Seq class is also generic, which
-allows us to show how tests can be written generically too.</p>
+possible, so it serves as a good example. The Seq class is generic, which
+allows us to show how tests can be written generically.</p>
 <p>First let's import all the required libraries and namespaces.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
 <span class="punctuation">{</span>
@@ -168,14 +168,14 @@ allows us to show how tests can be written generically too.</p>
 	<span class="punctuation">{</span>
 </code></pre>
 <h2 id="implementing-iarbitrary">Implementing IArbitrary<T></h2>
-<p>There needs to be an implementation of <code>IArbitrary&lt;T&gt;</code> interface for
-each type <code>T</code> we wish to use in our tests. This implementation generates
-random values of type <code>T</code>, and shrinks them when LinqCheck is looking
-for a minimal failing test case.</p>
-<p>In this case we need to define an implementation of <code>IArbitrary&lt;Seq&lt;T&gt;&gt;</code>.
-The easiest way to do that is to create an instance <code>Arbitrary&lt;T&gt;</code> class,
-which stores the generator and shrinker for type <code>T</code>. Let's define a
-method that does that.</p>
+<p>We need an implementation of <code>IArbitrary&lt;T&gt;</code> interface for each type <code>T</code>
+we wish to use in our tests. This implementation generates random values
+of type <code>T</code>, and shrinks them when LinqCheck is looking  for a minimal
+failing test case.</p>
+<p>So, we need to define an implementation of <code>IArbitrary&lt;Seq&lt;T&gt;&gt;</code>. The
+simplest way to achieve that is to create an instance <code>Arbitrary&lt;T&gt;</code>
+class, which stores the generator and shrinker for type <code>T</code>. Let's
+define a method that creates this object.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.SeqTests.ArbitrarySeq<T>()" data-toggle="tooltip" title="Examples.SeqTests.ArbitrarySeq<T>()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.SeqTests.ArbitrarySeq<T>()">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<ExtensionCord.Seq<T>>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="ExtensionCord.Seq<T>">Seq</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../Examples/SeqTests.html#T">T</a></span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="Examples.SeqTests.ArbitrarySeq<T>()">ArbitrarySeq</span><span class="punctuation">&lt;</span><span class="typename"><a href="../Examples/SeqTests.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 </code></pre>
@@ -186,7 +186,7 @@ with built-in or user-defined combinators. In this case we can
 utilize the combinator that creates an <code>Gen&lt;IEnumerable&lt;T&gt;&gt;</code> given
 a generator of type <code>Gen&lt;T&gt;</code>.</p>
 <p>We don't know yet what is the item type <code>T</code> which will be contained
-in the seqeuence. Luckily we don't have to. We can assume that the
+in the sequence. Luckily we don't have to. We can assume that the
 generator for <code>T</code> is already registered with LinqCheck, and get it
 by calling <code>Arbitrary.Gen&lt;T&gt; ()</code>.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary<ExtensionCord.Seq<T>>">new</span> <span class="typename"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary<T>">Arbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="ExtensionCord.Seq<T>">Seq</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../Examples/SeqTests.html#T">T</a></span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span>

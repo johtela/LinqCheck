@@ -12,8 +12,8 @@ complex data from simpler types. To demonstrate this idea we will generate some
 tests for the [Seq](https://johtela.github.io/ExtensionCord/src/Seq.html) 
 class defined in the [ExtensionCord](https://johtela.github.io/ExtensionCord/)
 library. This is an immutable, singly-linked list designed to be as simple as
-possible, so it serves as a good example. The Seq class is also generic, which
-allows us to show how tests can be written generically too.
+possible, so it serves as a good example. The Seq class is generic, which
+allows us to show how tests can be written generically.
 
 First let's import all the required libraries and namespaces.
 */
@@ -27,15 +27,15 @@ namespace Examples
 	{
 		/*
 		## Implementing IArbitrary<T>
-		There needs to be an implementation of `IArbitrary<T>` interface for 
-		each type `T` we wish to use in our tests. This implementation generates 
-		random values of type `T`, and shrinks them when LinqCheck is looking 
-		for a minimal failing test case.
+		We need an implementation of `IArbitrary<T>` interface for each type `T` 
+		we wish to use in our tests. This implementation generates random values 
+		of type `T`, and shrinks them when LinqCheck is looking  for a minimal 
+		failing test case.
 
-		In this case we need to define an implementation of `IArbitrary<Seq<T>>`.
-		The easiest way to do that is to create an instance `Arbitrary<T>` class,
-		which stores the generator and shrinker for type `T`. Let's define a 
-		method that does that.
+		So, we need to define an implementation of `IArbitrary<Seq<T>>`. The 
+		simplest way to achieve that is to create an instance `Arbitrary<T>` 
+		class, which stores the generator and shrinker for type `T`. Let's 
+		define a method that creates this object.
 		*/
 		public static IArbitrary<Seq<T>> ArbitrarySeq<T> ()
 		{
@@ -48,7 +48,7 @@ namespace Examples
 			a generator of type `Gen<T>`.
 
 			We don't know yet what is the item type `T` which will be contained
-			in the seqeuence. Luckily we don't have to. We can assume that the 
+			in the sequence. Luckily we don't have to. We can assume that the 
 			generator for `T` is already registered with LinqCheck, and get it
 			by calling `Arbitrary.Gen<T> ()`.
 			*/

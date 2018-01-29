@@ -149,12 +149,11 @@
 few very basic tests first. Suppose we want to test the System.Math class. It
 is unlikely we find any bugs in it, but it is a simple static class that
 everyone knows.</p>
-<p>First we need to reference the code we are testing, in this case the System
-namespace, as well as the LinqCheck library itself. The third namespace we
-reference is <a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>
-which is a general helper library that contains useful extensions for the
-.NET types. That library is optional, but helps writing the properties in
-a more compact way.</p>
+<p>First we need to reference the code we are testing: the System namespace,
+as well as the LinqCheck library itself. The third library we reference is
+<a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>. This is a general
+helper library that contains useful extensions for the .NET types. The library
+is optional, but it helps writing our properties in a more concise way.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
@@ -165,10 +164,11 @@ a more compact way.</p>
 <p>We can use any unit testing framework such as <a href="http://nunit.org/">NUnit</a>,
 <a href="https://xunit.github.io/">xUnit</a>,
 <a href="https://msdn.microsoft.com/en-us/library/hh694602.aspx">MSTest</a>, etc. to
-run our tests. In this case, we are using the built-in command line test
+run our tests. In this case we are using the built-in command line test
 runner included in LinqCheck. This is the simplest and fastest way to run
-your tests, but it does not scale up very well. For larger test suites a
-more complete framework is recommended.</p>
+our tests, but it does not provide the fancier features found in the more
+comprehensive frameworks, such as GUI runners, Visual Studio integration,
+and so on.</p>
 <pre class="csharp"><code class="csharp">	<span class="keyword" id="Examples.BasicTests">public</span> <span class="keyword">class</span> <span class="typename">BasicTests</span>
 	<span class="punctuation">{</span>
 </code></pre>

@@ -6,12 +6,11 @@ few very basic tests first. Suppose we want to test the System.Math class. It
 is unlikely we find any bugs in it, but it is a simple static class that 
 everyone knows. 
 
-First we need to reference the code we are testing, in this case the System
-namespace, as well as the LinqCheck library itself. The third namespace we
-reference is [ExtensionCord](https://johtela.github.io/ExtensionCord/) 
-which is a general helper library that contains useful extensions for the 
-.NET types. That library is optional, but helps writing the properties in
-a more compact way.
+First we need to reference the code we are testing: the System namespace, 
+as well as the LinqCheck library itself. The third library we reference is 
+[ExtensionCord](https://johtela.github.io/ExtensionCord/). This is a general 
+helper library that contains useful extensions for the .NET types. The library 
+is optional, but it helps writing our properties in a more concise way.
 */
 namespace Examples
 {
@@ -24,10 +23,11 @@ namespace Examples
 	We can use any unit testing framework such as [NUnit](http://nunit.org/), 
 	[xUnit](https://xunit.github.io/), 
 	[MSTest](https://msdn.microsoft.com/en-us/library/hh694602.aspx), etc. to 
-	run our tests. In this case, we are using the built-in command line test 
+	run our tests. In this case we are using the built-in command line test 
 	runner included in LinqCheck. This is the simplest and fastest way to run
-	your tests, but it does not scale up very well. For larger test suites a
-	more complete framework is recommended.
+	our tests, but it does not provide the fancier features found in the more 
+	comprehensive frameworks, such as GUI runners, Visual Studio integration, 
+	and so on.
 	*/
 	public class BasicTests
 	{
