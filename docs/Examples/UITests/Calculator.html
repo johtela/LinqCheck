@@ -145,48 +145,60 @@
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="testing-programs-with-mutable-state">Testing Programs with Mutable State</h1>
-<p>Pure functions are easy to test with LinqCheck since you can call them
-directly from your properties. You can just pass the generated input to your
-functions, there is no need to set up any additional state. But what about
+<p>Pure functions are easy to test with LinqCheck as we can call them
+directly from our properties. We can pass the generated input to our
+functions, without needing to set up any additional state. But what about
 programs which are not pure, which have mutable internal state? The majority
 of code running in real world falls into this category.</p>
 <p>It is possible to use property based testing with mutable state, but it
 incurs a bit more work than what is required for purely functional code. Let's
 say that we have a mutable object with a set of public methods which might
 change its internal state. What we can do is generate random sequences of
-method calls. After the calls are executed we check that the obect's state is
-as we expect. The question is, however, how can we know what the state should
+method calls. After the calls are executed we check that the object's state is
+what we expect. The question is, however, how can we know what the state should
 be after a random sequence of actions. What properties can we actually check?</p>
-<p>In practice, the easiest solution to the problem is to create a simplified
+<p>In practice, the easiest solution to this problem is to create a simplified
 model of the program we want to test. The model captures the essential features
-of the imperative program and serves as a
-<a href="https://en.wikipedia.org/wiki/Reference_implementation">reference implementation</a>.
-We run the same sequence of method invocations with the model and with the
-actual program, and then check is that their states are equivalent. John Hughes
-talks about the technique in many videos
+of the program and serves as a
+<a href="https://en.wikipedia.org/wiki/Reference_implementation"><em>reference implementation</em></a>.
+We invoke the same sequence of methods on the model and on the actual program,
+and then check that their states are equivalent. John Hughes talks about the
+technique in many videos
 <a href="https://www.youtube.com/watch?v=zi0rHwfiX1Q"><sup>1</sup></a>
 <a href="https://www.youtube.com/watch?v=hXnS_Xjwk2Y"><sup>2</sup></a>
-<a href="https://www.youtube.com/watch?v=H18vxq-VsCk"><sup>3</sup></a>, available in YouTube.</p>
+<a href="https://www.youtube.com/watch?v=H18vxq-VsCk"><sup>3</sup></a> available on YouTube.</p>
 <p>This approach sounds like a lot of work at first, but in practice writing the
-model is usually quite straightforward. There are also additional benefits we
-get from the model. We get essentially a specification for the program in the
-form that is much easier to understand and document. Once we have the situation
-that the model and the real program work exactly the same way, we can start
-refactoring the real program and changing its implementation - drastically if
-we want to. The model can be used to ensure that its behaviour is not changed,
-not even for the edge cases. Unit tests provide similar assurances, but the
-level of confidence you get from property based tests is much higher.</p>
+model is usually quite straightforward. There are additional benefits we get
+from the model:</p>
+<ul>
+<li><p>We gain insight into our program in the process of writing the model.</p>
+</li>
+<li><p>We get a formal specification of our program that can be exploited in
+documenting and communicating its behaviour.</p>
+</li>
+<li><p>Once we have the situation that the model and the real program work exactly
+the same way, we can start refactoring the program and changing its
+implementation - drastically if we want to. The model can be used to ensure
+that its behaviour is not changed, not even for the edge cases. Unit tests
+provide similar assurances, but the level of confidence you get from property
+based tests is much higher.</p>
+</li>
+</ul>
 <h2 id="testing-the-windows-calculator">Testing the Windows Calculator</h2>
 <p>To illustrate the approach, we use Windows Calculator as an example program
-that we would like to test. It is a nice example for a few reasons. First of
-all, everybody knows how the calculator program works. Its paragon is the
-pocket calculator which is still around with essentially the same user
-interface as in the 1970's when it was introduced. Secondly, although it seems
-to be a very simple program with few possible states, it actually has more edge
-cases than one might guess.</p>
+that we would like to test. It is a nice example for a few reasons. First,
+everybody knows how the calculator program works. Its paragon, the pocket
+calculator, is still around with essentially the same user interface as in the
+1970's when it was introduced. Second, although it seems to be a very simple
+program with few possible states, it actually has more edge cases than one
+might guess. Third, we can demonstrate how property based testing can be
+utilized in conjunction with UI automation.</p>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Calculator_Adler_81S.jpg/225px-Calculator_Adler_81S.jpg" alt="Adler 81S pocket calculator from the mid-1970s" />
 <img src="https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Windows_7_Calculator.png/225px-Windows_7_Calculator.png" alt="Windows 7 Calculator" />
 <img src="https://upload.wikimedia.org/wikipedia/en/2/26/Windows_10_Calculator.png" alt="Windows 10 Calculator" /></p>
+<h2 id="modelling-the-calculator">Modelling the Calculator</h2>
+<p>Before we begin, we create a new namespace for our tests, and import the
+required libraries.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
@@ -194,25 +206,73 @@ cases than one might guess.</p>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
 	<span class="keyword">using</span> ExtensionCord<span class="punctuation">;</span>
 	<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
-
-	<span class="keyword" id="Examples.UITests.ICalculator">public</span> <span class="keyword">interface</span> ICalculator <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.IDisposable">IDisposable</span>
+</code></pre>
+<p>What kind of model could we build for the calculator? The obvious option
+works fine for our purposes. So, let's encapsulate the calculator in a
+simple interface with methods corresponding to the calculator buttons.
+Calling one of the methods has the same effect as pushing the button.</p>
+<p>We extend the <code>IDisposable</code> interface. Creating the interface will open
+the calculator and calling <code>Dispose</code> will close it.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="Examples.UITests.ICalculator">public</span> <span class="keyword">interface</span> ICalculator <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.IDisposable">IDisposable</span>
 	<span class="punctuation">{</span>
-		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Clear()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()">Clear</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()">;</span>
-		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)">;</span>
-		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Add()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Add()">;</span>
+</code></pre>
+<p><code>Clear</code> corresponds to the <code>[C]</code> button.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Clear()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()">Clear</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()">;</span>
+</code></pre>
+<p>Digit function only accepts numbers from 0 to 9, so its argument type
+is byte.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)">;</span>
+</code></pre>
+<p>The following methods correspond to operator buttons <code>+</code>, <code>-</code>, <code>*</code>, and
+<code>/</code>.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Add()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Add()">;</span>
 		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Subtract()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Subtract()">Subtract</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Subtract()">;</span>
 		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Multiply()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Multiply()">Multiply</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Multiply()">;</span>
 		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Divide()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Divide()">Divide</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Divide()">;</span>
-		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Equals()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()">Equals</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()">;</span>
-		<span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ICalculator.Display">Display</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.ICalculator.Display.get">get</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Display.get">;</span> <span class="punctuation">}</span>
+</code></pre>
+<p><code>Equals</code> calculates the result and displays it. It can be also pressed
+multiple times to repeat the previous calculation.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" data-toggle="tooltip" title="void">void</span> <span id="Examples.UITests.ICalculator.Equals()" data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()">Equals</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()">;</span>
+</code></pre>
+<p>We also need to access the result currently displayed, and we need to
+be able to query, if the result is available. The calculator might be
+in an error state where the result is not defined; for example, after
+division by zero.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ICalculator.Display">Display</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.ICalculator.Display.get">get</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Display.get">;</span> <span class="punctuation">}</span>
 		<span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span id="Examples.UITests.ICalculator.ResultAvailable">ResultAvailable</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.ICalculator.ResultAvailable.get">get</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.ResultAvailable.get">;</span> <span class="punctuation">}</span>
 	<span class="punctuation">}</span>
-
-	<span class="keyword" id="Examples.UITests.Command">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="typename">Command</span>
+</code></pre>
+<p>Now we just need to implement this interface in two places: in our model,
+and in the automation code that controls the Windows calculator. Since the
+calculator application is different in Windows 7 and Windows 10 (nobody
+uses Windows 8, right?), we will provide actually three implementations.
+By doing so we will be able also to compare, if the behaviour of the
+calculator has changed in the different versions of Windows.</p>
+<h2 id="input-data">Input Data</h2>
+<p>The second thing we need to decide, is how to encode the input data. What
+we need as an input is a sequence of method calls, and we could model that
+in various ways. Whatever we choose, we need to wrap it under a single
+type. This follows from the requirement that all input types need to have
+an implementation of <code>IArbitrary&lt;T&gt;</code> interface where <code>T</code> is the input type.</p>
+<p>Let's first define a type representing a single method invokation or a push
+of a button. We name this type as Command. After we have defined that, we
+can exploit the built-in combinators in LinqCheck to generate a list of
+commands. This simplifies our job significantly, and lets us leverage the
+power of existing generators and shrinkers.</p>
+<p>The Command type is an abstract class with private inner classes
+representing two kinds of buttons: digit buttons which are used enter
+numbers and command buttons used to perform calculations.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="Examples.UITests.Command">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="typename">Command</span>
 	<span class="punctuation">{</span>
-		<span class="keyword" id="Examples.UITests.Command.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">abstract</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">;</span>
-
-		<span class="keyword" id="Examples.UITests.Command._Digit">private</span> <span class="keyword">class</span> <span class="typename">_Digit</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span>
+</code></pre>
+<p>The <code>Do</code> method calls the appropriate method in the ICalculator
+instance given as an argument. This method is implemented slightly
+differently by the two private subclasses.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">abstract</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">;</span>
+</code></pre>
+<p>The _Digit subclass stores the number to be pressed in the <code>Value</code>
+field.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command._Digit">private</span> <span class="keyword">class</span> <span class="typename">_Digit</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span>
 		<span class="punctuation">{</span>
 			<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="Examples.UITests.Command._Digit.Value">Value</span><span class="punctuation">;</span>
 
@@ -220,16 +280,24 @@ cases than one might guess.</p>
 			<span class="punctuation">{</span>
 				<span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span> <span class="punctuation" data-toggle="tooltip" title="int">=</span> <span data-toggle="tooltip" title="int">value</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
-
-			<span class="keyword" id="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">override</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span>
+</code></pre>
+<p>When a digit command is executed, it calls the <code>Digit</code> method on
+the given calculator.</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword" id="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">override</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Digit.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span>
 			<span class="punctuation">{</span>
 				<span data-toggle="tooltip" title="Examples.UITests.ICalculator">target</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)">.</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator.Digit(byte)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator.Digit(byte)">Digit</a></span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="byte">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span><span class="punctuation" data-toggle="tooltip" title="byte">)</span><span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
-
-			<span class="keyword" id="Examples.UITests.Command._Digit.ToString()" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">override</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation" data-toggle="tooltip" title="int.ToString()">.</span><span data-toggle="tooltip" title="int.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">;</span>
+</code></pre>
+<p>The input data should be printable, so that it can be shown in
+error messages. That is why we need to implement the the <code>ToString</code>
+method as well.</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword" id="Examples.UITests.Command._Digit.ToString()" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">override</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation" data-toggle="tooltip" title="int.ToString()">.</span><span data-toggle="tooltip" title="int.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Command._Command">private</span> <span class="keyword">class</span> <span class="typename">_Command</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span>
+</code></pre>
+<p>The other types of commands are represented by the _Command subclass.
+It stores the command name and a delegate function to be called when
+the command is executed.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command._Command">private</span> <span class="keyword">class</span> <span class="typename">_Command</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span>
 		<span class="punctuation">{</span>
 			<span class="keyword">public</span> <span class="typename" data-toggle="tooltip" title="System.Action<Examples.UITests.ICalculator>">Action</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span><span class="punctuation">&gt;</span> <span id="Examples.UITests.Command._Command.Action">Action</span><span class="punctuation">;</span>
 			<span class="keyword">public</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span id="Examples.UITests.Command._Command.Name">Name</span><span class="punctuation">;</span>
@@ -239,16 +307,22 @@ cases than one might guess.</p>
 				<span data-toggle="tooltip" title="System.Action<Examples.UITests.ICalculator>"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command.Action">Action</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Action<Examples.UITests.ICalculator>">=</span> <span data-toggle="tooltip" title="System.Action<Examples.UITests.ICalculator>">action</span><span class="punctuation">;</span>
 				<span data-toggle="tooltip" title="string"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command.Name">Name</a></span> <span class="punctuation" data-toggle="tooltip" title="string">=</span> <span data-toggle="tooltip" title="string">name</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
-
-			<span class="keyword" id="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">override</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span>
+</code></pre>
+<p>The <code>Do</code> method simply calls the stored delegate...</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword" id="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)" data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">override</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Command.Do(Examples.UITests.ICalculator)">Do</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> target<span class="punctuation">)</span>
 			<span class="punctuation">{</span>
 				<span data-toggle="tooltip" title="System.Action<Examples.UITests.ICalculator>"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command.Action">Action</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator">target</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
-
-			<span class="keyword" id="Examples.UITests.Command._Command.ToString()" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">override</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="string"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command.Name">Name</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">;</span>
+</code></pre>
+<p>..and <code>ToString</code> returns the command name.</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword" id="Examples.UITests.Command._Command.ToString()" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">override</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="string"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command.Name">Name</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command._Command.ToString()">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Command.Digit(int)" data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">static</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span> <span data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="int">int</span> value<span class="punctuation">)</span> <span class="punctuation">=&gt;</span>
+</code></pre>
+<p>Now we can define public functions and properties that create commands
+corresponding methods we have in the ICalculator interface. We don't
+include the <code>Clear</code> method since we don't intend to use it in our
+randomly generated sequences.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command.Digit(int)" data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">static</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span> <span data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="int">int</span> value<span class="punctuation">)</span> <span class="punctuation">=&gt;</span>
 			<span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit">new</span> <span class="typename"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit">_Digit</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">value</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)">;</span>
 
 		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span> <span id="Examples.UITests.Command.Add">Add</span> <span class="punctuation">=</span>
@@ -265,8 +339,12 @@ cases than one might guess.</p>
 
 		<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">readonly</span> <span class="keyword">new</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span> <span id="Examples.UITests.Command.Equals">Equals</span> <span class="punctuation">=</span>
 			<span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Command">new</span> <span class="typename"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Command">_Command</a></span> <span class="punctuation">(</span>c <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="Examples.UITests.ICalculator">c</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()">.</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator.Equals()"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator.Equals()">Equals</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span> <span class="string" data-toggle="tooltip" title="string">&quot;=&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">static</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">Execute</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> calculator<span class="punctuation">,</span> 
+</code></pre>
+<p>The <code>Execute</code> method runs a sequence of commands on a given calculator.
+This is the method we will call in our property when testing the
+calculator. It returns the number displayed after the sequences is
+executed.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">static</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Execute(Examples.UITests.ICalculator, System.Collections.Generic.IEnumerable<Examples.UITests.Command>)">Execute</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span> calculator<span class="punctuation">,</span> 
 			<span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation">&gt;</span> commands<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.ICalculator">calculator</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()">.</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator.Clear()"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator.Clear()">Clear</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
@@ -274,25 +352,55 @@ cases than one might guess.</p>
 				<span data-toggle="tooltip" title="Examples.UITests.Command">command</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)">.</span><span data-toggle="tooltip" title="Examples.UITests.Command.Do(Examples.UITests.ICalculator)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Do(Examples.UITests.ICalculator)">Do</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ICalculator">calculator</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span class="keyword">return</span> <span data-toggle="tooltip" title="Examples.UITests.ICalculator">calculator</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator.Display">Display</a></span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Command.Register()" data-toggle="tooltip" title="Examples.UITests.Command.Register()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Register()">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Register()">Register</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Command.Command()" data-toggle="tooltip" title="Examples.UITests.Command.Command()">static</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Command()">Command</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<p>The only thing left is to define the implementation for
+<code>IArbitrary&lt;Command&gt;</code>. We register it in the static constructor. We can
+use the <code>Arbitrary&lt;T&gt;</code> wrapper class as a helper.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command.Command()" data-toggle="tooltip" title="Examples.UITests.Command.Command()">static</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Command()">Command</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="typename" data-toggle="tooltip" title="LinqCheck.Arbitrary"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary">Arbitrary</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Arbitrary.Register<Examples.UITests.Command>(LinqCheck.IArbitrary<Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="LinqCheck.Arbitrary.Register<Examples.UITests.Command>(LinqCheck.IArbitrary<Examples.UITests.Command>)"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary.Register<T>(LinqCheck.IArbitrary<T>)">Register</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary<Examples.UITests.Command>">new</span> <span class="typename"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary<T>">Arbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span>
-				<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.OneOf<Examples.UITests.Command>(params LinqCheck.Gen<Examples.UITests.Command>[])">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.OneOf<Examples.UITests.Command>(params LinqCheck.Gen<Examples.UITests.Command>[])"><a href="../src/Gen.html#LinqCheck.Gen.OneOf<T>(LinqCheck.Gen<T>[])">OneOf</a></span> <span class="punctuation">(</span>
-					<span class="keyword">from</span> i <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)"><a href="../src/Gen.html#LinqCheck.Gen.ChooseInt(int, int)">ChooseInt</a></span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">,</span> <span class="number" data-toggle="tooltip" title="int">10</span><span class="punctuation">)</span>
+			<span class="typename" data-toggle="tooltip" title="LinqCheck.Arbitrary"><a href="../../src/Arbitrary.html#LinqCheck.Arbitrary">Arbitrary</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Arbitrary.Register<Examples.UITests.Command>(LinqCheck.IArbitrary<Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="LinqCheck.Arbitrary.Register<Examples.UITests.Command>(LinqCheck.IArbitrary<Examples.UITests.Command>)"><a href="../../src/Arbitrary.html#LinqCheck.Arbitrary.Register<T>(LinqCheck.IArbitrary<T>)">Register</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary<Examples.UITests.Command>">new</span> <span class="typename"><a href="../../src/Arbitrary.html#LinqCheck.Arbitrary<T>">Arbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command">Command</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span>
+</code></pre>
+<p>The generator consist of two branches. We will use the <code>OneOf</code>
+combinator to first randomly chooses whether we push a digit
+button or an operator button.</p>
+<pre class="csharp"><code class="csharp">				<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.OneOf<Examples.UITests.Command>(params LinqCheck.Gen<Examples.UITests.Command>[])">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.OneOf<Examples.UITests.Command>(params LinqCheck.Gen<Examples.UITests.Command>[])"><a href="../../src/Gen.html#LinqCheck.Gen.OneOf<T>(LinqCheck.Gen<T>[])">OneOf</a></span> <span class="punctuation">(</span>
+</code></pre>
+<p>If the digit button is selected, then we choose a random
+number from the range of 0 to 9, and create a <code>Digit</code>
+command for the chosen number.</p>
+<pre class="csharp"><code class="csharp">					<span class="keyword">from</span> i <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)"><a href="../../src/Gen.html#LinqCheck.Gen.ChooseInt(int, int)">ChooseInt</a></span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">,</span> <span class="number" data-toggle="tooltip" title="int">10</span><span class="punctuation">)</span>
 					<span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen<Examples.UITests.Command>">select</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Digit(int)">Digit</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">)</span><span class="punctuation">,</span>
-					<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.ChooseFrom<Examples.UITests.Command>(params Examples.UITests.Command[])">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.ChooseFrom<Examples.UITests.Command>(params Examples.UITests.Command[])"><a href="../src/Gen.html#LinqCheck.Gen.ChooseFrom<T>(T[])">ChooseFrom</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Add">Add</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Subtract">Subtract</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Multiply">Multiply</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Divide">Divide</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Equals">Equals</a></span><span class="punctuation">)</span>
+</code></pre>
+<p>If the winner was the other branch, then we choose a random
+command from the set of operators.</p>
+<pre class="csharp"><code class="csharp">					<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen"><a href="../../src/Gen.html#LinqCheck.Gen">Gen</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen.ChooseFrom<Examples.UITests.Command>(params Examples.UITests.Command[])">.</span><span data-toggle="tooltip" title="LinqCheck.Gen.ChooseFrom<Examples.UITests.Command>(params Examples.UITests.Command[])"><a href="../../src/Gen.html#LinqCheck.Gen.ChooseFrom<T>(T[])">ChooseFrom</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Add">Add</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Subtract">Subtract</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Multiply">Multiply</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Divide">Divide</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="Examples.UITests.Command"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Equals">Equals</a></span><span class="punctuation">)</span>
 				<span class="punctuation">)</span><span class="punctuation">,</span>
-				com <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="Examples.UITests.Command">com</span> <span class="keyword" data-toggle="tooltip" title="bool">is</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command._Digit"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit">_Digit</a></span> n <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>">?</span>
-					<span class="typename" data-toggle="tooltip" title="LinqCheck.Arbitrary"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary">Arbitrary</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<int>(int)">.</span><span data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<int>(int)"><a href="../src/Arbitrary.html#LinqCheck.Arbitrary.Shrink<T>(T)">Shrink</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command._Digit">n</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Select<int, Examples.UITests.Command>(System.Func<int, Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Select<int, Examples.UITests.Command>(System.Func<int, Examples.UITests.Command>)">Select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Digit(int)">Digit</a></span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>">:</span>
+</code></pre>
+<p>How to implement shrinking is a bit harder to figure out.
+Shrinking of operators is not something we can easily define,
+so we will be content with shrinking just the digit command
+utilizing the shrinking defined for integers. We achieve the
+true power of shrinking by reducing the lists of commands to
+shorter examples when LinqCheck finds a failing sequence. This
+functionality we get out-of-the-box without any additional code.</p>
+<pre class="csharp"><code class="csharp">				com <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="Examples.UITests.Command">com</span> <span class="keyword" data-toggle="tooltip" title="bool">is</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Command._Digit"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit">_Digit</a></span> n <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>">?</span>
+					<span class="typename" data-toggle="tooltip" title="LinqCheck.Arbitrary"><a href="../../src/Arbitrary.html#LinqCheck.Arbitrary">Arbitrary</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<int>(int)">.</span><span data-toggle="tooltip" title="LinqCheck.Arbitrary.Shrink<int>(int)"><a href="../../src/Arbitrary.html#LinqCheck.Arbitrary.Shrink<T>(T)">Shrink</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command._Digit">n</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Select<int, Examples.UITests.Command>(System.Func<int, Examples.UITests.Command>)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<int>.Select<int, Examples.UITests.Command>(System.Func<int, Examples.UITests.Command>)">Select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command.Digit(int)"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command.Digit(int)">Digit</a></span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<Examples.UITests.Command>">:</span>
 					<span class="typename" data-toggle="tooltip" title="ExtensionCord.EnumerableExt">EnumerableExt</span><span class="punctuation" data-toggle="tooltip" title="ExtensionCord.EnumerableExt.Enumerate<Examples.UITests.Command>(params Examples.UITests.Command[])">.</span><span data-toggle="tooltip" title="ExtensionCord.EnumerableExt.Enumerate<Examples.UITests.Command>(params Examples.UITests.Command[])">Enumerate</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Command">com</span><span class="punctuation">)</span>
 			<span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
+</code></pre>
+<p>Since static constructors are called quite undeterministically when a
+class is first used, we define a dummy method that we can call before
+generating any test data. This ensures that the implementation for
+<code>IArbitrary&lt;Command&gt;</code> is registered.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Command.Register()" data-toggle="tooltip" title="Examples.UITests.Command.Register()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command.Register()">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Command.Register()">Register</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="punctuation">}</span>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>Now we have the basic building blocks to create tests for the calculator. Next
+we need to connect our abstract API to the real world and implement the
+ICalculator interface first for the model and then for the Windows apps.</p>
 
 				</div>
 				<ul class="pager">

@@ -37,7 +37,7 @@ namespace Examples
 		which stores the generator and shrinker for type `T`. Let's define a 
 		method that does that.
 		*/
-		public static Arbitrary<Seq<T>> ArbitrarySeq<T> ()
+		public static IArbitrary<Seq<T>> ArbitrarySeq<T> ()
 		{
 			/*
 			First we need to define the generator for `Seq<T>` type. Generators
