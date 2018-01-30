@@ -11,7 +11,7 @@
     <title>BasicTests - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
-    <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../css/modern.min.css" />
@@ -63,75 +63,67 @@
                 <ul>
 	<li><a href="../index.html">Home</a></li>
 	<ul>
-		<li>LinqCheck home page.</li>
 	</ul>
-	<li><a href="../Examples/BasicTests.html" class="selected">BasicTests</a></li>
+	<li>Usage</li>
 	<ul>
-		<li>TODO! Add page description.</li>
+<ul>
+	<li><a href="../Examples/BasicTests.html" class="selected">Writing Simple Tests</a></li>
+	<ul>
 	</ul>
-	<li><a href="../Examples/SeqTests.html">SeqTests</a></li>
+	<li><a href="../Examples/SeqTests.html">Adding New Arbitrary Types</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../Examples/RunTests.html">RunTests</a></li>
+	<li><a href="../Examples/UITests/Calculator.html">Testing Programs with Mutable State</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/Arbitrary.html">Arbitrary</a></li>
+	<li><a href="../Examples/UITests/ModelCalculator.html">Implementing a Model</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/Container.html">Container</a></li>
+	<li><a href="../Examples/UITests/Automated.html">Using UI Automation</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/DefaultArbitrary.html">DefaultArbitrary</a></li>
+	<li><a href="../Examples/UITests/Win7Calculator.html">Windows 7 Calculator</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/Gen.html">Gen</a></li>
+	<li><a href="../Examples/UITests/Win10Calculator.html">Windows 10 Calculator</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/Prop.html">Prop</a></li>
+	<li><a href="../Examples/UITests/CalculatorTests.html">Testing the Calculator</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/Tester.html">Tester</a></li>
+	<li><a href="../Examples/RunTests.html">Running the Tests</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
-	<li><a href="../src/TestState.html">TestState</a></li>
+</ul>
+	</ul>
+	<li>Implementation</li>
 	<ul>
-		<li>TODO! Add page description.</li>
+<ul>
+	<li><a href="../src/Gen.html">Generators</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Arbitrary.html">Arbitrary Values</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/TestState.html">Test State</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Prop.html">Properties</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/DefaultArbitrary.html">Built-In Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Container.html">Registering Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Tester.html">Test Runner</a></li>
+	<ul>
+	</ul>
+</ul>
 	</ul>
 	<li><a href="../License.html">License</a></li>
 	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/Automated.html">Automated</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/Calculator.html">Calculator</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/CalculatorTests.html">CalculatorTests</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/ModelCalculator.html">ModelCalculator</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/Win10Calculator.html">Win10Calculator</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
-	</ul>
-	<li><a href="../Examples/UITests/Win7Calculator.html">Win7Calculator</a></li>
-	<ul>
-		<li>TODO! Add page description.</li>
 	</ul>
 </ul>
             </div>
@@ -141,14 +133,14 @@
 			<div class="col-md-9">
 				<ul class="pager">
 	<li class="previous"><a href="../index.html">Previous: Home</a></li>
-	<li class="next"><a href="../Examples/SeqTests.html">Next: SeqTests</a></li>
+	<li class="next"><a href="../Examples/SeqTests.html">Next: Adding New Arbitrary Types</a></li>
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="writing-simple-tests">Writing Simple Tests</h1>
 <p>So, how does one begin property based testing with LinqCheck. Let's look at
-few very basic tests first. Suppose we want to test the System.Math class. It
-is unlikely we find any bugs in it, but it is a simple static class that
-everyone knows.</p>
+a few very basic examples first. Suppose we want to test the System.Math class.
+It is unlikely we find any bugs in it but it works well as an example; it is
+a simple static class that everyone knows.</p>
 <p>First we need to reference the code we are testing: the System namespace,
 as well as the LinqCheck library itself. The third library we reference is
 <a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>. This is a general
@@ -183,12 +175,12 @@ are tests. In LinqCheck the attribute is simply <code>Test</code>.</p>
 minimum of two numbers. So, let's generate two random integers
 to test it. We do this by writing a LINQ expression which
 calls the <code>Prop.ForAll</code> method twice. The random integers are
-assigned to variables <code>x</code> and <code>y</code>.</p>
+assigned to the variables <code>x</code> and <code>y</code>.</p>
 <pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">(</span><span class="keyword">from</span> x <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<T>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 			 <span class="keyword">from</span> y <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../src/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../src/Prop.html#LinqCheck.Prop.ForAll<T>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 </code></pre>
-<p>Now we can call the <code>Math.Min</code> to calculate the minimum of <code>x</code>
-and <code>y</code>. We assign the result to variable <code>minxy</code>. Notice that
+<p>Now we can call <code>Math.Min</code> to calculate the minimum of <code>x</code>
+and <code>y</code>. We assign the result to the variable <code>minxy</code>. Notice that
 this time we are not generating a random value but just evaluating
 an expression, so we use the <code>let</code> clause instead of <code>from</code>.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword">let</span> minxy <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">x</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">y</span><span class="punctuation">)</span>
@@ -203,23 +195,23 @@ expression with the <code>select</code> clause that returns our values to the
 next phase.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">select</span> <span class="keyword" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">new</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">{</span> <span data-toggle="tooltip" title="int">x</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">y</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">z</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">minxy</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">,</span> <span data-toggle="tooltip" title="int">minxyz</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">}</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>">)</span>
 </code></pre>
-<p>Essentially, we have now a test case dispenser that produces
+<p>Essentially, we have set up a test case dispenser that produces
 three random integers and calculates their minima. Now we can
-start thinking about what properties these values should have.
-The first property is obvious: <code>minxy</code> should contain the minimum
-of <code>x</code> and <code>y</code>. Let's check that this is true.</p>
+start checking the properties these values should have. The first
+property is obvious: <code>minxy</code> should contain the minimum  of <code>x</code>
+and <code>y</code>. Let's check that this is true.</p>
 <pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop.Check<T>(LinqCheck.Prop<T>, System.Linq.Expressions.Expression<System.Func<T, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.minxy">minxy</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="punctuation" data-toggle="tooltip" title="int">(</span><span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span> <span class="punctuation" data-toggle="tooltip" title="int">?</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span> <span class="punctuation" data-toggle="tooltip" title="int">:</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span><span class="punctuation" data-toggle="tooltip" title="int">)</span><span class="punctuation">)</span>
 </code></pre>
 <p>The previous line defines a property that should hold for all input
 values. The <code>Prop.Check</code> extension method takes a lambda expression
-to which the randomly generated test cases are fed, and the expression
-should evaluate to true if the property holds. If it returns false or
-throws an exception, the property fails. The input values are
-wrapped in anonymous object that we assign to parameter <code>t</code>. The
-actual values are in the fields of this object.</p>
-<p>Naturally we should not use the <code>Math.Min</code> function to check the
+to which the randomly generated test cases are fed, and the
+expression should evaluate to true, if the property holds. If it
+returns false or throws an exception, the property fails. The input
+values are wrapped in anonymous object that we assign to parameter
+<code>t</code>. The actual values are in the fields of this object.</p>
+<p>Naturally we should not use the <code>Math.Min</code> function to check our
 property, since that is the function we are testing. Instead we
-use the ternary <code>?</code> operator to do it.</p>
+use the ternary <code>?</code> operator to do this.</p>
 <p>We don't need to stop here. Let's check that the Min method is
 symmetric, that is, the order of the arguments should not matter.</p>
 <pre class="csharp"><code class="csharp">			<span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)">.</span><span data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: int x, int y, int z, int minxy, int minxyz>>.Check<<anonymous type: int x, int y, int z, int minxy, int minxyz>>(System.Linq.Expressions.Expression<System.Func<<anonymous type: int x, int y, int z, int minxy, int minxyz>, bool>>, int)"><a href="../src/Prop.html#LinqCheck.Prop.Check<T>(LinqCheck.Prop<T>, System.Linq.Expressions.Expression<System.Func<T, bool>>, int)">Check</a></span> <span class="punctuation">(</span>t <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.minxy">minxy</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.y">y</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="<anonymous type: int x, int y, int z, int minxy, int minxyz>">t</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../Examples/BasicTests.html#<anonymous type: int x, int y, int z, int minxy, int minxyz>.x">x</a></span><span class="punctuation">)</span><span class="punctuation">)</span>
@@ -246,7 +238,7 @@ All tests passed. 1 tests run in 00:00:00.0307409.
 inputs. So, we basically covered 300 test cases in about 0.03 seconds.</p>
 <h2 id="failing-example">Failing Example</h2>
 <p>Let's now look at what happen's when a property fails. We test the
-<code>Math.Sin</code> function in a similar manner as above.</p>
+<code>Math.Sin</code> function in similar manner as above.</p>
 <pre class="csharp"><code class="csharp">		<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../src/Tester.html#LinqCheck.TestAttribute.TestAttribute()">Test</a></span><span class="punctuation">]</span>
 		<span class="keyword" id="Examples.BasicTests.TestSin()" data-toggle="tooltip" title="Examples.BasicTests.TestSin()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.BasicTests.TestSin()">TestSin</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
@@ -299,14 +291,19 @@ additional features.</p>
 				</div>
 				<ul class="pager">
 	<li class="previous"><a href="../index.html">Previous: Home</a></li>
-	<li class="next"><a href="../Examples/SeqTests.html">Next: SeqTests</a></li>
+	<li class="next"><a href="../Examples/SeqTests.html">Next: Adding New Arbitrary Types</a></li>
 </ul>
 			</div>
         </div>
     </div>
     
     <footer class="panel-footer text-center">
-        <p>Copyright © 2018 Tommi Johtela</p>
+        <div align="center">Copyright © 2018 Tommi Johtela</div>
+		<div align="right">
+			<small>
+				Documentation created with <a href="https://johtela.github.io/LiterateProgramming/">Literate Programming</a>.
+			</small>
+		</div>
     </footer>
 
 

@@ -3,70 +3,76 @@
     file: index.md
     desc: LinqCheck home page.
 
-  - page: BasicTests
-    file: Examples\BasicTests.cs
-    desc: TODO! Add page description.
+  - page: Usage
+    desc: Examples on how to use LinqCheck.
+    subs: 
+      - page: Writing Simple Tests
+        file: Examples\BasicTests.cs
+        desc: How to write basic properties and tests.
 
-  - page: SeqTests
-    file: Examples\SeqTests.cs
-    desc: TODO! Add page description.
+      - page: Adding New Arbitrary Types
+        file: Examples\SeqTests.cs
+        desc: How to implement the `IArbitrary<T>` interface and use your own types in properties.
 
-  - page: RunTests
-    file: Examples\RunTests.cs
-    desc: TODO! Add page description.
+      - page: Testing Programs with Mutable State
+        file: Examples\UITests\Calculator.cs
+        desc: Testing Windows Calculator with LinqCheck.
 
-  - page: Arbitrary
-    file: src\Arbitrary.cs
-    desc: TODO! Add page description.
+      - page: Implementing a Model
+        file: Examples\UITests\ModelCalculator.cs
+        desc: How to write a model implementation for an imperative program.
 
-  - page: Container
-    file: src\Container.cs
-    desc: TODO! Add page description.
+      - page: Using UI Automation
+        file: Examples\UITests\Automated.cs
+        desc: Developing tests which control other applications through UI automation.
 
-  - page: DefaultArbitrary
-    file: src\DefaultArbitrary.cs
-    desc: TODO! Add page description.
+      - page: Windows 7 Calculator
+        file: Examples\UITests\Win7Calculator.cs
+        desc: Implementing the automation for Windows 7 Calculator.
 
-  - page: Gen
-    file: src\Gen.cs
-    desc: TODO! Add page description.
+      - page: Windows 10 Calculator
+        file: Examples\UITests\Win10Calculator.cs
+        desc: Implementing the automation for Windows 10 Calculator.
 
-  - page: Prop
-    file: src\Prop.cs
-    desc: TODO! Add page description.
+      - page: Testing the Calculator
+        file: Examples\UITests\CalculatorTests.cs
+        desc: Writing properties that run the calculator and test the results.
 
-  - page: Tester
-    file: src\Tester.cs
-    desc: TODO! Add page description.
+      - page: Running the Tests
+        file: Examples\RunTests.cs
+        desc: How to write the Main method for your test suite.
 
-  - page: TestState
-    file: src\TestState.cs
-    desc: TODO! Add page description.
+  - page: Implementation
+    desc: Literate documentation for the LinqCheck library.
+    subs:
+      - page: Generators
+        file: src\Gen.cs
+        desc: Generalizing random numbers.
+
+      - page: Arbitrary Values
+        file: src\Arbitrary.cs
+        desc: An interface for arbitrary test data.
+
+      - page: Test State
+        file: src\TestState.cs
+        desc: The state needed by the properties when they are executed.
+
+      - page: Properties
+        file: src\Prop.cs
+        desc: Implmenting the properties as LINQ expressions.
+
+      - page: Built-In Arbitrary Types
+        file: src\DefaultArbitrary.cs
+        desc: Implementation of arbitrary types included in LinqCheck.
+
+      - page: Registering Arbitrary Types
+        file: src\Container.cs
+        desc: Container class that stores the registered arbitrary types.
+
+      - page: Test Runner
+        file: src\Tester.cs
+        desc: Built-in simple test runner.
 
   - page: License
     file: License.md
-    desc: TODO! Add page description.
-
-  - page: Automated
-    file: Examples\UITests\Automated.cs
-    desc: TODO! Add page description.
-
-  - page: Calculator
-    file: Examples\UITests\Calculator.cs
-    desc: TODO! Add page description.
-
-  - page: CalculatorTests
-    file: Examples\UITests\CalculatorTests.cs
-    desc: TODO! Add page description.
-
-  - page: ModelCalculator
-    file: Examples\UITests\ModelCalculator.cs
-    desc: TODO! Add page description.
-
-  - page: Win10Calculator
-    file: Examples\UITests\Win10Calculator.cs
-    desc: TODO! Add page description.
-
-  - page: Win7Calculator
-    file: Examples\UITests\Win7Calculator.cs
     desc: TODO! Add page description.

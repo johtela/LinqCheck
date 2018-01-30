@@ -1,8 +1,9 @@
-﻿.markdown {
+﻿@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville|Roboto+Mono');
+.markdown {
   color: #444;
-  font-family: Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman', serif;
-  font-size: 1.25em;
-  line-height: 1.75em;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 16px;
+  line-height: 1.8em;
 }
 .markdown a {
   color: #0645ad;
@@ -66,6 +67,7 @@
 }
 .markdown code,
 .markdown pre {
+  font-family: 'Roboto Mono', monospace;
   font-size: 0.95em;
   tab-size: 4;
   overflow-x: auto;

@@ -1,8 +1,9 @@
-﻿.markdown {
+﻿@import url('https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab');
+.markdown {
   color: #333;
-  font-family: Geneva, Verdana, sans-serif;
-  font-size: 1.1em;
-  line-height: 1.7em;
+  font-family: 'Roboto Slab', sans-serif;
+  font-size: 16px;
+  line-height: 1.8em;
 }
 .markdown a {
   color: #0645ad;
@@ -78,8 +79,9 @@
 }
 .markdown code,
 .markdown pre {
+  font-family: 'Roboto Mono', monospace;
   background-color: transparent;
-  font-size: 1.05em;
+  font-size: 0.95em;
   tab-size: 4;
   overflow-x: auto;
   overflow-y: hidden;

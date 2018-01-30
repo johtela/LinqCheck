@@ -4,9 +4,9 @@ Logo: images/LinqCheck.svg
 GitHub: https://github.com/johtela/LinqCheck
 Footer: "Copyright © 2018 Tommi Johtela"
 License: License.html
+BootstrapStyle: simplex
 MarkdownStyle: modern
 SyntaxHighlight: son-of-obsidian
-ShowDescriptionsInToc: true
 UseDiagrams: true
 DiagramStyle: mermaid
 UseMath: true
@@ -66,7 +66,7 @@ are not.
 Property based testing generally works best for testing pure functions
 whose result depend only on their input. However, the co-inventor of QuickCheck 
 [John Hughes](https://en.wikipedia.org/wiki/John_Hughes_(computer_scientist))
-has demonstrated that it is possible to also test imperative programs with
+has demonstrated that it is possible to test also imperative programs with
 property based testing. Rather than generating input data directly, we create 
 sequences of function calls that modify the program's mutable state. When a 
 failing sequence is found, the library reduces it to a minimal example that 
@@ -78,7 +78,7 @@ based testing, but I would recommend reading the
 by Hughes and Koen Classen. It not only introduces the concept but also
 explains how the library is implemented in an easy-to-follow way. The paper 
 assumes the reader to be familiar with Haskell, which might be an obstacle. 
-If you are proficient with the basics of Haskell, though, the paper even 
+If you are proficient with the basics of Haskell though, the paper even 
 serves as a guide on how to implement the library in some other programming 
 language.
 
@@ -95,7 +95,7 @@ functional programming are applicable in any programming language that has the
 few required constructs such as closures and generics.
 
 Another feature you might deduce from the name is that LinqCheck is built on 
-top of the language facilities provided by LINQ. It is no coincidence that LINQ 
+the language facilities provided by LINQ. It is no coincidence that LINQ 
 expressions resemble very much [monads](https://en.wikipedia.org/wiki/Monad_(functional_programming)) 
 in Haskell. [Erik Meijer](https://en.wikipedia.org/wiki/Erik_Meijer_(computer_scientist)),
 who is commonly credited to be the creator of LINQ, was involved in the design of 

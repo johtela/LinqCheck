@@ -2,9 +2,9 @@
 # Writing Simple Tests
 
 So, how does one begin property based testing with LinqCheck. Let's look at
-few very basic tests first. Suppose we want to test the System.Math class. It 
-is unlikely we find any bugs in it, but it is a simple static class that 
-everyone knows. 
+a few very basic examples first. Suppose we want to test the System.Math class. 
+It is unlikely we find any bugs in it but it works well as an example; it is 
+a simple static class that everyone knows. 
 
 First we need to reference the code we are testing: the System namespace, 
 as well as the LinqCheck library itself. The third library we reference is 
@@ -44,13 +44,13 @@ namespace Examples
 			minimum of two numbers. So, let's generate two random integers
 			to test it. We do this by writing a LINQ expression which 
 			calls the `Prop.ForAll` method twice. The random integers are 
-			assigned to variables `x` and `y`.
+			assigned to the variables `x` and `y`.
 			*/
 			(from x in Prop.ForAll<int> ()
 			 from y in Prop.ForAll<int> ()
 			 /*
-			 Now we can call the `Math.Min` to calculate the minimum of `x` 
-			 and `y`. We assign the result to variable `minxy`. Notice that 
+			 Now we can call `Math.Min` to calculate the minimum of `x` 
+			 and `y`. We assign the result to the variable `minxy`. Notice that 
 			 this time we are not generating a random value but just evaluating 
 			 an expression, so we use the `let` clause instead of `from`.
 			 */
@@ -68,25 +68,25 @@ namespace Examples
 			 */
 			 select new { x, y, z, minxy, minxyz })
 			 /*
-			 Essentially, we have now a test case dispenser that produces 
+			 Essentially, we have set up a test case dispenser that produces 
 			 three random integers and calculates their minima. Now we can 
-			 start thinking about what properties these values should have. 
-			 The first property is obvious: `minxy` should contain the minimum 
-			 of `x` and `y`. Let's check that this is true.
+			 start checking the properties these values should have. The first 
+			 property is obvious: `minxy` should contain the minimum  of `x` 
+			 and `y`. Let's check that this is true.
 			 */
 			.Check (t => t.minxy == (t.x < t.y ? t.x : t.y))
 			/*
 			The previous line defines a property that should hold for all input
 			values. The `Prop.Check` extension method takes a lambda expression 
-			to which the randomly generated test cases are fed, and the expression 
-			should evaluate to true if the property holds. If it returns false or
-			throws an exception, the property fails. The input values are 
-			wrapped in anonymous object that we assign to parameter `t`. The 
-			actual values are in the fields of this object.
+			to which the randomly generated test cases are fed, and the 
+			expression should evaluate to true, if the property holds. If it 
+			returns false or throws an exception, the property fails. The input 
+			values are wrapped in anonymous object that we assign to parameter 
+			`t`. The actual values are in the fields of this object.
 
-			Naturally we should not use the `Math.Min` function to check the
+			Naturally we should not use the `Math.Min` function to check our
 			property, since that is the function we are testing. Instead we
-			use the ternary `?` operator to do it. 
+			use the ternary `?` operator to do this. 
 			
 			We don't need to stop here. Let's check that the Min method is
 			symmetric, that is, the order of the arguments should not matter.
@@ -119,7 +119,7 @@ namespace Examples
 		## Failing Example
 
 		Let's now look at what happen's when a property fails. We test the 
-		`Math.Sin` function in a similar manner as above. 
+		`Math.Sin` function in similar manner as above. 
 		*/
 		[Test]
 		public void TestSin ()
