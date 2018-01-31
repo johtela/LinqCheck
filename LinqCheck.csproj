@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="docs\images\favicon.ico" />
     <Content Include="docs\images\LinqCheck.svg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

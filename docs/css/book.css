@@ -52,9 +52,21 @@
 .markdown blockquote {
   color: #666666;
   font-style: italic;
+  font-size: 17px;
   margin: 0;
   padding-left: 3em;
-  border-left: 0.5em #EEE solid;
+  border-left: 0.5rem #EEE solid;
+}
+.markdown blockquote:before {
+  display: block;
+  padding-left: 10px;
+  content: "\201C";
+  font-size: 50px;
+  /*font-style: normal;*/
+  position: relative;
+  left: -50px;
+  top: 20px;
+  height: 0;
 }
 .markdown hr {
   display: block;
