@@ -87,12 +87,12 @@ language.
 As you might have guessed LinqCheck is basically a port of QuickCheck for C#.
 It implements all of the concepts present in QuickCheck, and tries to provide 
 an API which feels natural in C#, not mimicking the original design too much.
-It also serves as an example of how to program in C# like it was a functional 
+It also aims to demonstrate how you can program in C# like it was a functional 
 programming language. You can write really elegant and simple code in C#, if
 you follow the principles of FP; the kind of obviously correct code that Tony 
-Hoare was referring to in his speech. It goes to prove that the ideas of 
-functional programming are applicable in any programming language that has the
-few required constructs such as closures and generics.
+Hoare was referring to in his speech. The ideas of functional programming are 
+applicable in any programming language that has the few required constructs 
+such as closures and function types.
 
 Another feature you might deduce from the name is that LinqCheck is built on 
 the language facilities provided by LINQ. It is no coincidence that LINQ 
@@ -110,7 +110,7 @@ The easiest way to learn LinqCheck is by example. The first part of this
 documentation covers several test examples and introduces the most important
 features of the library. If you are only interested in how to use the library, 
 you can read just those sections. But if you want to learn how the library works
-under the hood, you can continue reading the following sections that cover the
+under the hood, you can continue reading the following sections which cover the
 whole implementation. 
 
 This documentation that is generated with the 
