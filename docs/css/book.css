@@ -1,4 +1,4 @@
-﻿@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville|Roboto+Mono');
+﻿@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville:400,400i,700|Roboto+Mono:400,700');
 .markdown {
   color: #444;
   font-family: 'Libre Baskerville', serif;
@@ -27,6 +27,7 @@
 }
 .markdown p {
   margin: 1em 0;
+  hyphens: auto;
 }
 .markdown img {
   max-width: 100%;
@@ -88,6 +89,7 @@
   tab-size: 4;
   overflow-x: auto;
   overflow-y: hidden;
+  hyphens: none;
 }
 .markdown pre {
   white-space: pre-wrap;

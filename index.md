@@ -11,7 +11,7 @@ UseDiagrams: true
 DiagramStyle: mermaid
 UseMath: true
 ---
-# Property Based Testing in C# Using LINQ Expressions
+# Property Based Testing with LINQ Expressions
 
 > There are two ways of constructing a software design: One way is to make it 
 > so simple that there are obviously no deficiencies, and the other way is to 

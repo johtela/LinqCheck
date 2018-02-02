@@ -1,9 +1,11 @@
-﻿@import url('https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab');
+﻿@import url('https://fonts.googleapis.com/css?family=Roboto+Mono:400,700|Roboto+Slab:300,400');
 .markdown {
   color: #333;
   font-family: 'Roboto Slab', sans-serif;
+  font-weight: 400;
   font-size: 16px;
   line-height: 1.8em;
+  text-align: justify;
 }
 .markdown a {
   color: #0645ad;
@@ -26,7 +28,8 @@
   outline: 0;
 }
 .markdown p {
-  margin: 1em 0;
+  margin: 1em;
+  hyphens: auto;
 }
 .markdown img {
   max-width: 100%;
@@ -40,6 +43,7 @@
   font-weight: normal;
   color: #111;
   line-height: 1.1em;
+  text-align: left;
 }
 .markdown h1 {
   margin-top: 0;
@@ -57,16 +61,16 @@
 }
 .markdown blockquote {
   color: #444;
-  font-style: italic;
-  font-weight: lighter;
-  text-align: center;
-  margin: 1em 3em 1em 3em;
+  font-weight: 300;
+  text-align: right;
+  margin-left: 30%;
+  max-width: 70%;
   padding: 1em;
-  border: solid;
-  border-color: #f0f5ff;
-  border-width: 1px;
-  border-radius: 4px;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19);
+  border: none;
+  /*border-color: @heading-color;
+        border-width: 1px;
+        border-radius: @border-radius;
+        box-shadow: @shadow;*/
 }
 .markdown hr {
   display: block;
@@ -85,6 +89,7 @@
   tab-size: 4;
   overflow-x: auto;
   overflow-y: hidden;
+  hyphens: none;
 }
 .markdown pre {
   white-space: pre-wrap;
@@ -121,10 +126,13 @@
 .markdown ul,
 .markdown ol {
   margin: 1em 0;
-  padding: 0 0 0 2em;
+  padding: 0 3em 0 3em;
 }
 .markdown ul {
   list-style: circle;
+}
+.markdown li {
+  margin-bottom: 8px;
 }
 .markdown li p:last-child {
   margin: 0;
