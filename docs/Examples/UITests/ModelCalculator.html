@@ -136,32 +136,107 @@
 	<li class="next"><a href="../../Examples/UITests/Automated.html">Next: Using UI Automation</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
+					<h1 id="implementing-a-model">Implementing a Model</h1>
+<p>The model implementation should work exactly as the application it's mimicking.
+Since we don't have the source code for the Windows calculator, we have to
+reverse-engineer its operation. Luckily, calculator's functionality is quite
+simple - although when I developed the model, LinqCheck found many command
+sequences where the result of the calculation did not match my assumptions.
+This is why the model implementation went through quite many revisions before
+stabilizing into the current one.</p>
+<p>We begin by inheriting the ICalculator interface and defining a private
+enumeration type which is used in recording the operation that was performed
+previously.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
 <span class="punctuation">{</span>
-	<span class="keyword">using</span> System<span class="punctuation">;</span>
-
 	<span class="keyword" id="Examples.UITests.ModelCalculator">public</span> <span class="keyword">class</span> <span class="typename">ModelCalculator</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span>
 	<span class="punctuation">{</span>
 		<span class="keyword" id="Examples.UITests.ModelCalculator.Oper">private</span> <span class="keyword">enum</span> <span class="typename">Oper</span> <span class="punctuation">{</span> <span id="Examples.UITests.ModelCalculator.Oper.None">None</span><span class="punctuation">,</span> <span id="Examples.UITests.ModelCalculator.Oper.Add">Add</span><span class="punctuation">,</span> <span id="Examples.UITests.ModelCalculator.Oper.Sub">Sub</span><span class="punctuation">,</span> <span id="Examples.UITests.ModelCalculator.Oper.Mul">Mul</span><span class="punctuation">,</span> <span id="Examples.UITests.ModelCalculator.Oper.Div">Div</span> <span class="punctuation">}</span>
-
-		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ModelCalculator._accum">_accum</span><span class="punctuation">;</span>
-		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double?">?</span> <span id="Examples.UITests.ModelCalculator._display">_display</span><span class="punctuation">;</span>
-		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ModelCalculator._lastVal">_lastVal</span><span class="punctuation">;</span>
-		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span> <span id="Examples.UITests.ModelCalculator._lastOper">_lastOper</span><span class="punctuation">;</span>
-		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span id="Examples.UITests.ModelCalculator._lastEqual">_lastEqual</span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.ModelCalculator()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.ModelCalculator()">public</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.ModelCalculator()">ModelCalculator</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<h2 id="calculator-state">Calculator State</h2>
+<p>The (mutable) state of the calculator is determined by the following
+fields. The accumulator contains the current result of the calculation.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ModelCalculator._accum">_accum</span><span class="punctuation">;</span>
+</code></pre>
+<p>What is shown on the display depends on the calculator's state. When we
+enter numbers, they are shown on the display. However, when we press
+the <code>=</code> button, the value stored in the accumulator is shown. We define
+the	<code>_display</code> field to be nullable. If its value is <code>null</code>, it means
+that the accumulator is shown. Otherwise it contains the current number
+entered by the user.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double?">?</span> <span id="Examples.UITests.ModelCalculator._display">_display</span><span class="punctuation">;</span>
+</code></pre>
+<p>When the user presses <code>=</code> multiple times, then the previous operation
+is repeated. So, we need to remember what the previous operation was.
+We store the previously entered number in the <code>_prevVal</code> field and the
+previously peformed operation in the <code>_prevOper</code> field.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ModelCalculator._prevVal">_prevVal</span><span class="punctuation">;</span>
+		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span> <span id="Examples.UITests.ModelCalculator._prevOper">_prevOper</span><span class="punctuation">;</span>
+</code></pre>
+<p>We need to remember also if the previous operation was <code>=</code>. This
+affects when we forget the previous operation.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span id="Examples.UITests.ModelCalculator._prevEqual">_prevEqual</span><span class="punctuation">;</span>
+</code></pre>
+<p>As you can see from above, we need surprisingly many fields to store
+the calculator state. Although in the UI there is just one value
+visible at any time, beneath the surface there is much more going on.
+For fun, let's define formally the set of possible states that our
+model can be in. The set is the cartesian product of:</p>
+<div class="math">\mathbb{R} \times \{ \mathbb{R} \cup \mathrm{null} \} \times \mathbb{R} 
+\times \{ \mathrm{None}, \mathrm{Add}, \mathrm{Sub}, \mathrm{Mul,} 
+\mathrm{Div} \} \times \{ \mathrm{true}, \mathrm{false} \}
+</div>
+<p>Even if we consider the set of real numbers to be finite (since
+floating points essentially are) the cardinality of the set is still
+astronomical.</p>
+<p>This exemplifies the inherent problem with mutable state. Even for the
+simplest of programs the number of states quickly runs out of hand. If
+we keep adding new features, we will inevitably end up in the situation
+where it is impossible to reason about the program behavior.</p>
+<p>Purely functional programs get around this problem by eliminating the
+mutable state altogether, thus making it feasible to keep a mental
+picture of the program in your head.</p>
+<h2 id="creating-and-disposing-the-model">Creating And Disposing the Model</h2>
+<p>The constructor initializes the model by calling the <code>Clear</code> method.
+No cleanup is necessary during the model disposal.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.ModelCalculator()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.ModelCalculator()">public</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.ModelCalculator()">ModelCalculator</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Clear()">Clear</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 
 		<span class="keyword" id="Examples.UITests.ModelCalculator.Dispose()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Dispose()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Dispose()">Dispose</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">{</span> <span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Display">public</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> Display <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double">??</span> <span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.PerformLastOperation(double)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformLastOperation(double)">private</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformLastOperation(double)">PerformLastOperation</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="double">double</span> value<span class="punctuation">)</span>
+</code></pre>
+<h2 id="calculator-display">Calculator Display</h2>
+<p>As mentioned above, the value on the Display depends on whether user
+has entered a number or not. When the <code>_display</code> field is <code>null</code>, it
+corresponds to a state where the user has pressed <code>=</code> or not entered
+anything yet. In that case, we return the value of the accumulator.
+Otherwise we return the value stored in the <code>_display</code> field.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Display">public</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> Display <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double">??</span> <span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">;</span>
+</code></pre>
+<h2 id="clearing-the-state">Clearing the State</h2>
+<p>The <code>Clear</code> method corresponds pressing the <code>[C]</code> button. It
+initializes the state fields to zero, None, or false.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Clear()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()">Clear</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="keyword">switch</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastOper">_lastOper</a></span><span class="punctuation">)</span>
+			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevVal">_prevVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevOper">_prevOper</a></span> <span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.None">None</a></span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevEqual">_prevEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<h2 id="operations">Operations</h2>
+<p>Before we implement the arithmetic operations, we define a couple of
+helper functions. The first one performs the previous operation again.
+This function is actually used when an operation is performed the first
+time too. It checks the value of the <code>_prevOper</code> field and based on
+that adds, subtracts, multiplies, or divides the accumulator with the
+parameter <code>value</code>. If there is no previous operation set, then it
+stores the <code>value</code> in the accumulator.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)">private</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)">PerformPreviousOperation</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="double">double</span> value<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">switch</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevOper">_prevOper</a></span><span class="punctuation">)</span>
 			<span class="punctuation">{</span>
 				<span class="keyword">case</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.Add">Add</a></span><span class="punctuation">:</span>
 					<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span> <span class="punctuation" data-toggle="tooltip" title="double">+=</span> <span data-toggle="tooltip" title="double">value</span><span class="punctuation">;</span>
@@ -180,63 +255,35 @@
 					<span class="keyword">break</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">private</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">Operation</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span> oper<span class="punctuation">)</span>
+</code></pre>
+<p>The <code>Operation</code> method is called when a operator button is pressed. It
+checks whether the user has entered a number, and calculates the
+intermediate result into the accumulator first. Then it clears the
+display, and assigns new values to the <code>_prevVal</code> and <code>_prevOper</code>
+fields.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">private</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">Operation</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span> oper<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.ResultAvailable">ResultAvailable</a></span><span class="punctuation">)</span>
 				<span class="keyword">return</span><span class="punctuation">;</span>
 			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">HasValue</span><span class="punctuation">)</span>
-				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformLastOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformLastOperation(double)">PerformLastOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformPreviousOperation(double)">PerformPreviousOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span class="keyword">null</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastVal">_lastVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastOper">_lastOper</a></span> <span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">=</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">oper</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastEqual">_lastEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevVal">_prevVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevOper">_prevOper</a></span> <span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">=</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">oper</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevEqual">_prevEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Add()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Add()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<p>The arithmetic operations of the ICalculator interface are
+implemented by calling the <code>Operation</code> function with the appropriate
+enumeration value.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Add()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Add()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">Operation</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.Add">Add</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Clear()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()">Clear</span> <span class="punctuation">(</span><span class="punctuation">)</span>
-		<span class="punctuation">{</span>
-			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastVal">_lastVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastOper">_lastOper</a></span> <span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.None">None</a></span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastEqual">_lastEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">;</span>
-		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Digit(byte)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span>
-		<span class="punctuation">{</span>
-			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.ResultAvailable">ResultAvailable</a></span><span class="punctuation">)</span>
-				<span class="keyword">return</span><span class="punctuation">;</span>
-			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastEqual">_lastEqual</a></span><span class="punctuation">)</span>
-				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Clear()">Clear</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">HasValue</span> <span class="punctuation" data-toggle="tooltip" title="double?">?</span>
-				<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">*</span> <span class="number" data-toggle="tooltip" title="int">10</span> <span class="punctuation" data-toggle="tooltip" title="double?">+</span> <span data-toggle="tooltip" title="byte">number</span> <span class="punctuation" data-toggle="tooltip" title="double?">:</span>
-				<span data-toggle="tooltip" title="byte">number</span><span class="punctuation">;</span>
-		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.ResultAvailable">public</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> ResultAvailable <span class="punctuation">=&gt;</span> 
-			<span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsNaN(double)">.</span><span data-toggle="tooltip" title="double.IsNaN(double)">IsNaN</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsInfinity(double)">.</span><span data-toggle="tooltip" title="double.IsInfinity(double)">IsInfinity</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">;</span>
-
 		<span class="keyword" id="Examples.UITests.ModelCalculator.Divide()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Divide()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Divide()">Divide</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">Operation</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.Div">Div</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
-		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.ModelCalculator.Equals()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Equals()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Equals()">Equals</span> <span class="punctuation">(</span><span class="punctuation">)</span>
-		<span class="punctuation">{</span>
-			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">HasValue</span><span class="punctuation">)</span>
-			<span class="punctuation">{</span>
-				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformLastOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformLastOperation(double)">PerformLastOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">)</span><span class="punctuation">;</span>
-				<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastVal">_lastVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">;</span>
-			<span class="punctuation">}</span>
-			<span class="keyword">else</span> <span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastOper">_lastOper</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">!=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.None">None</a></span><span class="punctuation">)</span>
-				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformLastOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformLastOperation(double)">PerformLastOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastVal">_lastVal</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span class="keyword">null</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._lastEqual">_lastEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">true</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 
 		<span class="keyword" id="Examples.UITests.ModelCalculator.Multiply()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Multiply()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Multiply()">Multiply</span> <span class="punctuation">(</span><span class="punctuation">)</span>
@@ -248,9 +295,64 @@
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Operation(Examples.UITests.ModelCalculator.Oper)">Operation</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.Sub">Sub</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
+</code></pre>
+<p>The <code>Digit</code> method is called when the user pushes a digit button. It
+multiplies the existing digit by ten, and adds a new digit to the
+display.</p>
+<p>A couple of special cases need to be handled:</p>
+<ol>
+<li>If the display is locked, because the last operator returned
+undefined, infinity or other error,	then we disallow adding numbers.</li>
+<li>If the user previously pressed the equals button, then we clear the
+state before entering the digit.</li>
+</ol>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Digit(byte)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.ResultAvailable">ResultAvailable</a></span><span class="punctuation">)</span>
+				<span class="keyword">return</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevEqual">_prevEqual</a></span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Clear()"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Clear()">Clear</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">HasValue</span> <span class="punctuation" data-toggle="tooltip" title="double?">?</span>
+				<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">*</span> <span class="number" data-toggle="tooltip" title="int">10</span> <span class="punctuation" data-toggle="tooltip" title="double?">+</span> <span data-toggle="tooltip" title="byte">number</span> <span class="punctuation" data-toggle="tooltip" title="double?">:</span>
+				<span data-toggle="tooltip" title="byte">number</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<h2 id="checking-if-a-result-is-available">Checking If a Result Is Available</h2>
+<p>If the accumulator does not contain a valid number, then we have
+performed a calculation that has led to an undefined state. The
+<code>ResultAvailable</code> function will retrn <code>false</code> in that case.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.ResultAvailable">public</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> ResultAvailable <span class="punctuation">=&gt;</span> 
+			<span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsNaN(double)">.</span><span data-toggle="tooltip" title="double.IsNaN(double)">IsNaN</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsInfinity(double)">.</span><span data-toggle="tooltip" title="double.IsInfinity(double)">IsInfinity</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">;</span>
+</code></pre>
+<h2 id="calculating-the-result">Calculating the Result</h2>
+<p>When the user presses the <code>=</code> button, then we calculate the result of
+the currently previous operation and current value. If there are no
+digits entered, however, then we recalculate the previous calculation
+with the previous value.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.Equals()" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Equals()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Equals()">Equals</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="bool">.</span><span data-toggle="tooltip" title="bool">HasValue</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformPreviousOperation(double)">PerformPreviousOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevVal">_prevVal</a></span> <span class="punctuation" data-toggle="tooltip" title="double">=</span> <span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">Value</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">else</span> <span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevOper">_prevOper</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">!=</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper">.</span><span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper.None">None</a></span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="Examples.UITests.ModelCalculator.PerformPreviousOperation(double)"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.PerformPreviousOperation(double)">PerformPreviousOperation</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevVal">_prevVal</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="double?"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._display">_display</a></span> <span class="punctuation" data-toggle="tooltip" title="double?">=</span> <span class="keyword">null</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="bool"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._prevEqual">_prevEqual</a></span> <span class="punctuation" data-toggle="tooltip" title="bool">=</span> <span class="keyword" data-toggle="tooltip" title="bool">true</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
+<h2 id="about-the-model-implementation">About the Model Implementation</h2>
+<p>A word of warning to anyone considering writing a model for an imperative
+program: The model probably looks as trivial as the one above once you finally
+get it working. However, there are many nuances in the implementation you have
+to deal with when developing the model. This is because the state of the model
+and the actual program must match at all times. If they do not match in some
+specific case, LinqCheck will almost certainly find that case and complain
+about it. So, prepare for finding these special cases and spending some time
+fixing your model.</p>
 
 				</div>
 				<ul class="pager">

@@ -132,6 +132,7 @@
   list-style: circle;
 }
 .markdown li {
+  padding-left: 8px;
   margin-bottom: 8px;
 }
 .markdown li p:last-child {
