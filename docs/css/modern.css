@@ -29,6 +29,9 @@
 }
 .markdown p {
   margin: 1em;
+  -ms-hyphens: auto;
+  -moz-hyphens: auto;
+  -webkit-hyphens: auto;
   hyphens: auto;
 }
 .markdown img {
