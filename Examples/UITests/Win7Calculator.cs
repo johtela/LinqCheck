@@ -1,4 +1,14 @@
-﻿namespace Examples.UITests
+﻿/*
+# Windows 7 Calculator
+
+The calculator in Windows 7 is probably written in C++, and is a fairly old 
+application. Nevertheless, it fully supports the automation interfaces, and 
+allows us to control it though them. Accessibility features utilize also 
+automation interfaces, so all standard Windows applications support them.
+
+
+*/
+namespace Examples.UITests
 {
 	using System;
 	using System.Windows.Automation;
