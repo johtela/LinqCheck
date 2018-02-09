@@ -1,6 +1,6 @@
 ﻿/*
 # Using UI Automation
-It is not a well known fact, but .NET framework includes an ample UI automation 
+It is a little known fact that .NET framework includes an ample UI automation 
 library. This library resides under the System.Windows.Automation namespace. 
 Through the facilities provided by the library you can control applications 
 with Windows Forms, WPF, or plain old Win32 GUIs. So, essentially all types of 
@@ -111,7 +111,7 @@ namespace Examples.UITests
 		}
 		/*
 		We can wait that a button becomes enabled by using the method below. It
-		will throw an exception, if an element is not enabled until the 
+		will throw an exception, if the element is not enabled until the 
 		specified time has elapsed.
 		*/
 		protected void WaitEnabled (AutomationElement element, int timeoutInMs)
@@ -141,9 +141,9 @@ namespace Examples.UITests
 		}
 		/*
 		You can get the automation element corresponding a button with the
-		following method. It basically searches the tree of elements for the
-		given name. If it finds it, the method stores the element reference in 
-		the `_elements`	dictionary. So, the next time you ask for the same 
+		following method. It searches the tree of elements for the given name. 
+		If it finds it, the method stores the element reference in the 
+		`_elements`	dictionary. So, the next time you ask for the same 
 		button it can be returned more quickly from the dictionary.
 		*/
 		protected AutomationElement GetButton (string name)

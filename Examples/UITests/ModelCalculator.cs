@@ -4,7 +4,7 @@
 The model implementation should work exactly as the application it's mimicking.
 Since we don't have the source code for the Windows calculator, we have to 
 reverse-engineer its operation. Luckily, calculator's functionality is quite 
-simple - although when I developed the model, LinqCheck found many command 
+simple. Although when developing the model, LinqCheck found many command 
 sequences where the result of the calculation did not match my assumptions. 
 This is why the model implementation went through quite many revisions before 
 stabilizing into the current one.

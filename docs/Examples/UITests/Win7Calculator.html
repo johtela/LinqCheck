@@ -136,16 +136,32 @@
 	<li class="next"><a href="../../Examples/UITests/Win10Calculator.html">Next: Windows 10 Calculator</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
+					<h1 id="windows-7-calculator">Windows 7 Calculator</h1>
+<p>The calculator in Windows 7 is probably written in C++, and is a fairly old
+application. Nevertheless, it fully supports the automation facilities.
+Windows' accessibility features are also built upon automation, so all
+standard Windows applications have to support it.</p>
+<p>So, let's implement the necessary plumbing to control the calculator. We do that
+by inheriting the Automated class and implementing the ICalculator interface.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Windows<span class="punctuation">.</span>Automation<span class="punctuation">;</span>
 
 	<span class="keyword" id="Examples.UITests.Win7Calculator">class</span> <span class="typename">Win7Calculator</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.Automated"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated">Automated</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ICalculator"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.ICalculator">ICalculator</a></span>
 	<span class="punctuation">{</span>
-		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span id="Examples.UITests.Win7Calculator._result">_result</span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.Win7Calculator()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Win7Calculator()">public</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Win7Calculator()">Win7Calculator</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<p>The only data we store is the automation element for the calculator's
+display text box.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span id="Examples.UITests.Win7Calculator._result">_result</span><span class="punctuation">;</span>
+</code></pre>
+<h2 id="opening-and-closing-the-calculator">Opening and Closing the Calculator</h2>
+<p>The calculator is launched when the class is created, so we start it in
+the constructor. After the calculator started successfully, we find the
+automation element for the text box representing the result display. We
+find the text box by it's automation ID property, since it does not
+have a name.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.Win7Calculator()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Win7Calculator()">public</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Win7Calculator()">Win7Calculator</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.Automated.StartApp(string, string, int)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.StartApp(string, string, int)">StartApp</a></span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Calc.exe&quot;</span><span class="punctuation">,</span> <span class="string" data-toggle="tooltip" title="string">&quot;Calculator&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator._result">_result</a></span> <span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">=</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated._root">_root</a></span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.FindFirst(System.Windows.Automation.TreeScope, System.Windows.Automation.Condition)">FindFirst</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">TreeScope</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.TreeScope">.</span><span data-toggle="tooltip" title="System.Windows.Automation.TreeScope">Descendants</span><span class="punctuation">,</span> 
@@ -154,39 +170,52 @@
 				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.Exception">new</span> <span class="typename">Exception</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Could not find result box&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Clear()"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator.Clear()">Clear</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.Dispose()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Dispose()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Dispose()">Dispose</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<p>Disposing the object calls the inherited <code>QuitApp</code> method, which closes
+the calculator.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.Dispose()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Dispose()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Dispose()">Dispose</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.Automated.QuitApp()"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.QuitApp()">QuitApp</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.PushDigitButton(byte)" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.PushDigitButton(byte)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.PushDigitButton(byte)">PushDigitButton</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> digit<span class="punctuation">)</span>
-		<span class="punctuation">{</span>
-			<span data-toggle="tooltip" title="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)">GetInvokePattern</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetDigitButton(byte)"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator.GetDigitButton(byte)">GetDigitButton</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="byte">digit</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">.</span><span data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">Invoke</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
-		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.GetDigitButton(byte)" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetDigitButton(byte)">public</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetDigitButton(byte)">GetDigitButton</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span>
+</code></pre>
+<h2 id="pushing-digit-buttons">Pushing Digit Buttons</h2>
+<p>The digit buttons in Windows 7 calculator are named simply with numbers
+from 0 to 9. So we can locate the buttons easily and use the inherited
+helper methods to push them.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Digit(byte)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span data-toggle="tooltip" title="byte">number</span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span class="punctuation" data-toggle="tooltip" title="bool">(</span><span data-toggle="tooltip" title="byte">number</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;</span> <span class="number" data-toggle="tooltip" title="int">9</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">)</span>
-				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;mumber must be a digit 0-9&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
-			<span class="keyword">return</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetButton(string)">GetButton</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="byte">number</span><span class="punctuation" data-toggle="tooltip" title="byte.ToString()">.</span><span data-toggle="tooltip" title="byte.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;mumber must be between 0-9&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetInvokePattern(System.Windows.Automation.AutomationElement)">GetInvokePattern</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.GetButton(string)">GetButton</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="byte">number</span><span class="punctuation" data-toggle="tooltip" title="byte.ToString()">.</span><span data-toggle="tooltip" title="byte.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">.</span><span data-toggle="tooltip" title="System.Windows.Automation.InvokePattern.Invoke()">Invoke</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.GetResult()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()">public</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()">GetResult</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<h2 id="reading-the-result">Reading the Result</h2>
+<p>To get the result displayed currently, we just read the name property
+of the automation element we stored previously. The following helper
+method returns the result as string.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.GetResult()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()">public</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()">GetResult</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator._result">_result</a></span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPropertyValue(System.Windows.Automation.AutomationProperty)">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationElement.GetCurrentPropertyValue(System.Windows.Automation.AutomationProperty)">GetCurrentPropertyValue</span> <span class="punctuation">(</span>
 				<span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span><span class="punctuation" data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">.</span><span data-toggle="tooltip" title="System.Windows.Automation.AutomationProperty">NameProperty</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="object.ToString()">.</span><span data-toggle="tooltip" title="object.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.Display">public</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> Display <span class="punctuation">=&gt;</span> 
+</code></pre>
+<p>We need to convert the result to a double to implement the ICalculator
+interface's <code>Display</code> property. We try to parse the result and if we
+fail, we return <code>NaN</code>.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.Display">public</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> Display <span class="punctuation">=&gt;</span> 
 			<span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.TryParse(string, out double)">.</span><span data-toggle="tooltip" title="double.TryParse(string, out double)">TryParse</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator.GetResult()">GetResult</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span> <span class="keyword">out</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> result<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="double">?</span> 
 				<span data-toggle="tooltip" title="double">result</span> <span class="punctuation" data-toggle="tooltip" title="double">:</span> 
 				<span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double">.</span><span data-toggle="tooltip" title="double">NaN</span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.ResultAvailable">public</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> ResultAvailable <span class="punctuation">=&gt;</span>
+</code></pre>
+<p>To check if a result is available, we again just try to parse it.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.ResultAvailable">public</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> ResultAvailable <span class="punctuation">=&gt;</span>
 			<span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.TryParse(string, out double)">.</span><span data-toggle="tooltip" title="double.TryParse(string, out double)">TryParse</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.GetResult()"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator.GetResult()">GetResult</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span> <span class="keyword">out</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> result<span class="punctuation">)</span><span class="punctuation">;</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.Add()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Add()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+</code></pre>
+<h2 id="pushing-operator-buttons">Pushing Operator Buttons</h2>
+<p>The operator buttons are also named quite logically in the automation
+element tree, so pushing them is just a matter of calling the inherited
+<code>PushButton</code> method with the correct name.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Win7Calculator.Add()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Add()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Add()">Add</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.Automated.PushButton(string)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.PushButton(string)">PushButton</a></span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Add&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
@@ -199,13 +228,6 @@
 		<span class="keyword" id="Examples.UITests.Win7Calculator.Divide()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Divide()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Divide()">Divide</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span data-toggle="tooltip" title="Examples.UITests.Automated.PushButton(string)"><a href="../../Examples/UITests/Automated.html#Examples.UITests.Automated.PushButton(string)">PushButton</a></span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Divide&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
-		<span class="punctuation">}</span>
-
-		<span class="keyword" id="Examples.UITests.Win7Calculator.Digit(byte)" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Digit(byte)">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Digit(byte)">Digit</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="byte">byte</span> number<span class="punctuation">)</span>
-		<span class="punctuation">{</span>
-			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="byte">number</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;</span> <span class="number" data-toggle="tooltip" title="int">9</span><span class="punctuation">)</span>
-				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="System.ArgumentException">new</span> <span class="typename">ArgumentException</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Invlalid digit&quot;</span><span class="punctuation">,</span> <span class="string" data-toggle="tooltip" title="string">&quot;number&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
-			<span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.PushDigitButton(byte)"><a href="../../Examples/UITests/Win7Calculator.html#Examples.UITests.Win7Calculator.PushDigitButton(byte)">PushDigitButton</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="byte">number</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 
 		<span class="keyword" id="Examples.UITests.Win7Calculator.Multiply()" data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Multiply()">public</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Win7Calculator.Multiply()">Multiply</span> <span class="punctuation">(</span><span class="punctuation">)</span>
@@ -225,6 +247,8 @@
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
+<h2 id="next-steps">Next Steps</h2>
+<p>That was pretty easy. Now we can do the same drill for Windows 10 calculator.</p>
 
 				</div>
 				<ul class="pager">

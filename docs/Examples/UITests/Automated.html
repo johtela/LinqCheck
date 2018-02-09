@@ -137,7 +137,7 @@
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="using-ui-automation">Using UI Automation</h1>
-<p>It is not a well known fact, but .NET framework includes an ample UI automation
+<p>It is a little known fact that .NET framework includes an ample UI automation
 library. This library resides under the System.Windows.Automation namespace.
 Through the facilities provided by the library you can control applications
 with Windows Forms, WPF, or plain old Win32 GUIs. So, essentially all types of
@@ -237,7 +237,7 @@ be done by calling the following method.</p>
 		<span class="punctuation">}</span>
 </code></pre>
 <p>We can wait that a button becomes enabled by using the method below. It
-will throw an exception, if an element is not enabled until the
+will throw an exception, if the element is not enabled until the
 specified time has elapsed.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)" data-toggle="tooltip" title="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)">protected</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.WaitEnabled(System.Windows.Automation.AutomationElement, int)">WaitEnabled</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> element<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> timeoutInMs<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
@@ -265,9 +265,9 @@ get enabled after some operation is performed.</p>
 		<span class="punctuation">}</span>
 </code></pre>
 <p>You can get the automation element corresponding a button with the
-following method. It basically searches the tree of elements for the
-given name. If it finds it, the method stores the element reference in
-the <code>_elements</code>	dictionary. So, the next time you ask for the same
+following method. It searches the tree of elements for the given name.
+If it finds it, the method stores the element reference in the
+<code>_elements</code>	dictionary. So, the next time you ask for the same
 button it can be returned more quickly from the dictionary.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.Automated.GetButton(string)" data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)">protected</span> <span class="typename" data-toggle="tooltip" title="System.Windows.Automation.AutomationElement">AutomationElement</span> <span data-toggle="tooltip" title="Examples.UITests.Automated.GetButton(string)">GetButton</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> name<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
