@@ -139,20 +139,6 @@
 			return prop.Bind (value => predicate (value) ? value.ToProp () : value.Fail ());
 		}
 
-		public static Prop<T> Label<T> (this Prop<T> prop, string label)
-		{
-			return state =>
-			{
-				state.Label = label;
-				return prop (state);
-			};
-		}
-
-        public static Prop<T> Label<T> (this Prop<T> prop, string label, params object[] args)
-        {
-            return prop.Label (string.Format (label, args));
-        }
-
         private static bool Test<T> (Prop<T> prop, int tries, TestState state)
 		{
 			try
@@ -208,8 +194,9 @@
 				values = GenerateValues (state.ShrunkValues, current);
 				try
 				{
-					if (!Test (prop, 1, new TestState (TestPhase.Shrink, state.Seed, state.Size, 
-						values, state.ShrunkValues)))
+					if (!Test (prop, 1, new TestState (TestPhase.Shrink, 
+						state.Seed, state.Size, state.Label, values, 
+						state.ShrunkValues)))
 					{
 						var weight = current.Sum ();
 						if (weight <= bestWeight)
@@ -226,12 +213,13 @@
 		}
 
 		public static Prop<T> Check<T> (this Prop<T> prop, Expression<Func<T, bool>> condition, 
-			int tries = 100)
+			int tries = 100, string label = null)
 		{
 			var seed = DateTime.Now.Millisecond;
 			var size = 10;
-			var testProp = prop.Label(condition.Body.ToString ()).FailIf (condition.Compile ());
-			var state = new TestState (TestPhase.Generate, seed, size);
+			label = label ?? condition.Body.ToString ();
+			var testProp = prop.FailIf (condition.Compile ());
+			var state = new TestState (TestPhase.Generate, seed, size, label);
 
 			// Testing phase.
 			if (!Test<T> (testProp, tries, state))
@@ -239,13 +227,13 @@
 				// Shrinking phase.
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.Write ("Falsifiable after {0} tests. Shrinking input.", state.SuccessfulTests + 1);
-				state = new TestState (TestPhase.StartShrink, seed, size, state.Values,
-					new List<List<object>> ());
+				state = new TestState (TestPhase.StartShrink, seed, size, label,
+					state.Values, new List<List<object>> ());
 				Test (testProp, 1, state);
 				Debug.Assert (state.Values.Count == state.ShrunkValues.Count);
 				var optimized = Optimize (testProp, state);
 				Console.ResetColor ();
-				state = new TestState (TestPhase.Shrink, seed, size, optimized, null);
+				state = new TestState (TestPhase.Shrink, seed, size, label, optimized, null);
 				// Fail again with optimized input without catching the exception.
 				testProp (state);
 				throw new TestFailed ("The failed property was re-evaluated, but the error did not reoccur. "

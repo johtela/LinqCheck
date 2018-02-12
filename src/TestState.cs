@@ -14,22 +14,24 @@
         public string Label;
         public int SuccessfulTests;
         public int DiscardedTests;
-        public Dictionary<string, int> Classes = new Dictionary<string,int> ();
+        public SortedDictionary<string, int> Classes = 
+			new SortedDictionary<string,int> ();
         public int CurrentValue;
         public readonly List<object> Values;
         public readonly List<List<object>> ShrunkValues;
 
-        public TestState(TestPhase phase, int seed, int size) :
-            this (phase, seed, size, null, null)
+        public TestState(TestPhase phase, int seed, int size, string label) :
+            this (phase, seed, size, label, null, null)
         {}
 
-        public TestState(TestPhase phase, int seed, int size, List<object> values, 
-            List<List<object>> shrunkValues)
+        public TestState(TestPhase phase, int seed, int size, string label, 
+			List<object> values, List<List<object>> shrunkValues)
         {
             Phase = phase;
             Random = new Random(seed);
 			Seed = seed;
             Size = size;
+			Label = label;
             Values = values ?? new List<object>();
             ShrunkValues = shrunkValues;
         }
