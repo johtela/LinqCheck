@@ -1,18 +1,18 @@
 ﻿/*
 # Testing Programs with Mutable State
-Pure functions are easy to test with LinqCheck as we can call them 
-directly from our properties. We can pass the generated input to our
-functions, without needing to set up any additional state. But what about
-programs which are not pure, which have mutable internal state? The majority
-of code running in real world falls into this category.
+Pure functions are easy to test with LinqCheck as we can call them directly 
+from our properties. We can pass the generated input to our functions without 
+setting up any additional state. But what about programs which are not pure, 
+which have mutable internal state? The majority of code running in real world 
+falls into this category.
 
 It is possible to use property based testing with mutable state, but it 
 incurs a bit more work than what is required for purely functional code. Let's
-say that we have a mutable object with a set of public methods which might 
-change its internal state. What we can do is generate random sequences of 
-method calls. After the calls are executed we check that the object's state is 
-what we expect. The question is, however, how can we know what the state should 
-be after a random sequence of actions. What properties can we actually check?
+say that we have a mutable object with a set of public methods which may change 
+its internal state. What we can do is generate random sequences of method calls. 
+After the calls are executed we check that the object's state is what we expect. 
+The question is, however, how can we know what the state should be after a 
+random sequence of actions. What properties can we actually check?
 
 In practice, the easiest solution to this problem is to create a simplified 
 model of the program we want to test. The model captures the essential features 
@@ -67,7 +67,7 @@ namespace Examples.UITests
 	using ExtensionCord;
 	using LinqCheck;
 	/*
-	What kind of model could we build for the calculator? The obvious option 
+	What kind of model could we build for the calculator? The obvious choice 
 	works fine for our purposes. So, let's encapsulate the calculator in a 
 	simple interface with methods corresponding to the calculator buttons. 
 	Calling one of the methods has the same effect as pushing the button.

@@ -73,10 +73,10 @@ namespace Examples
 		implementation for `IArbitrary<T>`.
 
 		## Testing Properties of Sequences
-		So, what properties should all sequences have? Let's start with the 
-		easy ones. First we'll check that the First and Rest properties
-		are correct. Note that our test method is generic, it can basically
-		test this property for any sequences of any item type.
+		What properties should all sequences have? Let's start with the easy 
+		ones. First we'll check that the First and Rest properties are correct. 
+		Note that our test method is generic, it can basically test this 
+		property for any sequences of any item type.
 		*/
 		public void CheckFirstAndRest<T>()
 		{
@@ -278,7 +278,7 @@ namespace Examples
 			 length of the sequence. By adding this clause we get a report 
 			 with the results of how many test cases we have with the specified 
 			 property. The report helps us determine, for example, if we have
-			 enough test coverage on longer lists.
+			 enough test coverage for longer sequences.
 			 */
 			 orderby seq.Count ()
 			 select new { seq, item, newSeq })
@@ -292,10 +292,10 @@ namespace Examples
 			/*
 			### Changing the Size of the Generated Data
 			Before the second check let's use the `Restrict` combinator to make
-			the test range a bit bigger. Restrict either widens our narrows our
-			test set. The default test "size" is 10, which means that we don't 
-			get sequences longer than 9 items. So, effectively we double our 
-			test range by setting the size to 20.
+			the test range a bit bigger. The combinator either widens our 
+			narrows our	test set. The default test "size" is 10, which means 
+			that we don't get sequences longer than 9 items. Effectively, we 
+			double our test range by setting the size to 20.
 			
 			The second property says that if we find the same item that was 
 			removed in the new sequence, it must be a duplicate, and thus 

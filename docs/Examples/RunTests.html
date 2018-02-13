@@ -136,17 +136,33 @@
 	<li class="next"><a href="../src/Gen.html">Next: Generators</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
+					<h1 id="running-the-tests">Running the Tests</h1>
+<p>The only thing left to do is to run all the test fixtures we built in the
+previous sections. As stated in the beginning, we have many options for a test
+runner; practically any of the unit testing frameworks will do. The simplest
+solution, though, is to use the built-in command line runner. It is typically
+called from the main method. The code below shows how to run the three test
+fixtures we defined previously.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> LinqCheck<span class="punctuation">;</span>
-	<span class="keyword">using</span> System<span class="punctuation">.</span>Diagnostics<span class="punctuation">;</span>
 	<span class="keyword">using</span> UITests<span class="punctuation">;</span>
 
 	<span class="keyword" id="Examples.RunTests">class</span> <span class="typename">RunTests</span>
 	<span class="punctuation">{</span>
 		<span class="keyword" id="Examples.RunTests.Main(string[])" data-toggle="tooltip" title="Examples.RunTests.Main(string[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.RunTests.Main(string[])">Main</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">[</span><span class="punctuation">]</span> args<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="typename" data-toggle="tooltip" title="LinqCheck.Tester"><a href="../src/Tester.html#LinqCheck.Tester">Tester</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">.</span><span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])"><a href="../src/Tester.html#LinqCheck.Tester.RunTestsTimed(object[])">RunTestsTimed</a></span> <span class="punctuation">(</span>
+</code></pre>
+<p>There are two variants for the test runner, the <code>RunTests</code> will
+execute test methods without gathering any timing data.
+<code>RunTestsTimed</code> will record how long each test takes and show the
+elapsed time with the results. The output will appear in the
+console window. If you want it somewhere else, 	use the standard
+<code>&gt;</code> directive in the command line to redirect the output to a file,
+for example.</p>
+<p>Both methods take a variable list of test fixtures as an argument.
+Just create an instance of each fixture and pass it to the methods.</p>
+<pre class="csharp"><code class="csharp">			<span class="typename" data-toggle="tooltip" title="LinqCheck.Tester"><a href="../src/Tester.html#LinqCheck.Tester">Tester</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">.</span><span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])"><a href="../src/Tester.html#LinqCheck.Tester.RunTestsTimed(object[])">RunTestsTimed</a></span> <span class="punctuation">(</span>
 				<span class="keyword" data-toggle="tooltip" title="Examples.BasicTests">new</span> <span class="typename"><a href="../Examples/BasicTests.html#Examples.BasicTests">BasicTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span>
 				<span class="keyword" data-toggle="tooltip" title="Examples.SeqTests">new</span> <span class="typename"><a href="../Examples/SeqTests.html#Examples.SeqTests">SeqTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">,</span>
 				<span class="keyword" data-toggle="tooltip" title="Examples.UITests.CalculatorTests">new</span> <span class="typename"><a href="../Examples/UITests/CalculatorTests.html#Examples.UITests.CalculatorTests">CalculatorTests</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
@@ -154,6 +170,10 @@
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
+<h2 id="conclusion">Conclusion</h2>
+<p>Hopefully you got some idea about how property based testing is done with
+LinqCheck based on these few examples. Next we will jump to the implementation
+and cover all the concepts needed in LinqCheck's design.</p>
 
 				</div>
 				<ul class="pager">
