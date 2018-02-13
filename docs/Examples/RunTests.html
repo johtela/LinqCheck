@@ -153,13 +153,12 @@ fixtures we defined previously.</p>
 		<span class="keyword" id="Examples.RunTests.Main(string[])" data-toggle="tooltip" title="Examples.RunTests.Main(string[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="Examples.RunTests.Main(string[])">Main</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation">[</span><span class="punctuation">]</span> args<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 </code></pre>
-<p>There are two variants for the test runner, the <code>RunTests</code> will
-execute test methods without gathering any timing data.
-<code>RunTestsTimed</code> will record how long each test takes and show the
-elapsed time with the results. The output will appear in the
-console window. If you want it somewhere else, 	use the standard
-<code>&gt;</code> directive in the command line to redirect the output to a file,
-for example.</p>
+<p>There are two variants of the test runner. <code>RunTests</code> will execute
+test methods without gathering any timing data. <code>RunTestsTimed</code>
+will record how long each test takes and show the elapsed time with
+the results. The output will appear in the console window. If you
+want it someplace else, use the standard <code>&gt;</code> directive in the
+command line to redirect the output to a file, for example.</p>
 <p>Both methods take a variable list of test fixtures as an argument.
 Just create an instance of each fixture and pass it to the methods.</p>
 <pre class="csharp"><code class="csharp">			<span class="typename" data-toggle="tooltip" title="LinqCheck.Tester"><a href="../src/Tester.html#LinqCheck.Tester">Tester</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">.</span><span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])"><a href="../src/Tester.html#LinqCheck.Tester.RunTestsTimed(object[])">RunTestsTimed</a></span> <span class="punctuation">(</span>
@@ -171,9 +170,9 @@ Just create an instance of each fixture and pass it to the methods.</p>
 <span class="punctuation">}</span>
 </code></pre>
 <h2 id="conclusion">Conclusion</h2>
-<p>Hopefully you got some idea about how property based testing is done with
-LinqCheck based on these few examples. Next we will jump to the implementation
-and cover all the concepts needed in LinqCheck's design.</p>
+<p>Hopefully you now got the basics on how property based testing is practiced
+with LinqCheck. Next we will jump to the implementation and cover all the
+concepts in LinqCheck's design.</p>
 
 				</div>
 				<ul class="pager">
