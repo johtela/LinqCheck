@@ -45,7 +45,7 @@
   - page: Implementation
     desc: Literate documentation for the LinqCheck library.
     subs:
-      - page: Generators
+      - page: Generators and Monads
         file: src\Gen.cs
         desc: Generalizing random numbers.
 
