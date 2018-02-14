@@ -137,15 +137,16 @@
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="generators-and-monads">Generators and Monads</h1>
-<p>Most programming languages have some kind of random number generator. For C#,
-there is the Random class which lives in the System namespace. It can produce
-random integer or floating point numbers. That is well and good, but how can
-we generate random values of any type? To put it differently, how can we
-generalize the <code>Random</code> class to <code>Random&lt;T&gt;</code> where <code>T</code> is any type?</p>
-<p>The answer is that we need to consider the random value generator to be
-abstract, and define it as a function. Effectively we need a function which
-takes a random number and transforms it to some specific type <code>T</code>. So, we
-define our generic generator as a delegate and call it <code>Gen&lt;T&gt;</code>.</p>
+<p>Most programming languages have a random number generator of some kind. The
+Random class in the System namespace provides the default implementation for
+.NET. It can produce random integers and floating point numbers. That is all
+well and good, but we need to generate many more types than just numbers. The
+question is: how can we generalize the <code>Random</code> class to provide values of any
+type?</p>
+<p>The answer is that we need to turn the random value generator into an abstract
+concept, and define it as a function with multiple implementations. The function
+takes a random number generator and transforms its output to some specific type <code>T</code>.
+Let's define our generic generator as a delegate and call it <code>Gen&lt;T&gt;</code>.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
@@ -155,29 +156,29 @@ define our generic generator as a delegate and call it <code>Gen&lt;T&gt;</code>
 
 	<span class="keyword" id="T LinqCheck.Gen<T>(System.Random, int)">public</span> <span class="keyword">delegate</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span> <span class="typename">Gen</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Random">Random</span> rnd<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> size<span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
-<p>The delegate takes an instance of Random class and the size parameter,
+<p>The delegate takes as arguments an instance of the Random class and size,
 which represents the range of the returned value. The bigger the size the
 wider range of values should be returned. For integers, the size parameter
 limits the maximum number that the generator can return. For strings, it
-specifies the maximum length. The interpretation of the argument is
+specifies the maximum length. The interpretation of the argument is thus
 context-sensitive.</p>
 <p>We could now provide an implementation of <code>Gen&lt;T&gt;</code> for every type <code>T</code> that
 we would like to generate, but that would result in a lot of boilerplate
-code. Instead of going that route, let's take our abstraction one step further
-and transform our <code>Gen&lt;T&gt;</code> type to a
+code. Instead of taking that route, let's take our abstraction one step
+further and make <code>Gen&lt;T&gt;</code> an instance of a
 <a href="https://en.wikipedia.org/wiki/Monad_(functional_programming)"><em>monad</em></a>.</p>
 <h2 id="monads">Monads</h2>
-<p>There are a lot of articles in the net trying to explain monads through
-category theory or using some (weird) analogy. Leaving the theoretical and
-philosophical points aside, we will just show how a monad is implemented in
-C#. If you are unfamiliar with the concept, hopefully you can still grasp
-the principle by following the code.</p>
+<p>The internet is littered with articles and blog posts explaining monads
+through <a href="https://en.wikipedia.org/wiki/Category_theory">category theory</a> or
+using some (obscure) analogy. Leaving theoretical and pedagogical aspects
+aside, we will just show a real-world example of a monad implemented in C#.
+Even if you are unfamiliar with the concept, hopefully you can grasp the
+principle by following the code.</p>
 <p>To build a monad you first of all need a generic type. Monad defines a way
-to <em>compose</em> these generic types together by providing two simple
-operations: <em>return</em> and <em>bind</em>. Assuming our generic type is called
-<span class="math">M \langle T \rangle</span>, these operations have the following signatures (we
-are using the <a href="https://en.wikipedia.org/wiki/Currying"><em>curried</em></a> notation
-here):</p>
+to <em>compose</em> instances of generic types together by providing two simple
+operations: <em>return</em> and <em>bind</em>. Assuming our generic type is <span class="math">M \langle T \rangle</span>,
+these operations have the following signatures (we are using the
+<a href="https://en.wikipedia.org/wiki/Currying"><em>curried</em></a> notation here):</p>
 <ul>
 <li><span class="math">return: T \to M \langle T \rangle</span></li>
 <li><span class="math">bind: M \langle T \rangle \to (T \to M \langle U \rangle) \to M \langle U \rangle</span></li>

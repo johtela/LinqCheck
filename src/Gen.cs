@@ -1,16 +1,17 @@
 /*
 # Generators and Monads
 
-Most programming languages have some kind of random number generator. For C#,
-there is the Random class which lives in the System namespace. It can produce
-random integer or floating point numbers. That is well and good, but how can
-we generate random values of any type? To put it differently, how can we 
-generalize the `Random` class to `Random<T>` where `T` is any type?
+Most programming languages have a random number generator of some kind. The 
+Random class in the System namespace provides the default implementation for
+.NET. It can produce random integers and floating point numbers. That is all
+well and good, but we need to generate many more types than just numbers. The 
+question is: how can we generalize the `Random` class to provide values of any 
+type?
 
-The answer is that we need to consider the random value generator to be 
-abstract, and define it as a function. Effectively we need a function which
-takes a random number and transforms it to some specific type `T`. So, we 
-define our generic generator as a delegate and call it `Gen<T>`.
+The answer is that we need to turn the random value generator into an abstract 
+concept, and define it as a function with multiple implementations. The function 
+takes a random number generator and transforms its output to some specific type `T`. 
+Let's define our generic generator as a delegate and call it `Gen<T>`.
 */
 namespace LinqCheck
 {
@@ -21,32 +22,32 @@ namespace LinqCheck
 
 	public delegate T Gen<T> (Random rnd, int size);
 	/*
-	The delegate takes an instance of Random class and the size parameter, 
+	The delegate takes as arguments an instance of the Random class and size, 
 	which represents the range of the returned value. The bigger the size the 
 	wider range of values should be returned. For integers, the size parameter
 	limits the maximum number that the generator can return. For strings, it 
-	specifies the maximum length. The interpretation of the argument is 
+	specifies the maximum length. The interpretation of the argument is thus
 	context-sensitive.
 
 	We could now provide an implementation of `Gen<T>` for every type `T` that 
 	we would like to generate, but that would result in a lot of boilerplate 
-	code. Instead of going that route, let's take our abstraction one step further
-	and transform our `Gen<T>` type to a
+	code. Instead of taking that route, let's take our abstraction one step 
+	further and make `Gen<T>` an instance of a
 	[_monad_](https://en.wikipedia.org/wiki/Monad_(functional_programming)).
 
 	## Monads
-	There are a lot of articles in the net trying to explain monads through 
-	category theory or using some (weird) analogy. Leaving the theoretical and 
-	philosophical points aside, we will just show how a monad is implemented in 
-	C#. If you are unfamiliar with the concept, hopefully you can still grasp 
-	the principle by following the code.
+	The internet is littered with articles and blog posts explaining monads 
+	through [category theory](https://en.wikipedia.org/wiki/Category_theory) or
+	using some (obscure) analogy. Leaving theoretical and pedagogical aspects 
+	aside, we will just show a real-world example of a monad implemented in C#. 
+	Even if you are unfamiliar with the concept, hopefully you can grasp the 
+	principle by following the code.
 
 	To build a monad you first of all need a generic type. Monad defines a way 
-	to _compose_ these generic types together by providing two simple 
-	operations: _return_ and _bind_. Assuming our generic type is called 
-	$M \langle T \rangle$, these operations have the following signatures (we 
-	are using the [_curried_](https://en.wikipedia.org/wiki/Currying) notation 
-	here):
+	to _compose_ instances of generic types together by providing two simple 
+	operations: _return_ and _bind_. Assuming our generic type is $M \langle T \rangle$, 
+	these operations have the following signatures (we are using the 
+	[_curried_](https://en.wikipedia.org/wiki/Currying) notation here):
 
 	*	$return: T \to M \langle T \rangle$
 	*	$bind: M \langle T \rangle \to (T \to M \langle U \rangle) \to M \langle U \rangle$
