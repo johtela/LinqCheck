@@ -175,7 +175,7 @@ aside, we will just show a real-world example of a monad implemented in C#.
 Even if you are unfamiliar with the concept, hopefully you can grasp the
 principle by following the code.</p>
 <p>To build a monad you first of all need a generic type. Monad defines a way
-to <em>compose</em> instances of generic types together by providing two simple
+to <em>compose</em> instances of a generic type together by providing two simple
 operations: <em>return</em> and <em>bind</em>. Assuming our generic type is <span class="math">M \langle T \rangle</span>,
 these operations have the following signatures (we are using the
 <a href="https://en.wikipedia.org/wiki/Currying"><em>curried</em></a> notation here):</p>
@@ -228,7 +228,8 @@ Again, we define the operation as static, generic, extension method.</p>
 </code></pre>
 <p>Let's again follow the types to implement the method. We need to
 return a value of type <code>Gen&lt;U&gt;</code> which corresponds to delegate
-<code>(Random, int) =&gt; U</code>.</p>
+<code>(Random, int) =&gt; U</code>. So, we need to return a lambda expression
+with two parameters <code>rnd</code> and <code>size</code>.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span class="punctuation">(</span>rnd<span class="punctuation">,</span> size<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span>
 			<span class="punctuation">{</span>
 </code></pre>
@@ -248,32 +249,75 @@ of our lambda expression, we call this generator with the same
 			<span class="punctuation">}</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 </code></pre>
-<p>Note that the implementation was almost mechanical. Think for a while,
-if you could have implemented the method differently. You will notice
-that if you try to change the implementation in any way, the code will
-not compile anymore; the types do not match.</p>
+<p>Note that the process was almost mechanical. Think for a while, if you
+could implement the method differently. You will notice that if you try
+to change the implementation in any way, the code will not compile
+anymore; the types do not match.</p>
 <p>This is the reason, why we usually do not have to concern ourselves
 with the monad laws. If your monad type is a pure function, it is
 impossible to define the <em>return</em> and <em>bind</em> operation in a way that
 violates the monad laws. There is literally only one way to implement
 them. Be warned that this realization can easily blow your mind...</p>
 <h3 id="what-have-we-achieved">What Have We Achieved?</h3>
+<p>Before going further, let's step back and contemplate what we just
+implemented. We defined two operations: <code>ToGen</code> converts a value into
+a generator, and <code>Bind</code> turns a generator for <code>T</code>'s into generator for
+<code>U</code>'s when given a function that maps a value of type <code>T</code> to a
+generator of type <code>Gen&lt;U&gt;</code>.</p>
+<p>Essentially we defined a way to create generators and chain them
+together while hiding the two parameters of the <code>Gen&lt;T&gt;</code> delegate.
+This does not sound like a big deal, but it is.</p>
+<p>We can construct arbitrary complex generators and implement almost
+all the functionality we need using just these two operations. The
+instance of the Random class and the size parameter are passed along
+transparently in the background. This simplifies our code and makes it
+<em>composable</em>. With monads we achieve true code reusability.</p>
 <h2 id="relation-to-linq">Relation to Linq</h2>
+<p>In the introduction there was a vague claim that Linq and monads are
+somehow related. Now we will show exactly how. We will implement Linq's
+core operations <code>Select</code> and <code>SelectMany</code> using <code>ToGen</code> and <code>Bind</code>. The
+<code>Select*</code> methods enable the syntactic sugaring that allows us to write
+generators as Linq expressions.</p>
+<p>With syntactic sugaring we can define our generators with a
+<a href="https://en.wikipedia.org/wiki/Domain-specific_language">domain specific language</a>.
+This DSL just happens to have the same syntax as Linq. Haskell provides
+syntactic sugaring for monads too, although its syntax resembles an
+imperative program rather than a SQL query. Nevertheless, the idea
+is exactly the same.</p>
+<h3 id="implementing-select-and-selectmany">Implementing Select and SelectMany</h3>
+<p>The signature of the Linq's <code>Select</code> method is almost the same as for
+<code>Bind</code>. The only difference is the type of the function given as the
+second argument. Instead of <code>Func&lt;T, Gen&lt;U&gt;&gt;</code> it is <code>Func&lt;T, U&gt;</code>.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Gen.Select<T, U>(LinqCheck.Gen<T>, System.Func<T, U>)" data-toggle="tooltip" title="LinqCheck.Gen.Select<T, U>(LinqCheck.Gen<T>, System.Func<T, U>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.Select<T, U>(LinqCheck.Gen<T>, System.Func<T, U>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<U>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="U"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.Select<T, U>(LinqCheck.Gen<T>, System.Func<T, U>)">Select</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> gen<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Func<T, U>">Func</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="U"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">&gt;</span> select<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>">gen</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, U>(System.Func<T, LinqCheck.Gen<U>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, U>(System.Func<T, LinqCheck.Gen<U>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>a <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, U>">select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="U.ToGen<U>()">.</span><span data-toggle="tooltip" title="U.ToGen<U>()"><a href="../src/Gen.html#LinqCheck.Gen.ToGen<T>(T)">ToGen</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+</code></pre>
+<p>Implementing <code>Select</code> is trivial using <code>ToGen</code> and <code>Bind</code>.</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>">gen</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, U>(System.Func<T, LinqCheck.Gen<U>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, U>(System.Func<T, LinqCheck.Gen<U>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>a <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, U>">select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="U.ToGen<U>()">.</span><span data-toggle="tooltip" title="U.ToGen<U>()"><a href="../src/Gen.html#LinqCheck.Gen.ToGen<T>(T)">ToGen</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		 &lt;summary&gt;
-		/// SelectMany extension method needed to enable Linq&#39;s syntactic sugaring.
-		/// &lt;/summary&gt;
-		<span class="keyword" id="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)" data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<V>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="V"><a href="../src/Gen.html#V">V</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">SelectMany</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">,</span> <span class="typename"><a href="../src/Gen.html#V">V</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> gen<span class="punctuation">,</span>
+</code></pre>
+<p>The <code>SelectMany</code> operation is called flatMap in some functional
+languages. It performs a double <code>Bind</code> as it combines a generator for
+<code>T</code>'s and a generator for <code>U</code>'s, and maps them to a generator for <code>V</code>'s.
+Whenever we have more than one select clause in a Linq expression this
+method is called.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)" data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<V>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="V"><a href="../src/Gen.html#V">V</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.SelectMany<T, U, V>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>, System.Func<T, U, V>)">SelectMany</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">,</span> <span class="typename"><a href="../src/Gen.html#V">V</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> gen<span class="punctuation">,</span>
 			<span class="typename" data-toggle="tooltip" title="System.Func<T, LinqCheck.Gen<U>>">Func</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<U>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="U"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> project<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Func<T, U, V>">Func</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="U"><a href="../src/Gen.html#U">U</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="V"><a href="../src/Gen.html#V">V</a></span><span class="punctuation">&gt;</span> select<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
-			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>">gen</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, V>(System.Func<T, LinqCheck.Gen<V>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, V>(System.Func<T, LinqCheck.Gen<V>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>a <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, LinqCheck.Gen<U>>">project</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<U>.Bind<U, V>(System.Func<U, LinqCheck.Gen<V>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<U>.Bind<U, V>(System.Func<U, LinqCheck.Gen<V>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>b <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, U, V>">select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="U">b</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="V.ToGen<V>()">.</span><span data-toggle="tooltip" title="V.ToGen<V>()"><a href="../src/Gen.html#LinqCheck.Gen.ToGen<T>(T)">ToGen</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+</code></pre>
+<p>As for <code>Select</code> the correct implementation reveals itself by
+following the types.</p>
+<pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>">gen</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, V>(System.Func<T, LinqCheck.Gen<V>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>.Bind<T, V>(System.Func<T, LinqCheck.Gen<V>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>a <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, LinqCheck.Gen<U>>">project</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<U>.Bind<U, V>(System.Func<U, LinqCheck.Gen<V>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<U>.Bind<U, V>(System.Func<U, LinqCheck.Gen<V>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>b <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Func<T, U, V>">select</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">a</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="U">b</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="V.ToGen<V>()">.</span><span data-toggle="tooltip" title="V.ToGen<V>()"><a href="../src/Gen.html#LinqCheck.Gen.ToGen<T>(T)">ToGen</a></span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		 &lt;summary&gt;
+</code></pre>
+<p>Using <code>Bind</code> and <code>ToGen</code> makes the implementation for <code>Select</code> and
+<code>SelectMany</code> completely generic. This means that these methods are
+defined exactly the same way for <em>any</em> monad we might come up with.
+Unfortunately it is not possible to reuse the implementation for other
+monads as there is no mechanism in C# to define them as a meta-type,
+but copying and pasting will work as well.</p>
+<p>There is another monad type in LinqCheck: <code>Prop&lt;T&gt;</code>. Check for yourself
+that its implementation of <code>Select</code> and <code>SelectMany</code> is same as above.</p>
+<pre class="csharp"><code class="csharp">		 &lt;summary&gt;
 		/// Where extension method needed to enable Linq&#39;s syntactic sugaring.
 		/// &lt;/summary&gt;
 		<span class="keyword" id="LinqCheck.Gen.Where<T>(LinqCheck.Gen<T>, System.Func<T, bool>)" data-toggle="tooltip" title="LinqCheck.Gen.Where<T>(LinqCheck.Gen<T>, System.Func<T, bool>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.Where<T>(LinqCheck.Gen<T>, System.Func<T, bool>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.Where<T>(LinqCheck.Gen<T>, System.Func<T, bool>)">Where</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> gen<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Func<T, bool>">Func</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span><span class="punctuation">&gt;</span> predicate<span class="punctuation">)</span>

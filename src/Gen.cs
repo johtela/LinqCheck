@@ -44,7 +44,7 @@ namespace LinqCheck
 	principle by following the code.
 
 	To build a monad you first of all need a generic type. Monad defines a way 
-	to _compose_ instances of generic types together by providing two simple 
+	to _compose_ instances of a generic type together by providing two simple 
 	operations: _return_ and _bind_. Assuming our generic type is $M \langle T \rangle$, 
 	these operations have the following signatures (we are using the 
 	[_curried_](https://en.wikipedia.org/wiki/Currying) notation here):
@@ -107,7 +107,8 @@ namespace LinqCheck
 			/*
 			Let's again follow the types to implement the method. We need to 
 			return a value of type `Gen<U>` which corresponds to delegate 
-			`(Random, int) => U`.
+			`(Random, int) => U`. So, we need to return a lambda expression
+			with two parameters `rnd` and `size`.
 			*/
 			return (rnd, size) =>
 			{
@@ -130,10 +131,10 @@ namespace LinqCheck
 			};
 		}
 		/*
-		Note that the implementation was almost mechanical. Think for a while,
-		if you could have implemented the method differently. You will notice
-		that if you try to change the implementation in any way, the code will 
-		not compile anymore; the types do not match.
+		Note that the process was almost mechanical. Think for a while, if you 
+		could implement the method differently. You will notice that if you try
+		to change the implementation in any way, the code will not compile 
+		anymore; the types do not match.
 
 		This is the reason, why we usually do not have to concern ourselves
 		with the monad laws. If your monad type is a pure function, it is 
@@ -142,23 +143,78 @@ namespace LinqCheck
 		them. Be warned that this realization can easily blow your mind...
 
 		### What Have We Achieved?
+
+		Before going further, let's step back and contemplate what we just 
+		implemented. We defined two operations: `ToGen` converts a value into 
+		a generator, and `Bind` turns a generator for `T`'s into generator for 
+		`U`'s when given a function that maps a value of type `T` to a 
+		generator of type `Gen<U>`.
+
+		Essentially we defined a way to create generators and chain them 
+		together while hiding the two parameters of the `Gen<T>` delegate. 
+		This does not sound like a big deal, but it is. 
 		
-		## Relation to Linq	
+		We can construct arbitrary complex generators and implement almost 
+		all the functionality we need using just these two operations. The 
+		instance of the Random class and the size parameter are passed along
+		transparently in the background. This simplifies our code and makes it 
+		_composable_. With monads we achieve true code reusability.
+
+		## Relation to Linq 
+
+		In the introduction there was a vague claim that Linq and monads are
+		somehow related. Now we will show exactly how. We will implement Linq's 
+		core operations `Select` and `SelectMany` using `ToGen` and `Bind`. The 
+		`Select*` methods enable the syntactic sugaring that allows us to write 
+		generators as Linq expressions. 
+		
+		With syntactic sugaring we can define our generators with a
+		[domain specific language](https://en.wikipedia.org/wiki/Domain-specific_language).
+		This DSL just happens to have the same syntax as Linq. Haskell provides
+		syntactic sugaring for monads too, although its syntax resembles an 
+		imperative program rather than a SQL query. Nevertheless, the idea 
+		is exactly the same.
+
+		### Implementing Select and SelectMany
+
+		The signature of the Linq's `Select` method is almost the same as for 
+		`Bind`. The only difference is the type of the function given as the 
+		second argument. Instead of `Func<T, Gen<U>>` it is `Func<T, U>`. 
 		*/
 		public static Gen<U> Select<T, U> (this Gen<T> gen, Func<T, U> select)
 		{
+			/*
+			Implementing `Select` is trivial using `ToGen` and `Bind`.
+			*/
 			return gen.Bind (a => select (a).ToGen ());
 		}
-
-		/// <summary>
-		/// SelectMany extension method needed to enable Linq's syntactic sugaring.
-		/// </summary>
+		/*
+		The `SelectMany` operation is called flatMap in some functional 
+		languages. It performs a double `Bind` as it combines a generator for 
+		`T`'s and a generator for `U`'s, and maps them to a generator for `V`'s.
+		Whenever we have more than one select clause in a Linq expression this 
+		method is called.
+		*/
 		public static Gen<V> SelectMany<T, U, V> (this Gen<T> gen,
 			Func<T, Gen<U>> project, Func<T, U, V> select)
 		{
+			/*
+			As for `Select` the correct implementation reveals itself by 
+			following the types. 
+			*/
 			return gen.Bind (a => project (a).Bind (b => select (a, b).ToGen ()));
 		}
-
+		/*
+		Using `Bind` and `ToGen` makes the implementation for `Select` and 
+		`SelectMany` completely generic. This means that these methods are
+		defined exactly the same way for _any_ monad we might come up with. 
+		Unfortunately it is not possible to reuse the implementation for other 
+		monads as there is no mechanism in C# to define them as a meta-type, 
+		but copying and pasting will work as well. 
+		
+		There is another monad type in LinqCheck: `Prop<T>`. Check for yourself 
+		that its implementation of `Select` and `SelectMany` is same as above.
+		*/
 		/// <summary>
 		/// Where extension method needed to enable Linq's syntactic sugaring.
 		/// </summary>
