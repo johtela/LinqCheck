@@ -5,13 +5,13 @@ Most programming languages have a random number generator of some kind. The
 Random class in the System namespace provides the default implementation for
 .NET. It can produce random integers and floating point numbers. That is all
 well and good, but we need to generate many more types than just numbers. The 
-question is: how can we generalize the `Random` class to provide values of any 
+question is: how can we generalize the Random class to provide values of any 
 type?
 
 The answer is that we need to turn the random value generator into an abstract 
 concept, and define it as a function with multiple implementations. The function 
-takes a random number generator and transforms its output to some specific type `T`. 
-Let's define our generic generator as a delegate and call it `Gen<T>`.
+gets a random number generator and transforms its output to a specific type `T`. 
+We define this abstract function as a delegate and call it `Gen<T>`.
 */
 namespace LinqCheck
 {
@@ -48,38 +48,103 @@ namespace LinqCheck
 	operations: _return_ and _bind_. Assuming our generic type is $M \langle T \rangle$, 
 	these operations have the following signatures (we are using the 
 	[_curried_](https://en.wikipedia.org/wiki/Currying) notation here):
-
-	*	$return: T \to M \langle T \rangle$
-	*	$bind: M \langle T \rangle \to (T \to M \langle U \rangle) \to M \langle U \rangle$
-
-	foo
+	$$
+	\begin{align}
+	return & : T \to M \langle T \rangle \\
+	bind & : M \langle T \rangle \to (T \to M \langle U \rangle) \to M \langle U \rangle
+	\end{align}
+	$$
+	All monads share these two operations. They differ, however, in how the 
+	operations are implemented. There are also [laws](https://wiki.haskell.org/Monad_laws) 
+	which all monads must obey, but we can ignore them for now.
+	
+	To make things more concrete, let's implement the two operators for our 
+	`Gen<T>` delegate. We put the operations into a static class called Gen.
 	*/
-
 	public static class Gen
 	{
-		/// <summary>
-		/// Monadic return lifts a value to Gen monadn.
-		/// </summary>
+		/*
+		### Implementing _return_
+		The signature of the _return_ operation is:
+		$$
+		T \to M \langle T \rangle
+		$$
+		The operation takes a value of type $T$ and returns it wrapped in the 
+		monad type $M \langle T \rangle$. Since _return_ is a reserved keyword 
+		in C# it is bad practice to define a method with that name. Instead, 
+		we name it `ToGen` to denote that the method transforms a value into
+		the Gen monad. It is a generic, static, extension method whose
+		signature in C# syntax looks like this:
+		*/
 		public static Gen<T> ToGen<T> (this T value)
 		{
+			/*
+			To implement the method, we can use a functional programming 
+			technique commonly called as _following the types_. It entails 
+			realizing that we are implementing a pure method, so we can only 
+			return a value which we can construct from our parameters. 
+			
+			The only parameter we get is a value of type `T`. We have to return 
+			a value of type `Gen<T>`, which is an alias for a delegate 
+			`(Random, int) => T`. There is practically only one way to implement 
+			that delegate given the parameters we have at hand. 
+			*/
 			return (rnd, size) => value;
 		}
-
-		/// <summary>
-		/// Monadic bind, the magical wand that allows composing Gens.
-		/// </summary>
+		/*
+		When we follow the types the implementation becomes obvious. 
+		
+		### Implementing _bind_
+		The signature of _bind_ is somewhat more complicated:
+		$$
+		M \langle T \rangle \to (T \to M \langle U \rangle) \to M \langle U \rangle
+		$$
+		but it can be mapped to the C# syntax in a straightforward fashion. 
+		Again, we define the operation as static, generic, extension method.
+		*/
 		public static Gen<U> Bind<T, U> (this Gen<T> gen, Func<T, Gen<U>> func)
 		{
+			/*
+			Let's again follow the types to implement the method. We need to 
+			return a value of type `Gen<U>` which corresponds to delegate 
+			`(Random, int) => U`.
+			*/
 			return (rnd, size) =>
 			{
+				/*
+				How should we implement this lambda expression? Well, we have 
+				been given two parameters: a generator of type `Gen<T>` and a 
+				function which maps `T` to `Gen<U>`. To get a value of type `T`
+				we need to call `gen`. Its arguments `(Random, int)` we get 
+				from the parameters of the lambda expression.
+				*/
 				var a = gen (rnd, size);
+				/*
+				Now we have a value of type `T` in variable `a`. The only thing
+				we can do with that variable is to feed it to `func` to get a 
+				generator of type `Gen<U>`. To get the expected result type `U`
+				of our lambda expression, we call this generator with the same 
+				`rnd` and `size` parameters as before.
+				*/
 				return func (a) (rnd, size);
 			};
 		}
+		/*
+		Note that the implementation was almost mechanical. Think for a while,
+		if you could have implemented the method differently. You will notice
+		that if you try to change the implementation in any way, the code will 
+		not compile anymore; the types do not match.
 
-		/// <summary>
-		/// Select extension method needed to enable Linq's syntactic sugaring.
-		/// </summary>
+		This is the reason, why we usually do not have to concern ourselves
+		with the monad laws. If your monad type is a pure function, it is 
+		impossible to define the _return_ and _bind_ operation in a way that 
+		violates the monad laws. There is literally only one way to implement 
+		them. Be warned that this realization can easily blow your mind...
+
+		### What Have We Achieved?
+		
+		## Relation to Linq	
+		*/
 		public static Gen<U> Select<T, U> (this Gen<T> gen, Func<T, U> select)
 		{
 			return gen.Bind (a => select (a).ToGen ());
