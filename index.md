@@ -21,8 +21,8 @@ UseMath: true
 > _C.A.R. Hoare in his 1980 Turing Award Lecture_
 
 Although [Tony Hoare's](https://en.wikipedia.org/wiki/Tony_Hoare) famous quote 
-is undoubtedly correct, it is increasingly difficult nowadays to design so 
-simple software that it is obviously bug-free by design. Software gets more and 
+is undoubtedly correct, it is increasingly difficult nowadays to design software 
+so simple that it is obviously bug-free by design. Software gets more and 
 more complex every day, and usually the only practical way to assure its quality 
 is to test it thoroughly. Design is important, as is aspiration for simplicity, 
 but they don't guarantee error free programs.

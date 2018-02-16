@@ -491,8 +491,8 @@ and <a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a> library
 <h2 id="choosing-between-generators">Choosing between Generators</h2>
 <p>Sometimes we have more than one generator for a type, and we want to
 randomly choose one of them. The <code>OneOf</code> combinator will choose a
-generator from an array when all elements have the same probability.
-In other words, the distribution of choices is even.</p>
+generator from an array using even distribution. I.e. each choice
+has an equal chance to be selected.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Gen.OneOf<T>(LinqCheck.Gen<T>[])" data-toggle="tooltip" title="LinqCheck.Gen.OneOf<T>(params LinqCheck.Gen<T>[])">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.OneOf<T>(params LinqCheck.Gen<T>[])">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.OneOf<T>(params LinqCheck.Gen<T>[])">OneOf</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">params</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span><span class="punctuation">[</span><span class="punctuation">]</span> gens<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)"><a href="../src/Gen.html#LinqCheck.Gen.ChooseInt(int, int)">ChooseInt</a></span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>[]">gens</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Length</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>i <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen<T>[]">gens</span><span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">;</span>
@@ -501,7 +501,7 @@ In other words, the distribution of choices is even.</p>
 <p>If you want a skewed distribution of the choices, you can use the
 <code>Frequency</code> method. It allows you to specify the frequency for each
 choice. The frequencies are defined as integers with relative ranges.
-For example, if choice <em>A</em> has a frequency of 3 and choice <em>B</em> 12,
+For example, if choice <em>A</em> has a frequency of 3 and choice <em>B</em> has 12,
 choice <em>B</em> is 4 times more likely to be selected than <em>A</em>.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Gen.Frequency<T>(System.Tuple<int, LinqCheck.Gen<T>>[])" data-toggle="tooltip" title="LinqCheck.Gen.Frequency<T>(params System.Tuple<int, LinqCheck.Gen<T>>[])">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Gen.Frequency<T>(params System.Tuple<int, LinqCheck.Gen<T>>[])">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Gen.Frequency<T>(params System.Tuple<int, LinqCheck.Gen<T>>[])">Frequency</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">params</span> <span class="typename" data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>">Tuple</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Gen.html#T">T</a></span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span><span class="punctuation">[</span><span class="punctuation">]</span> freqGens<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
@@ -514,19 +514,18 @@ choice <em>B</em> is 4 times more likely to be selected than <em>A</em>.</p>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
 </code></pre>
-<h2 id="deterministic-randomness">Deterministic Randomness</h2>
-<p>Before wrapping up the chapter for generators, let's still discuss about the
-requirement of determinism. The generators cannot be truly random; their output
-depends on the seed provided to the instance of the Random class that we pass
-around. To put it differently, they produce
-<a href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator"><em>pseudorandom</em></a>
+<h2 id="generators-are-deterministic">Generators Are Deterministic</h2>
+<p>Before wrapping up the chapter, let's discuss the requirement of determinism.
+Generators are not truly random; their output depends on the seed provided to
+the instance of the Random class that we pass around. To put it differently,
+they produce <a href="https://en.wikipedia.org/wiki/Pseudorandom_number_generator"><em>pseudorandom</em></a>
 values.</p>
 <p>This is important because we want to be able to generate a same sequence
 of values multiple times when we are generating test data. All of the
 combinators work deterministically. They extract random numbers from the <code>rnd</code>
 object and pass it around in the same manner every time they are called. This
-ensures that whatever generator we compose, it will still work
-deterministically.</p>
+ensures that whatever generator we compose, given the same seed, it will
+generate the same value.</p>
 
 				</div>
 				<ul class="pager">

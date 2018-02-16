@@ -397,8 +397,8 @@ namespace LinqCheck
 		## Choosing between Generators
 		Sometimes we have more than one generator for a type, and we want to
 		randomly choose one of them. The `OneOf` combinator will choose a 
-		generator from an array when all elements have the same probability. 
-		In other words, the distribution of choices is even.
+		generator from an array using even distribution. I.e. each choice
+		has an equal chance to be selected.
 		*/
 		public static Gen<T> OneOf<T> (params Gen<T>[] gens)
 		{
@@ -408,7 +408,7 @@ namespace LinqCheck
 		If you want a skewed distribution of the choices, you can use the 
 		`Frequency` method. It allows you to specify the frequency for each 
 		choice. The frequencies are defined as integers with relative ranges. 
-		For example, if choice _A_ has a frequency of 3 and choice _B_ 12, 
+		For example, if choice _A_ has a frequency of 3 and choice _B_ has 12, 
 		choice _B_ is 4 times more likely to be selected than _A_.
 		*/
 		public static Gen<T> Frequency<T> (params Tuple<int, Gen<T>>[] freqGens)
@@ -422,18 +422,17 @@ namespace LinqCheck
 	}
 }
 /*
-## Deterministic Randomness
-Before wrapping up the chapter for generators, let's still discuss about the 
-requirement of determinism. The generators cannot be truly random; their output
-depends on the seed provided to the instance of the Random class that we pass 
-around. To put it differently, they produce 
-[_pseudorandom_](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) 
+## Generators Are Deterministic
+Before wrapping up the chapter, let's discuss the requirement of determinism. 
+Generators are not truly random; their output depends on the seed provided to 
+the instance of the Random class that we pass around. To put it differently, 
+they produce [_pseudorandom_](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) 
 values. 
 
 This is important because we want to be able to generate a same sequence 
 of values multiple times when we are generating test data. All of the 
 combinators work deterministically. They extract random numbers from the `rnd` 
 object and pass it around in the same manner every time they are called. This 
-ensures that whatever generator we compose, it will still work 
-deterministically.
+ensures that whatever generator we compose, given the same seed, it will 
+generate the same value.
 */
