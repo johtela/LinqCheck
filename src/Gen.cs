@@ -143,7 +143,6 @@ namespace LinqCheck
 		them. Be warned that this realization can easily blow your mind...
 
 		### What Have We Achieved?
-
 		Before going further, let's step back and contemplate what we just 
 		implemented. We defined two operations: `ToGen` converts a value into 
 		a generator, and `Bind` turns a generator for `T`'s into generator for 
@@ -161,7 +160,6 @@ namespace LinqCheck
 		_composable_. With monads we achieve true code reusability.
 
 		## Relation to Linq 
-
 		In the introduction there was a vague claim that Linq and monads are
 		somehow related. Now we will show exactly how. We will implement Linq's 
 		core operations `Select` and `SelectMany` using `ToGen` and `Bind`. The 
@@ -180,16 +178,15 @@ namespace LinqCheck
 		The signature of the Linq's `Select` method is almost the same as for 
 		`Bind`. The only difference is the type of the function given as the 
 		second argument. Instead of `Func<T, Gen<U>>` it is `Func<T, U>`. 
+		Converting the function type to one expected by `Bind` is trivial using
+		`ToGen`.
 		*/
 		public static Gen<U> Select<T, U> (this Gen<T> gen, Func<T, U> select)
 		{
-			/*
-			Implementing `Select` is trivial using `ToGen` and `Bind`.
-			*/
 			return gen.Bind (a => select (a).ToGen ());
 		}
 		/*
-		The `SelectMany` operation is called flatMap in some functional 
+		The `SelectMany` operation is called _flatMap_ in some functional 
 		languages. It performs a double `Bind` as it combines a generator for 
 		`T`'s and a generator for `U`'s, and maps them to a generator for `V`'s.
 		Whenever we have more than one select clause in a Linq expression this 
@@ -200,38 +197,53 @@ namespace LinqCheck
 		{
 			/*
 			As for `Select` the correct implementation reveals itself by 
-			following the types. 
+			following the types. Note that the types force us to arrange
+			the `Bind` operations in a specific order.
 			*/
 			return gen.Bind (a => project (a).Bind (b => select (a, b).ToGen ()));
 		}
 		/*
-		Using `Bind` and `ToGen` makes the implementation for `Select` and 
+		Using `Bind` and `ToGen` makes the implementation of `Select` and 
 		`SelectMany` completely generic. This means that these methods are
-		defined exactly the same way for _any_ monad we might come up with. 
-		Unfortunately it is not possible to reuse the implementation for other 
-		monads as there is no mechanism in C# to define them as a meta-type, 
-		but copying and pasting will work as well. 
+		implemented exactly the same way for _any_ monad we might come up with. 
+		Unfortunately it is not possible to reuse these implementations for 
+		other monads like in Haskell since the C# type system lacks 
+		[type classes](https://en.wikipedia.org/wiki/Type_class), but copying 
+		and pasting will work as well. 
 		
 		There is another monad type in LinqCheck: `Prop<T>`. Check for yourself 
 		that its implementation of `Select` and `SelectMany` is same as above.
+
+		### Implementing Where
+		Linq's `Where` combinator is such that we cannot define it in terms of 
+		`ToGen` and `Bind`. `Where` filters out generated values which do not 
+		match a specified predicate. It might need to call the generator 
+		repeatedly to obtain a value that satisfies the predicate. In the 
+		worst case, it might not find a matching value at all. The combinator 
+		gives up after 100 tries and throw an exception. It is the caller's
+		responsibility to ensure that the predicate is not too strict.
 		*/
-		/// <summary>
-		/// Where extension method needed to enable Linq's syntactic sugaring.
-		/// </summary>
 		public static Gen<T> Where<T> (this Gen<T> gen, Func<T, bool> predicate)
 		{
 			return (rnd, size) =>
 			{
-				T result;
-				do { result = gen (rnd, size); }
-				while (!predicate (result));
-				return result;
+				T res;
+				var tries = 0;
+				do
+					res = gen (rnd, size);
+				while (!predicate (res) && ++tries < 100);
+				if (tries >= 100)
+					throw new ArgumentException ("Could not generate a " +
+						"random value which satisfies the predicate.");
+				return res;
 			};
 		}
-
-		/// <summary>
-		/// Combine two Gen values into a tuple.
-		/// </summary>
+		/*
+		## Other Combinators
+		New generators can be now defined as Linq expressions. As an example, 
+		let's define two new combinators which combine two generators into a 
+		generator of tuples.
+		*/
 		public static Gen<Tuple<T, U>> Plus<T, U> (this Gen<T> gen1, Gen<U> gen2)
 		{
 			return from a in gen1
@@ -239,34 +251,31 @@ namespace LinqCheck
 				   select Tuple.Create (a, b);
 		}
 
-		/// <summary>
-		/// Combine three Gen values into a tuple.
-		/// </summary>
-		public static Gen<Tuple<T, U, V>> Plus<T, U, V> (this Gen<T> gen1, Gen<U> gen2,
-			Gen<V> gen3)
+		public static Gen<Tuple<T, U, V>> Plus<T, U, V> (this Gen<T> gen1, 
+			Gen<U> gen2, Gen<V> gen3)
 		{
 			return from a in gen1
 				   from b in gen2
 				   from c in gen3
 				   select Tuple.Create (a, b, c);
 		}
-
+		/*
+		## Number Generators
+		In addition to combinators we naturally need generators for the 
+		number types `int` and `double`. These generators exploit the
+		functionality of the Random class. The `size` parameter is used to 
+		limit the generated values, if no explicit limit is specified.
+		*/
         public static Gen<int> ChooseInt ()
         {
             return (rnd, size) => rnd.Next (-size / 2, size / 2);
         }
 
-        /// <summary>
-        /// Primitive generator to choose an integer.
-        /// </summary>
         public static Gen<int> ChooseInt (int min)
 		{
 			return (rnd, size) => rnd.Next (min, min + size);
 		}
 
-		/// <summary>
-		/// Primitive generator to choose an integer in the given range.
-		/// </summary>
 		public static Gen<int> ChooseInt (int min, int max)
 		{
 			return (rnd, size) => rnd.Next (min, max);
@@ -277,25 +286,20 @@ namespace LinqCheck
             return (rnd, size) => ((rnd.NextDouble () - 0.5) * size);
         }
 
-        /// <summary>
-        /// Primitive generator to choose a double in the given range.
-        /// </summary>
         public static Gen<double> ChooseDouble (double min)
         {
             return (rnd, size) => (rnd.NextDouble () * size) + min;
         }
 
-        /// <summary>
-        /// Primitive generator to choose a double.
-        /// </summary>
         public static Gen<double> ChooseDouble (double min, double max)
 		{
 			return (rnd, size) => (rnd.NextDouble () * (max - min)) + min;
 		}
-
-		/// <summary>
-		/// Randomly choose an value from an array.
-		/// </summary>
+		/*
+		## Choosing a Value from a Predefined Set
+		Another way to generate a random value is to select it from a predefined
+		set. This set can be given as an array or as an IEnumerable.
+		*/
 		public static Gen<T> ChooseFrom<T> (params T[] values)
 		{
 			return (rnd, size) => values[rnd.Next (values.Length)];
@@ -305,10 +309,12 @@ namespace LinqCheck
 		{
 			return ChooseFrom (enumerable.ToArray ());
 		}
-
-		/// <summary>
-		/// Cast the gen to its base type.
-		/// </summary>
+		/*
+		## Converting Generators
+		We need also to do type conversions between the generators. The 
+		following methods are defined mostly for convenience, to avoid 
+		boilerplate code when constructing generators.
+		*/
 		public static Gen<U> Cast<T, U> (this Gen<T> gen) where T : U
 		{
 			return gen.Bind (x => ((U)x).ToGen ());
@@ -323,74 +329,88 @@ namespace LinqCheck
 		{
 			return gen.Bind (x => ((float)x).ToGen ());
 		}
+		/*
+		## Generating Collections
+		Once we can generate primitive types, the next step is to generate 
+		collections of them. Since practically all collections implement the
+		IEnumerable interface, we can use it as a basis to generate any 
+		collection type.
 
-        /// <summary>
-        /// <summary>
-        /// Helper function that generates an infinite stream of values.
-        /// </summary>
-        private static IEnumerable<T> InfiniteEnumerable<T> (Gen<T> gen, Random rnd, int size)
+		First let's define an infinite sequence of values. This is the most 
+		general collection generator from which the more restricted versions
+		are derived.
+		*/
+        private static IEnumerable<T> InfiniteEnumerable<T> (Gen<T> gen, 
+			Random rnd, int size)
         {
             while (true) yield return gen (rnd, size);
         }
-
-        /// Helper function that generates a fixed number of values.
-        /// </summary>
-        private static IEnumerable<T> FixedEnumerable<T> (Gen<T> gen, Random rnd, int size, int length)
+		/*
+		The second variant returns the specified number of random values.
+		*/
+        private static IEnumerable<T> FixedEnumerable<T> (Gen<T> gen, 
+			Random rnd, int size, int length)
         {
             return InfiniteEnumerable (gen, rnd, size).Take (length);
         }
-
-        /// <summary>
-		/// Helper function that generates an random number of values.
-		/// </summary>
-		private static IEnumerable<T> RandomEnumerable<T> (Gen<T> gen, Random rnd, int size)
+		/*
+		And the third variant returns a finite but random number of elements.
+		*/
+		private static IEnumerable<T> RandomEnumerable<T> (Gen<T> gen, 
+			Random rnd, int size)
 		{
             return FixedEnumerable (gen, rnd, size, rnd.Next (size));
 		}
-
-        /// <summary>
-		/// Returns a list (enumeration) of generated values.
-		/// </summary>
+		/*
+		The following version takes the limits from the generator's arguments.
+		It is the easiest way to convert a generator into a collection 
+		generator.
+		*/
 		public static Gen<IEnumerable<T>> EnumerableOf<T> (this Gen<T> gen)
 		{
 			return (rnd, size) => RandomEnumerable (gen, rnd, size);
 		}
-
-		/// <summary>
-		/// Returns an array of generated values.
-		/// </summary>
+		/*
+		Below are the corresponding generators for arrays. They utilize the 
+		IEnumerable generators and the extension methods defined in 
+		[System.Linq.Enumerable](https://msdn.microsoft.com/en-us/library/system.linq.enumerable(v=vs.110).aspx)
+		and [ExtensionCord](https://johtela.github.io/ExtensionCord/) library.
+		*/
 		public static Gen<T[]> ArrayOf<T> (this Gen<T> gen)
 		{
 			return (rnd, size) => RandomEnumerable (gen, rnd, size).ToArray ();
 		}
 
-        /// <summary>
-        /// Returns an array of generated values.
-        /// </summary>
         public static Gen<T[]> FixedArrayOf<T> (this Gen<T> gen, int length)
         {
-            return (rnd, size) => FixedEnumerable (gen, rnd, size, length).ToArray ();
+            return (rnd, size) => FixedEnumerable (gen, rnd, size, length)
+				.ToArray ();
         }
 
-        /// <summary>
-        /// Returns an array of generated values.
-        /// </summary>
-        public static Gen<T[,]> Fixed2DArrayOf<T> (this Gen<T> gen, int dimension1, int dimension2)
+		public static Gen<T[,]> Fixed2DArrayOf<T> (this Gen<T> gen, 
+			int dimension1, int dimension2)
         {
-            return (rnd, size) => InfiniteEnumerable (gen, rnd, size).To2DArray (dimension1, dimension2);
+            return (rnd, size) => InfiniteEnumerable (gen, rnd, size)
+				.To2DArray (dimension1, dimension2);
         }
-
-        /// <summary>
-		/// Randomly chooses one of given generators.
-		/// </summary>
+		/*
+		## Choosing between Generators
+		Sometimes we have more than one generator for a type, and we want to
+		randomly choose one of them. The `OneOf` combinator will choose a 
+		generator from an array when all elements have the same probability. 
+		In other words, the distribution of choices is even.
+		*/
 		public static Gen<T> OneOf<T> (params Gen<T>[] gens)
 		{
 			return ChooseInt (0, gens.Length).Bind (i => gens[i]);
 		}
-
-		/// <summary>
-		/// Choose a generator randomly from a list based on frequencies.
-		/// </summary>
+		/*
+		If you want a skewed distribution of the choices, you can use the 
+		`Frequency` method. It allows you to specify the frequency for each 
+		choice. The frequencies are defined as integers with relative ranges. 
+		For example, if choice _A_ has a frequency of 3 and choice _B_ 12, 
+		choice _B_ is 4 times more likely to be selected than _A_.
+		*/
 		public static Gen<T> Frequency<T> (params Tuple<int, Gen<T>>[] freqGens)
 		{
 			var sum = 0;
@@ -401,3 +421,19 @@ namespace LinqCheck
 		}
 	}
 }
+/*
+## Deterministic Randomness
+Before wrapping up the chapter for generators, let's still discuss about the 
+requirement of determinism. The generators cannot be truly random; their output
+depends on the seed provided to the instance of the Random class that we pass 
+around. To put it differently, they produce 
+[_pseudorandom_](https://en.wikipedia.org/wiki/Pseudorandom_number_generator) 
+values. 
+
+This is important because we want to be able to generate a same sequence 
+of values multiple times when we are generating test data. All of the 
+combinators work deterministically. They extract random numbers from the `rnd` 
+object and pass it around in the same manner every time they are called. This 
+ensures that whatever generator we compose, it will still work 
+deterministically.
+*/

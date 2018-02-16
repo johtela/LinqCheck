@@ -88,7 +88,7 @@
 .markdown code,
 .markdown pre {
   font-family: 'Roboto Mono', monospace;
-  font-size: 0.95em;
+  font-size: 95%;
   tab-size: 4;
   overflow-x: auto;
   overflow-y: hidden;
