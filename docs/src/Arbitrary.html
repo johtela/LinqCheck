@@ -138,9 +138,10 @@
 				<div id="static-content" class="markdown">
 					<h1 id="generating-and-shrinking-arbitrary-values">Generating and Shrinking Arbitrary Values</h1>
 <p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/145px-Yin_yang.svg.png" alt="Yin and yang" /></p>
-<p>In the realm of property based testing generating random test data is just one
-side of the story. If random value generation is the <em>yin</em> then the <em>yang</em> is
-shrinking these values.</p>
+<p>In the world of property based tests generating random test data is just one
+side of the story. The true power of the technique is attained by implementing
+shrinking of values as well. If random generation is the <em>yin</em>, then the <em>yang</em>
+is shrinking.</p>
 <p>We put these dual operations into a generic interface <code>IArbitrary&lt;T&gt;</code>. There
 must be an instance of this interface for all the types we want to use in our
 properties.</p>
@@ -157,8 +158,10 @@ properties.</p>
 <pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Generate">Generate</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">get</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">;</span> <span class="punctuation">}</span>
 </code></pre>
 <p>The <code>Shrink</code> method provides shrunk versions of a value given as
-parameter. The more complex the generated value is, the more instances
-shrinking typically returns.</p>
+parameter. The list of alternatives is returned as IEnumerable. Each
+returned alternative is progressively simpler than the original value.
+The more complex the generated value is, the more instances shrinking
+typically returns.</p>
 <pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<T>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Shrink(T)" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">Shrink</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> value<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">;</span>
 	<span class="punctuation">}</span>
 </code></pre>

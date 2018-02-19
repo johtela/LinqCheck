@@ -160,14 +160,14 @@ namespace LinqCheck
 		transparently in the background. This simplifies our code and makes it 
 		_composable_. With monads we achieve true code reusability.
 
-		## Relation to Linq 
-		In the introduction there was a vague claim that Linq and monads are
-		somehow related. Now we will show exactly how. We will implement Linq's 
+		## Relation to LINQ 
+		In the introduction there was a vague claim that LINQ and monads are
+		somehow related. Now we will show exactly how. We will implement LINQ's 
 		core operations `Select` and `SelectMany` using `ToGen` and `Bind`. The 
 		`Select*` methods enable the syntactic sugaring that allows us to write 
-		generators as Linq expressions. 
+		generators as LINQ expressions. 
 		
-		When C# compiler is desugaring a Linq expression, it just rewrites it 
+		When C# compiler is desugaring a LINQ expression, it just rewrites it 
 		using the `Select` and `SelectMany`	extension methods. If these methods 
 		are defined somewhere and they have the correct signature, then the 
 		compiler will be happy. 
@@ -175,14 +175,14 @@ namespace LinqCheck
 		The trick is thus to define those methods for our own monad type, and 
 		we get a [domain specific language](https://en.wikipedia.org/wiki/Domain-specific_language)
 		for our generators. This DSL just happens to have the same syntax as 
-		Linq. Haskell provides 
+		LINQ. Haskell provides 
 		[syntactic sugaring](https://en.wikibooks.org/wiki/Haskell/do_notation) 
 		for monads too, although its syntax resembles an imperative program 
 		rather than a SQL query. Nevertheless, the idea is exactly the same.
 
 		### Implementing Select and SelectMany
 
-		The signature of the Linq's `Select` method is almost the same as for 
+		The signature of the LINQ's `Select` method is almost the same as for 
 		`Bind`. The only difference is the type of the function given as the 
 		second argument. Instead of `Func<T, Gen<U>>` it is `Func<T, U>`. 
 		Converting the function type to one expected by `Bind` is trivial using
@@ -196,7 +196,7 @@ namespace LinqCheck
 		The `SelectMany` operation is called _flatMap_ in some functional 
 		languages. It performs a double `Bind` as it combines a generator for 
 		`T`'s and a generator for `U`'s, and maps them to a generator for `V`'s.
-		Whenever we have more than one select clause in a Linq expression this 
+		Whenever we have more than one select clause in a LINQ expression this 
 		method is called.
 		*/
 		public static Gen<V> SelectMany<T, U, V> (this Gen<T> gen,
@@ -222,13 +222,13 @@ namespace LinqCheck
 		that its implementation of `Select` and `SelectMany` is same as above.
 
 		### Implementing Where
-		Linq's `Where` combinator is such that we cannot define it in terms of 
-		`ToGen` and `Bind`. `Where` filters out generated values which do not 
-		match a specified predicate. It might need to call the generator 
-		repeatedly to obtain a value that satisfies the predicate. In the 
-		worst case, it might not find a matching value at all. The combinator 
-		gives up after 100 tries and throw an exception. It is the caller's
-		responsibility to ensure that the predicate is not too strict.
+		LINQ's `Where` combinator we cannot define it in terms of `ToGen` and 
+		`Bind`. `Where` filters out generated values which do not match a 
+		specified predicate. It might need to call the generator repeatedly to 
+		obtain a value that satisfies the predicate. In the worst case, it 
+		might not find a matching value at all. The combinator gives up after 
+		100 tries and throw an exception. It is the caller's responsibility to 
+		ensure that the predicate is not too strict.
 		*/
 		public static Gen<T> Where<T> (this Gen<T> gen, Func<T, bool> predicate)
 		{
@@ -247,7 +247,7 @@ namespace LinqCheck
 		}
 		/*
 		## Other Combinators
-		New generators can be now defined as Linq expressions. As an example, 
+		New generators can be now defined as LINQ expressions. As an example, 
 		let's define two new combinators which combine two generators into a 
 		generator of tuples.
 		*/

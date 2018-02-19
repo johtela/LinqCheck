@@ -3,11 +3,12 @@
 
 ![Yin and yang](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/145px-Yin_yang.svg.png)
 
-In the realm of property based testing generating random test data is just one
-side of the story. If random value generation is the _yin_ then the _yang_ is 
-shrinking these values.
+In the world of property based tests generating random test data is just one
+side of the story. The true power of the technique is attained by implementing
+shrinking of values as well. If random generation is the _yin_, then the _yang_ 
+is shrinking.
 
-We put these dual operations into a generic interface `IArbitrary<T>`. There 
+We put these dual operations into the generic interface `IArbitrary<T>`. There 
 must be an instance of this interface for all the types we want to use in our
 properties.
 */
@@ -25,8 +26,10 @@ namespace LinqCheck
 		Gen<T> Generate { get; }
 		/*
 		The `Shrink` method provides shrunk versions of a value given as 
-		parameter. The more complex the generated value is, the more instances 
-		shrinking typically returns.
+		parameter. The list of alternatives is returned as IEnumerable. Each
+		returned alternative is progressively simpler than the original value.
+		The more complex the generated value is, the more instances shrinking 
+		typically returns.
 		*/
 		IEnumerable<T> Shrink (T value);
 	}

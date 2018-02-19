@@ -137,13 +137,13 @@
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="writing-simple-tests">Writing Simple Tests</h1>
-<p>So, how does one begin property based testing with LinqCheck. Let's look at
+<p>How does one begin property based testing with LinqCheck? Let's look at
 a few very basic examples first. Suppose we want to test the System.Math class.
 It is unlikely we find any bugs in it but it works well as an example; it is
 a simple static class that everyone knows.</p>
 <p>First we need to reference the code we are testing: the System namespace,
 as well as the LinqCheck library itself. The third library we reference is
-<a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>. This is a general
+<a href="https://johtela.github.io/ExtensionCord/">ExtensionCord</a>. It is a general
 helper library that contains useful extensions for the .NET types. The library
 is optional, but it helps writing our properties in a more concise way.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="Examples">namespace</span> Examples
@@ -156,7 +156,7 @@ is optional, but it helps writing our properties in a more concise way.</p>
 <p>We can use any unit testing framework such as <a href="http://nunit.org/">NUnit</a>,
 <a href="https://xunit.github.io/">xUnit</a>,
 <a href="https://msdn.microsoft.com/en-us/library/hh694602.aspx">MSTest</a>, etc. to
-run our tests. In this case we are using the built-in command line test
+run our tests. In this case, we are using the built-in command line test
 runner included in LinqCheck. This is the simplest and fastest way to run
 our tests, but it does not provide the fancier features found in the more
 comprehensive frameworks, such as GUI runners, Visual Studio integration,
