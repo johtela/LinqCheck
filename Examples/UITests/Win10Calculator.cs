@@ -1,6 +1,8 @@
 ﻿/*
 # Windows 10 Calculator
 
+![Windows 10 Calculator](https://upload.wikimedia.org/wikipedia/en/2/26/Windows_10_Calculator.png)
+
 The calculator shipping with Windows 8 and 10 was completely rewritten. It has
 a new look, but the basic functionality remained the same. So, from the
 functional point of view it should work like before. Our automation controller 

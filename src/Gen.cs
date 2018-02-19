@@ -31,7 +31,7 @@ namespace LinqCheck
 
 	We could now provide an implementation of `Gen<T>` for every type `T` that 
 	we would like to generate, but that would result in a lot of boilerplate 
-	code. Instead of taking that route, let's take our abstraction one step 
+	code. Rather than going down that path, let's take our abstraction one step 
 	further and make `Gen<T>` an instance of a
 	[_monad_](https://en.wikipedia.org/wiki/Monad_(functional_programming)).
 
@@ -45,8 +45,9 @@ namespace LinqCheck
 
 	To build a monad you first of all need a generic type. Monad defines a way 
 	to _compose_ instances of a generic type together by providing two simple 
-	operations: _return_ and _bind_. Assuming our generic type is $M \langle T \rangle$, 
-	these operations have the following signatures (we are using the 
+	operations: _return_ and _bind_. Assuming our generic type is denoted by 
+	$M \langle T \rangle$, where $T$ is the type parameter, the operations are 
+	defined as follows (we 	are using the 
 	[_curried_](https://en.wikipedia.org/wiki/Currying) notation here):
 	$$
 	\begin{align}
@@ -85,7 +86,7 @@ namespace LinqCheck
 			return a value which we can construct from our parameters. 
 			
 			The only parameter we get is a value of type `T`. We have to return 
-			a value of type `Gen<T>`, which is an alias for a delegate 
+			a value of type `Gen<T>`, which is an alias for the delegate 
 			`(Random, int) => T`. There is practically only one way to implement 
 			that delegate given the parameters we have at hand. 
 			*/
@@ -106,7 +107,7 @@ namespace LinqCheck
 		{
 			/*
 			Let's again follow the types to implement the method. We need to 
-			return a value of type `Gen<U>` which corresponds to delegate 
+			return a value of type `Gen<U>` which corresponds to the delegate 
 			`(Random, int) => U`. So, we need to return a lambda expression
 			with two parameters `rnd` and `size`.
 			*/
@@ -166,12 +167,18 @@ namespace LinqCheck
 		`Select*` methods enable the syntactic sugaring that allows us to write 
 		generators as Linq expressions. 
 		
-		With syntactic sugaring we can define our generators with a
-		[domain specific language](https://en.wikipedia.org/wiki/Domain-specific_language).
-		This DSL just happens to have the same syntax as Linq. Haskell provides
-		syntactic sugaring for monads too, although its syntax resembles an 
-		imperative program rather than a SQL query. Nevertheless, the idea 
-		is exactly the same.
+		When C# compiler is desugaring a Linq expression, it just rewrites it 
+		using the `Select` and `SelectMany`	extension methods. If these methods 
+		are defined somewhere and they have the correct signature, then the 
+		compiler will be happy. 
+		
+		The trick is thus to define those methods for our own monad type, and 
+		we get a [domain specific language](https://en.wikipedia.org/wiki/Domain-specific_language)
+		for our generators. This DSL just happens to have the same syntax as 
+		Linq. Haskell provides 
+		[syntactic sugaring](https://en.wikibooks.org/wiki/Haskell/do_notation) 
+		for monads too, although its syntax resembles an imperative program 
+		rather than a SQL query. Nevertheless, the idea is exactly the same.
 
 		### Implementing Select and SelectMany
 
@@ -415,9 +422,10 @@ namespace LinqCheck
 		{
 			var sum = 0;
 			for (int i = 0; i < freqGens.Length; i++)
-				freqGens[i] = Tuple.Create (sum += freqGens[0].Item1, freqGens[i].Item2);
-
-			return ChooseInt (1, sum).Bind (x => freqGens.First (fg => fg.Item1 >= x).Item2);
+				freqGens[i] = Tuple.Create (sum += freqGens[0].Item1, 
+					freqGens[i].Item2);
+			return ChooseInt (1, sum).Bind (x => 
+				freqGens.First (fg => fg.Item1 >= x).Item2);
 		}
 	}
 }

@@ -102,19 +102,19 @@
 	<li><a href="../src/Gen.html" class="selected">Generators and Monads</a></li>
 	<ul>
 	</ul>
-	<li><a href="../src/Arbitrary.html">Arbitrary Values</a></li>
-	<ul>
-	</ul>
-	<li><a href="../src/TestState.html">Test State</a></li>
-	<ul>
-	</ul>
-	<li><a href="../src/Prop.html">Properties</a></li>
+	<li><a href="../src/Arbitrary.html">Generating and Shrinking Arbitrary Values</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/DefaultArbitrary.html">Built-In Arbitrary Types</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/Container.html">Registering Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/TestState.html">Test State</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Prop.html">Properties</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/Tester.html">Test Runner</a></li>
@@ -133,7 +133,7 @@
 			<div class="col-md-9">
 				<ul class="pager">
 	<li class="previous"><a href="../Examples/RunTests.html">Previous: Running the Tests</a></li>
-	<li class="next"><a href="../src/Arbitrary.html">Next: Arbitrary Values</a></li>
+	<li class="next"><a href="../src/Arbitrary.html">Next: Generating and Shrinking Arbitrary Values</a></li>
 </ul>
 				<div id="static-content" class="markdown">
 					<h1 id="generators-and-monads">Generators and Monads</h1>
@@ -164,7 +164,7 @@ specifies the maximum length. The interpretation of the argument is thus
 context-sensitive.</p>
 <p>We could now provide an implementation of <code>Gen&lt;T&gt;</code> for every type <code>T</code> that
 we would like to generate, but that would result in a lot of boilerplate
-code. Instead of taking that route, let's take our abstraction one step
+code. Rather than going down that path, let's take our abstraction one step
 further and make <code>Gen&lt;T&gt;</code> an instance of a
 <a href="https://en.wikipedia.org/wiki/Monad_(functional_programming)"><em>monad</em></a>.</p>
 <h2 id="monads">Monads</h2>
@@ -176,8 +176,9 @@ Even if you are unfamiliar with the concept, hopefully you can grasp the
 principle by following the code.</p>
 <p>To build a monad you first of all need a generic type. Monad defines a way
 to <em>compose</em> instances of a generic type together by providing two simple
-operations: <em>return</em> and <em>bind</em>. Assuming our generic type is <span class="math">M \langle T \rangle</span>,
-these operations have the following signatures (we are using the
+operations: <em>return</em> and <em>bind</em>. Assuming our generic type is denoted by
+<span class="math">M \langle T \rangle</span>, where <span class="math">T</span> is the type parameter, the operations are
+defined as follows (we 	are using the
 <a href="https://en.wikipedia.org/wiki/Currying"><em>curried</em></a> notation here):</p>
 <div class="math">\begin{align}
 return &amp; : T \to M \langle T \rangle \\
@@ -210,7 +211,7 @@ technique commonly called as <em>following the types</em>. It entails
 realizing that we are implementing a pure method, so we can only
 return a value which we can construct from our parameters.</p>
 <p>The only parameter we get is a value of type <code>T</code>. We have to return
-a value of type <code>Gen&lt;T&gt;</code>, which is an alias for a delegate
+a value of type <code>Gen&lt;T&gt;</code>, which is an alias for the delegate
 <code>(Random, int) =&gt; T</code>. There is practically only one way to implement
 that delegate given the parameters we have at hand.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span class="punctuation">(</span>rnd<span class="punctuation">,</span> size<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="T">value</span><span class="punctuation">;</span>
@@ -227,7 +228,7 @@ Again, we define the operation as static, generic, extension method.</p>
 		<span class="punctuation">{</span>
 </code></pre>
 <p>Let's again follow the types to implement the method. We need to
-return a value of type <code>Gen&lt;U&gt;</code> which corresponds to delegate
+return a value of type <code>Gen&lt;U&gt;</code> which corresponds to the delegate
 <code>(Random, int) =&gt; U</code>. So, we need to return a lambda expression
 with two parameters <code>rnd</code> and <code>size</code>.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword">return</span> <span class="punctuation">(</span>rnd<span class="punctuation">,</span> size<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span>
@@ -278,12 +279,17 @@ somehow related. Now we will show exactly how. We will implement Linq's
 core operations <code>Select</code> and <code>SelectMany</code> using <code>ToGen</code> and <code>Bind</code>. The
 <code>Select*</code> methods enable the syntactic sugaring that allows us to write
 generators as Linq expressions.</p>
-<p>With syntactic sugaring we can define our generators with a
-<a href="https://en.wikipedia.org/wiki/Domain-specific_language">domain specific language</a>.
-This DSL just happens to have the same syntax as Linq. Haskell provides
-syntactic sugaring for monads too, although its syntax resembles an
-imperative program rather than a SQL query. Nevertheless, the idea
-is exactly the same.</p>
+<p>When C# compiler is desugaring a Linq expression, it just rewrites it
+using the <code>Select</code> and <code>SelectMany</code>	extension methods. If these methods
+are defined somewhere and they have the correct signature, then the
+compiler will be happy.</p>
+<p>The trick is thus to define those methods for our own monad type, and
+we get a <a href="https://en.wikipedia.org/wiki/Domain-specific_language">domain specific language</a>
+for our generators. This DSL just happens to have the same syntax as
+Linq. Haskell provides
+<a href="https://en.wikibooks.org/wiki/Haskell/do_notation">syntactic sugaring</a>
+for monads too, although its syntax resembles an imperative program
+rather than a SQL query. Nevertheless, the idea is exactly the same.</p>
 <h3 id="implementing-select-and-selectmany">Implementing Select and SelectMany</h3>
 <p>The signature of the Linq's <code>Select</code> method is almost the same as for
 <code>Bind</code>. The only difference is the type of the function given as the
@@ -507,9 +513,10 @@ choice <em>B</em> is 4 times more likely to be selected than <em>A</em>.</p>
 		<span class="punctuation">{</span>
 			<span class="keyword" data-toggle="tooltip" title="int">var</span> <span id="sum">sum</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
 			<span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="i">i</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span> <span data-toggle="tooltip" title="int">i</span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Length</span><span class="punctuation">;</span> <span data-toggle="tooltip" title="int">i</span><span class="punctuation" data-toggle="tooltip" title="int">++</span><span class="punctuation">)</span>
-				<span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span> <span class="punctuation" data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>">=</span> <span class="typename" data-toggle="tooltip" title="System.Tuple">Tuple</span><span class="punctuation" data-toggle="tooltip" title="System.Tuple.Create<int, LinqCheck.Gen<T>>(int, LinqCheck.Gen<T>)">.</span><span data-toggle="tooltip" title="System.Tuple.Create<int, LinqCheck.Gen<T>>(int, LinqCheck.Gen<T>)">Create</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">sum</span> <span class="punctuation" data-toggle="tooltip" title="int">+=</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">]</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Item1</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>">Item2</span><span class="punctuation">)</span><span class="punctuation">;</span>
-
-			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)"><a href="../src/Gen.html#LinqCheck.Gen.ChooseInt(int, int)">ChooseInt</a></span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">1</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">sum</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>x <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Tuple<int, LinqCheck.Gen<T>>>.First<System.Tuple<int, LinqCheck.Gen<T>>>(System.Func<System.Tuple<int, LinqCheck.Gen<T>>, bool>)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Tuple<int, LinqCheck.Gen<T>>>.First<System.Tuple<int, LinqCheck.Gen<T>>>(System.Func<System.Tuple<int, LinqCheck.Gen<T>>, bool>)">First</span> <span class="punctuation">(</span>fg <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>">fg</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Item1</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;=</span> <span data-toggle="tooltip" title="int">x</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>">Item2</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span> <span class="punctuation" data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>">=</span> <span class="typename" data-toggle="tooltip" title="System.Tuple">Tuple</span><span class="punctuation" data-toggle="tooltip" title="System.Tuple.Create<int, LinqCheck.Gen<T>>(int, LinqCheck.Gen<T>)">.</span><span data-toggle="tooltip" title="System.Tuple.Create<int, LinqCheck.Gen<T>>(int, LinqCheck.Gen<T>)">Create</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">sum</span> <span class="punctuation" data-toggle="tooltip" title="int">+=</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">]</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Item1</span><span class="punctuation">,</span> 
+					<span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>">Item2</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="LinqCheck.Gen.ChooseInt(int, int)"><a href="../src/Gen.html#LinqCheck.Gen.ChooseInt(int, int)">ChooseInt</a></span> <span class="punctuation">(</span><span class="number" data-toggle="tooltip" title="int">1</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">sum</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<int>.Bind<int, T>(System.Func<int, LinqCheck.Gen<T>>)"><a href="../src/Gen.html#LinqCheck.Gen.Bind<T, U>(LinqCheck.Gen<T>, System.Func<T, LinqCheck.Gen<U>>)">Bind</a></span> <span class="punctuation">(</span>x <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> 
+				<span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>[]">freqGens</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Tuple<int, LinqCheck.Gen<T>>>.First<System.Tuple<int, LinqCheck.Gen<T>>>(System.Func<System.Tuple<int, LinqCheck.Gen<T>>, bool>)">.</span><span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Tuple<int, LinqCheck.Gen<T>>>.First<System.Tuple<int, LinqCheck.Gen<T>>>(System.Func<System.Tuple<int, LinqCheck.Gen<T>>, bool>)">First</span> <span class="punctuation">(</span>fg <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span data-toggle="tooltip" title="System.Tuple<int, LinqCheck.Gen<T>>">fg</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Item1</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;=</span> <span data-toggle="tooltip" title="int">x</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Gen<T>">.</span><span data-toggle="tooltip" title="LinqCheck.Gen<T>">Item2</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 	<span class="punctuation">}</span>
 <span class="punctuation">}</span>
@@ -530,7 +537,7 @@ generate the same value.</p>
 				</div>
 				<ul class="pager">
 	<li class="previous"><a href="../Examples/RunTests.html">Previous: Running the Tests</a></li>
-	<li class="next"><a href="../src/Arbitrary.html">Next: Arbitrary Values</a></li>
+	<li class="next"><a href="../src/Arbitrary.html">Next: Generating and Shrinking Arbitrary Values</a></li>
 </ul>
 			</div>
         </div>

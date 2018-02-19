@@ -102,19 +102,19 @@
 	<li><a href="../src/Gen.html">Generators and Monads</a></li>
 	<ul>
 	</ul>
-	<li><a href="../src/Arbitrary.html" class="selected">Arbitrary Values</a></li>
-	<ul>
-	</ul>
-	<li><a href="../src/TestState.html">Test State</a></li>
-	<ul>
-	</ul>
-	<li><a href="../src/Prop.html">Properties</a></li>
+	<li><a href="../src/Arbitrary.html" class="selected">Generating and Shrinking Arbitrary Values</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/DefaultArbitrary.html">Built-In Arbitrary Types</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/Container.html">Registering Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/TestState.html">Test State</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Prop.html">Properties</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/Tester.html">Test Runner</a></li>
@@ -133,30 +133,36 @@
 			<div class="col-md-9">
 				<ul class="pager">
 	<li class="previous"><a href="../src/Gen.html">Previous: Generators and Monads</a></li>
-	<li class="next"><a href="../src/TestState.html">Next: Test State</a></li>
+	<li class="next"><a href="../src/DefaultArbitrary.html">Next: Built-In Arbitrary Types</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
+					<h1 id="generating-and-shrinking-arbitrary-values">Generating and Shrinking Arbitrary Values</h1>
+<p><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/145px-Yin_yang.svg.png" alt="Yin and yang" /></p>
+<p>In the realm of property based testing generating random test data is just one
+side of the story. If random value generation is the <em>yin</em> then the <em>yang</em> is
+shrinking these values.</p>
+<p>We put these dual operations into a generic interface <code>IArbitrary&lt;T&gt;</code>. There
+must be an instance of this interface for all the types we want to use in our
+properties.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
 
-	 &lt;summary&gt;
-	/// Interface for generating random values.
-	/// &lt;/summary&gt;
-	/// &lt;typeparam name=&quot;T&quot;&gt;The type of the arbitrary value created.&lt;/typeparam&gt;
 	<span class="keyword" id="LinqCheck.IArbitrary<T>">public</span> <span class="keyword">interface</span> IArbitrary<span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span>
 	<span class="punctuation">{</span>
-		<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Generate">Generate</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">get</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">;</span> <span class="punctuation">}</span>
-		<span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<T>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Shrink(T)" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">Shrink</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> value<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">;</span>
+</code></pre>
+<p>The <code>Generate</code> property returns the generator for the type.</p>
+<pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Generate">Generate</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">get</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">;</span> <span class="punctuation">}</span>
+</code></pre>
+<p>The <code>Shrink</code> method provides shrunk versions of a value given as
+parameter. The more complex the generated value is, the more instances
+shrinking typically returns.</p>
+<pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<T>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Shrink(T)" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">Shrink</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> value<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">;</span>
 	<span class="punctuation">}</span>
-
-	 &lt;summary&gt;
-	/// Base class for creating instances and combinators for arbitrary values.
-	/// &lt;/summary&gt;
-	/// &lt;typeparam name=&quot;T&quot;&gt;&lt;/typeparam&gt;
-	<span class="keyword" id="LinqCheck.ArbitraryBase<T>">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="typename">ArbitraryBase</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span>
+</code></pre>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.ArbitraryBase<T>">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="typename">ArbitraryBase</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span>
 	<span class="punctuation">{</span>
 		<span class="keyword" id="LinqCheck.ArbitraryBase<T>.Generate">public</span> <span class="keyword">abstract</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> Generate <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.ArbitraryBase<T>.Generate.get">get</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.ArbitraryBase<T>.Generate.get">;</span> <span class="punctuation">}</span>
 
@@ -269,7 +275,7 @@
 				</div>
 				<ul class="pager">
 	<li class="previous"><a href="../src/Gen.html">Previous: Generators and Monads</a></li>
-	<li class="next"><a href="../src/TestState.html">Next: Test State</a></li>
+	<li class="next"><a href="../src/DefaultArbitrary.html">Next: Built-In Arbitrary Types</a></li>
 </ul>
 			</div>
         </div>

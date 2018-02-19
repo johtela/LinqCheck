@@ -42,6 +42,9 @@ from the model:
 	based tests is much higher.
 
 ## Testing the Windows Calculator
+
+![Adler 81S pocket calculator from the mid-1970s](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Calculator_Adler_81S.jpg/225px-Calculator_Adler_81S.jpg)
+
 To illustrate the approach, we use Windows Calculator as an example program 
 that we would like to test. It is a nice example for a few reasons. First, 
 everybody knows how the calculator program works. Its paragon, the pocket 
@@ -50,10 +53,6 @@ calculator, is still around with essentially the same user interface as in the
 program with few possible states, it actually has more edge cases than one 
 might guess. Third, we can demonstrate how property based testing can be
 utilized in conjunction with UI automation.
-
-![Adler 81S pocket calculator from the mid-1970s](https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Calculator_Adler_81S.jpg/225px-Calculator_Adler_81S.jpg)
-![Windows 7 Calculator](https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Windows_7_Calculator.png/225px-Windows_7_Calculator.png)
-![Windows 10 Calculator](https://upload.wikimedia.org/wikipedia/en/2/26/Windows_10_Calculator.png)
 
 ## Modelling the Calculator
 Before we begin, we create a new namespace for our tests, and import the 

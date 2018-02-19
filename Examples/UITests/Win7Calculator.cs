@@ -1,6 +1,8 @@
 ﻿/*
 # Windows 7 Calculator
 
+![Windows 7 Calculator](https://upload.wikimedia.org/wikipedia/en/thumb/a/ae/Windows_7_Calculator.png/225px-Windows_7_Calculator.png)
+
 The calculator in Windows 7 is probably written in C++, and is a fairly old 
 application. Nevertheless, it fully supports the automation facilities. 
 Windows' accessibility features are also built upon automation, so all 

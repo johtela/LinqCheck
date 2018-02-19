@@ -49,17 +49,9 @@
         file: src\Gen.cs
         desc: Generalizing random numbers.
 
-      - page: Arbitrary Values
+      - page: Generating and Shrinking Arbitrary Values
         file: src\Arbitrary.cs
         desc: An interface for arbitrary test data.
-
-      - page: Test State
-        file: src\TestState.cs
-        desc: The state needed by the properties when they are executed.
-
-      - page: Properties
-        file: src\Prop.cs
-        desc: Implmenting the properties as LINQ expressions.
 
       - page: Built-In Arbitrary Types
         file: src\DefaultArbitrary.cs
@@ -68,6 +60,14 @@
       - page: Registering Arbitrary Types
         file: src\Container.cs
         desc: Container class that stores the registered arbitrary types.
+
+      - page: Test State
+        file: src\TestState.cs
+        desc: The state needed by the properties when they are executed.
+
+      - page: Properties
+        file: src\Prop.cs
+        desc: Implmenting the properties as LINQ expressions.
 
       - page: Test Runner
         file: src\Tester.cs

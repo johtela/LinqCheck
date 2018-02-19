@@ -90,7 +90,7 @@ namespace Examples.UITests
 		When we execute the test, we should see the calculator launched and its
 		buttons being pressed in a rapid fashion.
 
-		![Test Running](../../images/win7calculator.gif){.center-block}
+		![Test Running](../../images/win7calculator.gif)
 
 		There are a couple of cases that cause the test to fail in Windows 7. 
 		The first is that automation sometimes fails when querying for the 

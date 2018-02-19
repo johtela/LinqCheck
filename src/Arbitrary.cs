@@ -1,23 +1,37 @@
-﻿namespace LinqCheck
+﻿/*
+# Generating and Shrinking Arbitrary Values
+
+![Yin and yang](https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Yin_yang.svg/145px-Yin_yang.svg.png)
+
+In the realm of property based testing generating random test data is just one
+side of the story. If random value generation is the _yin_ then the _yang_ is 
+shrinking these values.
+
+We put these dual operations into a generic interface `IArbitrary<T>`. There 
+must be an instance of this interface for all the types we want to use in our
+properties.
+*/
+namespace LinqCheck
 {
 	using System;
 	using System.Collections.Generic;
 	using System.Linq;
 
-	/// <summary>
-	/// Interface for generating random values.
-	/// </summary>
-	/// <typeparam name="T">The type of the arbitrary value created.</typeparam>
 	public interface IArbitrary<T>
 	{
+		/*
+		The `Generate` property returns the generator for the type.
+		*/
 		Gen<T> Generate { get; }
+		/*
+		The `Shrink` method provides shrunk versions of a value given as 
+		parameter. The more complex the generated value is, the more instances 
+		shrinking typically returns.
+		*/
 		IEnumerable<T> Shrink (T value);
 	}
-
-	/// <summary>
-	/// Base class for creating instances and combinators for arbitrary values.
-	/// </summary>
-	/// <typeparam name="T"></typeparam>
+	/*
+	*/
 	public abstract class ArbitraryBase<T> : IArbitrary<T>
 	{
 		public abstract Gen<T> Generate { get; }
