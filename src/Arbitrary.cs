@@ -8,14 +8,15 @@ us only half way there. The full power of the technique is attained by
 implementing shrinking of values as well. If random generation is the _yin_ of
 property based testing, then the _yang_ is shrinking.
 
-Shrinking, in practical terms, stands for producing a set of simpler 
-versions of a generated value. For example, given a number -132, shrinking 
-would first invert it to yield a positive number, and then make that number 
-smaller. If all of the produced alternatives keep the property failing, as a 
-last option it would return number zero, which is arguably the simplest of all
-numbers. The same principle applies to compound data structures such as
-strings and collections as well; shrinking will first try to remove elemenents 
-from them, and then shrink each remaining element individually.
+Shrinking, in practical terms, stands for the act of producing simpler versions 
+of a generated value, which causes a property to fail. For example, assuming 
+that number -132 causes our property to fail, shrinking will first invert it to 
+yield a positive number, and then try to make the number smaller. If all the 
+smaller numbers produced still keep our property failing, finally shrinking will 
+return zero, which is arguably the simplest of all numbers. The procedure is 
+similar for compound data structures such as strings and collections as well; 
+shrinking first tries to remove elemenents from them, and then shrink each 
+remaining element individually.
 
 The point of all this is to create a simpler versions of the failing input data
 without loosing the characteristic that makes the property fail. In the same 
