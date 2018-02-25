@@ -10,11 +10,11 @@ property based testing, then the _yang_ is shrinking.
 
 Shrinking, in practical terms, stands for the act of producing simpler versions 
 of a generated value, which causes a property to fail. For example, assuming 
-that number -132 causes our property to fail, shrinking will first invert it to 
-yield a positive number, and then try to make the number smaller. If all the 
-smaller numbers produced still keep our property failing, finally shrinking will 
-return zero, which is arguably the simplest of all numbers. The procedure is 
-similar for compound data structures such as strings and collections as well; 
+that number -123 causes our property to fail, shrinking first inverts it to 
+yield a positive number, and then tries to make the number smaller. If all the 
+smaller numbers produced still keep our property failing, finally, shrinking 
+will return zero, which is arguably the simplest of all numbers. The procedure 
+is similar for compound data structures such as strings and collections; 
 shrinking first tries to remove elemenents from them, and then shrink each 
 remaining element individually.
 
@@ -136,7 +136,12 @@ namespace LinqCheck
 			_container = new Container (typeof (IArbitrary<>));
 			DefaultArbitrary.Register ();
 		}
-
+		/*
+		### Registering New IArbitrary Implementations
+		The following two methods register an implementation of IArbitrary for
+		a given type. The type can be specified as a generic argument or as an 
+		instance of the Type class.
+		*/
 		public static void Register<T> (IArbitrary<T> arbitrary)
 		{
 			_container.Register (arbitrary);
@@ -146,12 +151,22 @@ namespace LinqCheck
 		{
 			_container.Register (type);
 		}
-
+		/*
+		### Getting the Registered Implementation
+		To retrieve a previously registered IArbitrary implementation, you can 
+		call the `Get` method. It gets the implementation from the container.
+		*/
 		public static IArbitrary<T> Get<T> ()
 		{
 			return (IArbitrary<T>)_container.GetImplementation (typeof (T));
 		}
-
+		/*
+		### Helper Methods
+		The three methods below are defined for convenience. They are helper
+		methods that can be used to generate or shrink an instance of a given 
+		type. The methods assume that an implementation of IArbitrary is 
+		registered for the type.
+		*/
 		public static Gen<T> Gen<T> ()
 		{
 			return Get<T> ().Generate;
@@ -166,7 +181,15 @@ namespace LinqCheck
 		{
 			return Get<T> ().Shrink (value);
 		}
-
+		/*
+		### Combinators
+		Lastly, we define some combinators which compose new IArbitrary 
+		implementations from existing ones. The `SuchThat` combinator restricts
+		generated values by filtering out the ones that do not match a given 
+		predicate. The method tries 100 times to generate a value before giving
+		up and throwing an exception. The reason for this is to avoid entering 
+		an infinite loop, if the predicate is too restrictrive
+		*/
 		public static IArbitrary<T> SuchThat<T> (this IArbitrary<T> arbitrary, 
 			Func<T, bool> predicate)
 		{
@@ -184,6 +207,21 @@ namespace LinqCheck
 					return res;
 				},
 				val => arbitrary.Shrink (val).Where (predicate));
+		}
+		/*
+		The `Convert` combinator creates an implementation of IArbitary for a 
+		new type `U` given an existing implementation for type `T`. For this to 
+		work, we need to specify conversion functions from `T` to `U` and vice 
+		versa. 
+		*/
+		public static IArbitrary<U> Convert<T, U> (this IArbitrary<T> arbitrary,
+			Func<T, U> convertTtoU, Func<U, T> convertUtoT)
+		{
+			return new Arbitrary<U> (
+				from a in arbitrary.Generate
+				select convertTtoU (a),
+				a => from b in arbitrary.Shrink (convertUtoT (a))
+					 select convertTtoU (b));
 		}
 	}
 }
