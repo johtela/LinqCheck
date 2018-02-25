@@ -1,4 +1,9 @@
-﻿namespace LinqCheck
+﻿/*
+# Built-In Arbitrary Types
+
+
+*/
+namespace LinqCheck
 {
 	using System;
 	using System.Collections.Generic;
