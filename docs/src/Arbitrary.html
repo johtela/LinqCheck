@@ -144,13 +144,14 @@ implementing shrinking of values as well. If random generation is the <em>yin</e
 property based testing, then the <em>yang</em> is shrinking.</p>
 <p>Shrinking, in practical terms, stands for the act of producing simpler versions
 of a generated value, which causes a property to fail. For example, assuming
-that number -123 causes our property to fail, shrinking first inverts it to
-yield a positive number, and then tries to make the number smaller. If all the
-smaller numbers produced still keep our property failing, finally, shrinking
-will return zero, which is arguably the simplest of all numbers. The procedure
-is similar for compound data structures such as strings and collections;
-shrinking first tries to remove elemenents from them, and then shrink each
-remaining element individually.</p>
+that number -123 causes our property to fail, shrinking first tries to replace
+it with zero, which is arguably the simplest of all numbers. If zero makes the
+test pass, then tries some numbers closer to zero and also the inverse until
+one of them makes the test fail again. If all the simpler alternatives pass
+the test, as a last resort, the original failing number is used.</p>
+<p>The procedure is similar for compound data structures such as strings and
+collections; shrinking tries to remove elemenents from them, and then shrink
+each remaining element individually.</p>
 <p>The point of all this is to create a simpler versions of the failing input data
 without loosing the characteristic that makes the property fail. In the same
 manner as random generation is used to find test cases that violate the
@@ -173,10 +174,12 @@ to generate in our properties.</p>
 <pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="LinqCheck.Gen<T>"><a href="../src/Gen.html#T LinqCheck.Gen<T>(System.Random, int)">Gen</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Generate">Generate</span> <span class="punctuation">{</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">get</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Generate.get">;</span> <span class="punctuation">}</span>
 </code></pre>
 <p>The <code>Shrink</code> method provides shrunk versions of a value given as
-parameter. The list of alternatives is returned as an IEnumerable. Each
-returned alternative is progressively simpler than the previous one.
-The more complex the generated value is, the more alternatives
-<code>Shrink</code> typically returns.</p>
+parameter. The list of alternatives is returned as an IEnumerable. The
+first alternative is the simplest form, and the following ones are each
+one step closer to the original. The original value is automatically
+appended at	the end of the result when QuickCheck is calling the method.
+So, there is no need to return it when implementing the IArbitrary
+interface.</p>
 <pre class="csharp"><code class="csharp">		<span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<T>">IEnumerable</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span id="LinqCheck.IArbitrary<T>.Shrink(T)" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">Shrink</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Arbitrary.html#T">T</a></span> value<span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>.Shrink(T)">;</span>
 	<span class="punctuation">}</span>
 </code></pre>

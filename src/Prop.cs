@@ -35,12 +35,7 @@
 
 		public static Prop<T> Fail<T> (this T value)
 		{
-			return state =>
-			{
-				throw new TestFailed (string.Format (
-					"Property '{0}' failed for input:\n{1}",
-					state.Label, value));
-			};
+			return state => throw new PropertyFailed<T> (state.Label, value);
 		}
 
 		public static Prop<T> Discard<T> (this T value)
@@ -125,10 +120,9 @@
 			{
 				var res = prop (state);
 				var cl = classify (res.Item2).ToString ();
-                var cnt = 0;
-                if (state.Classes.TryGetValue (cl, out cnt))
+				if (state.Classes.TryGetValue (cl, out int cnt))
 					state.Classes[cl] = cnt + 1;
-                else
+				else
 					state.Classes.Add (cl, 1);
 				return res;
 			};
@@ -158,7 +152,7 @@
 					}
 				}
 			}
-			catch (TestFailed) { return false; }
+			catch (PropertyFailed<T>) { return false; }
 			return true;
 		}
 
@@ -171,45 +165,35 @@
 		{
 			for (int i = 0; i < shrunkValues.Count; i++)
 			{
-				var ind = indices [i] - 1;
-				if (ind >= 0)
+				var ind = indices [i] + 1;
+				if (ind < shrunkValues[i].Count)
 				{
 					indices [i] = ind;
 					return true;
 				}
-				indices [i] = shrunkValues [i].Count - 1;
 			}
 			return false;
 		}
 
 		private static List<object> Optimize<T> (Prop<T> prop, TestState state)
 		{
-			var current = new List<int> (state.ShrunkValues.Select (l => l.Count - 1));
+			var current = new List<int> (
+				Enumerable.Repeat (0, state.ShrunkValues.Count));
 			var values = state.Values;
-			var best = state.Values;
-			var bestWeight = current.Sum ();
 
 			while (NextCandidate (state.ShrunkValues, current))
 			{
 				values = GenerateValues (state.ShrunkValues, current);
 				try
 				{
-					if (!Test (prop, 1, new TestState (TestPhase.Shrink, 
-						state.Seed, state.Size, state.Label, values, 
+					if (!Test (prop, 1, new TestState (TestPhase.Shrink,
+						state.Seed, state.Size, state.Label, values,
 						state.ShrunkValues)))
-					{
-						var weight = current.Sum ();
-						if (weight <= bestWeight)
-						{
-							best = values;
-							bestWeight = weight;
-							Console.Write (".");
-						}
-					}
+						break;
 				}
 				catch (Exception) { }
 			}
-			return best;
+			return values;
 		}
 
 		public static Prop<T> Check<T> (this Prop<T> prop, Expression<Func<T, bool>> condition, 
@@ -236,9 +220,11 @@
 				state = new TestState (TestPhase.Shrink, seed, size, label, optimized, null);
 				// Fail again with optimized input without catching the exception.
 				testProp (state);
-				throw new TestFailed ("The failed property was re-evaluated, but the error did not reoccur. "
-					+ "This probably means that the property has side effects which supress the error "
-					+ "under some conditions and make the test case undeterministic.");
+				throw new TestFailed (
+					"The failed property was re-evaluated, but the error did " +
+					" not reoccur. This probably means that the property has " + 
+					" side effects which supress the error under some conditions " +
+					"and make the test case undeterministic.");
 			}
 			Console.ForegroundColor = ConsoleColor.Gray;
 			Console.WriteLine ("'{0}' passed {1} tests. Discarded: {2}", 

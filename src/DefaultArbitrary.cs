@@ -1,7 +1,7 @@
 ﻿/*
 # Built-In Arbitrary Types
 
-LinqCheck provides the most importantant arbitrary types out-of-the-box. We 
+LinqCheck provides the most important arbitrary types out-of-the-box. We 
 define the built-in implementations for the IArbitrary interface in the 
 DefaultArbitrary static class. 
 */
@@ -81,12 +81,11 @@ namespace LinqCheck
 		The following methods are used in producing and shrinking the primitive
 		types. First, let's examine how we generate and shrink characters.
 
-		Characters are selected from the English alphabet adding a few special
-		characters. Consequently, no unprintable characters or strings should 
-		be produced. If you want to generate characters from the whole ASCII 
-		table, or even from the Unicode character set, you can do so by first 
-		generating a random integer with appropriate range and using it as 
-		a character code.
+		### Generating Characters
+		Characters are selected from the printable part of the ASCII table. If 
+		you want to generate characters from the whole ASCII table, or even 
+		from the Unicode character set, you can do so by first generating a 
+		random integer with appropriate range and using it as a character code.
 		*/
 		private static IEnumerable<char> CharCandidates ()
 		{
@@ -98,43 +97,81 @@ namespace LinqCheck
 			yield return '\n';
 		}
 		/*
-		The shrinking of characters is quite 
+		### Shrinking Characters
+		The rules of characters shrinking are a bit arbitrary but agreeable. We 
+		prefer to have lowercase letters over uppercase ones, and letters over 
+		numbers or whitespace.
 		*/
 		private static IEnumerable<char> ShrinkChar (char c)
 		{
 			var candidates = new char[] 
 				{ 'a', 'b', 'c', 'A', 'B', 'C', '1', '2', '3', char.ToLower (c),
-				  ' ', '\n' };
+				  ' ', '\t' };
 
 			return candidates.Where (x => x.SimplerThan (c));
 		}
 
 		private static bool SimplerThan (this char x, char y)
 		{
-			Func<Func<char, bool>, bool> simpler = fun => fun (x) && !fun (y);
+			bool simpler (Func<char, bool> fun) => fun (x) && !fun (y);
 
-			return simpler (char.IsLower) || simpler (char.IsUpper) || simpler (char.IsDigit) ||
-				simpler (c => c == ' ') || simpler (char.IsWhiteSpace) || x < y;
+			return simpler (char.IsLower) || simpler (char.IsUpper) || 
+				simpler (char.IsDigit) || simpler (c => c == ' ') || 
+				simpler (char.IsWhiteSpace) || x < y;
 		}
-
+		/*
+		### Shrinking Integers
+		When shrinking integers we prefer to have values close to zero and 
+		positive numbers before negative ones.
+		*/
 		private static IEnumerable<int> ShrinkInteger (int x)
 		{
 			yield return 0;
-			var absx = Math.Abs (x);
-			for (var i = absx / 2; absx - i < absx; i = i / 2)
-				yield return absx - i;
 			if (x < 0) yield return -x;
+			for (var i = x / 2; Math.Abs (x - i) < Math.Abs (x); i = i / 2)
+				yield return x - i;
 		}
-
+		/*
+		### Shrinking Floating Point Numbers
+		We simplify floating point numbers by trying first zero and then the 
+		value truncated down or up. Finally we try to make the number positive,
+		if it is negative.
+		*/
 		private static IEnumerable<double> ShrinkDouble (double x)
 		{
-			if (x < 0) yield return -x;
+			yield return 0.0;
 			yield return Math.Floor (x);
+			yield return Math.Ceiling (x);
+			if (x < 0.0) yield return -x;
 		}
+		/*
+		### Shrinking Enumerables
+		Enumerable type has the most involved shrinking procedure. We try to 
+		first remove as many items from the IEnumerable as we can, and then we
+		shrink each individual element at a time. The simplest case, and the 
+		first alternative returned, is the empty enumerable.
 
-		public static IEnumerable<IEnumerable<T>> ShrinkEnumerable<T> (this IEnumerable<T> e)
+		Enumerable shrinking is particularly tricky to implement because it
+		very much depends on the case whether removing items or simplifying
+		them individually provides simpler test data. It is difficult to rank 
+		the alternatives in the order of simplicity, since these two operations 
+		are mostly orthogonal. 
+		
+		The implementation below prefers shorter sequences over longer ones 
+		regardless of how shrunk their elements are. The shrinking will always
+		pick the first alternative which causes a property to fail, so it does 
+		not make sense to produce additional alternatives by combining removing
+		and shrinking elements in various ways. The concept of "simplicity" is 
+		a subjective one, and LinqCheck tries to define it in a reasonable 
+		manner.
+		*/
+		public static IEnumerable<IEnumerable<T>> ShrinkEnumerable<T> (
+			this IEnumerable<T> e)
 		{
-			return RemoveUntil (e).SelectMany (Fun.Identity).Concat (ShrinkOne (e)).Prepend (new T[0]);
+			return RemoveUntil (e)
+				.SelectMany (Fun.Identity)
+				.Concat (ShrinkOne (e))
+				.Prepend (new T[0]);
 		}
 
 		private static IEnumerable<IEnumerable<IEnumerable<T>>> RemoveUntil<T> (IEnumerable<T> e)
@@ -150,7 +187,8 @@ namespace LinqCheck
 			var xs1 = e.Take (k);
 			var xs2 = e.Skip (k);
 			return (from r in RemoveK (xs2, k, len - k)
-					select xs1.Concat (r)).Append (xs2);
+					select xs1.Concat (r))
+					.Append (xs2);
 		}
 
 		private static IEnumerable<IEnumerable<T>> ShrinkOne<T> (IEnumerable<T> e)

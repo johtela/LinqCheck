@@ -10,15 +10,27 @@ namespace LinqCheck
 	/// </summary>
 	public class TestFailed : Exception
 	{
-		public TestFailed (string message) : base(message)
+		public TestFailed (string message) : base (message)
 		{
 		}
 	}
-	
+
+	public class PropertyFailed<T> : TestFailed
+	{
+		public readonly T Input;
+
+		public PropertyFailed (string property, T input)
+			: base (string.Format (
+				"Property '{0}' failed for input:\n{1}", property, input))
+		{
+			Input = input;
+		}
+	}
+
 	/// <summary>
 	/// Attribute to mark test cases.
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Method)]
+	[AttributeUsage (AttributeTargets.Method)]
 	public class TestAttribute : Attribute
 	{
 		public TestAttribute ()

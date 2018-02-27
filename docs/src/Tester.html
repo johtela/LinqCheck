@@ -148,15 +148,27 @@
 	/// &lt;/summary&gt;
 	<span class="keyword" id="LinqCheck.TestFailed">public</span> <span class="keyword">class</span> <span class="typename">TestFailed</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span>
 	<span class="punctuation">{</span>
-		<span class="keyword" id="LinqCheck.TestFailed.TestFailed(string)" data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">public</span> <span data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">TestFailed</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> message<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="void">:</span> <span class="keyword" data-toggle="tooltip" title="void">base</span><span class="punctuation">(</span><span data-toggle="tooltip" title="string">message</span><span class="punctuation">)</span>
+		<span class="keyword" id="LinqCheck.TestFailed.TestFailed(string)" data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">public</span> <span data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">TestFailed</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> message<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="void">:</span> <span class="keyword" data-toggle="tooltip" title="void">base</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">message</span><span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 		<span class="punctuation">}</span>
 	<span class="punctuation">}</span>
-	
+
+	<span class="keyword" id="LinqCheck.PropertyFailed<T>">public</span> <span class="keyword">class</span> <span class="typename">PropertyFailed</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Tester.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.TestFailed"><a href="../src/Tester.html#LinqCheck.TestFailed">TestFailed</a></span>
+	<span class="punctuation">{</span>
+		<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Tester.html#T">T</a></span> <span id="LinqCheck.PropertyFailed<T>.Input">Input</span><span class="punctuation">;</span>
+
+		<span class="keyword" id="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)" data-toggle="tooltip" title="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)">public</span> <span data-toggle="tooltip" title="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)">PropertyFailed</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> property<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Tester.html#T">T</a></span> input<span class="punctuation">)</span>
+			<span class="punctuation" data-toggle="tooltip" title="void">:</span> <span class="keyword" data-toggle="tooltip" title="void">base</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+				<span class="string" data-toggle="tooltip" title="string">&quot;Property &#39;{0}&#39; failed for input:\n{1}&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="string">property</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">input</span><span class="punctuation">)</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="T"><a href="../src/Tester.html#LinqCheck.PropertyFailed<T>.Input">Input</a></span> <span class="punctuation" data-toggle="tooltip" title="T">=</span> <span data-toggle="tooltip" title="T">input</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+
 	 &lt;summary&gt;
 	/// Attribute to mark test cases.
 	/// &lt;/summary&gt;
-	<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="System.AttributeUsageAttribute">AttributeUsage</span><span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.AttributeTargets">AttributeTargets</span><span class="punctuation" data-toggle="tooltip" title="System.AttributeTargets">.</span><span data-toggle="tooltip" title="System.AttributeTargets">Method</span><span class="punctuation">)</span><span class="punctuation">]</span>
+	<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="System.AttributeUsageAttribute">AttributeUsage</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.AttributeTargets">AttributeTargets</span><span class="punctuation" data-toggle="tooltip" title="System.AttributeTargets">.</span><span data-toggle="tooltip" title="System.AttributeTargets">Method</span><span class="punctuation">)</span><span class="punctuation">]</span>
 	<span class="keyword" id="LinqCheck.TestAttribute">public</span> <span class="keyword">class</span> <span class="typename">TestAttribute</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.Attribute">Attribute</span>
 	<span class="punctuation">{</span>
 		<span class="keyword" id="LinqCheck.TestAttribute.TestAttribute()" data-toggle="tooltip" title="LinqCheck.TestAttribute.TestAttribute()">public</span> <span data-toggle="tooltip" title="LinqCheck.TestAttribute.TestAttribute()">TestAttribute</span> <span class="punctuation">(</span><span class="punctuation">)</span>

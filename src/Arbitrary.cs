@@ -10,16 +10,15 @@ property based testing, then the _yang_ is shrinking.
 
 Shrinking, in practical terms, stands for the act of producing simpler versions 
 of a generated value, which causes a property to fail. For example, assuming 
-that number -123 causes our property to fail, shrinking first tries the value 
-zero, which is arguably the simplest of all number. Then it tries positive 1 
+that number -123 causes our property to fail, shrinking first tries to replace 
+it with zero, which is arguably the simplest of all numbers. If zero makes the 
+test pass, then tries some numbers closer to zero and also the inverse until 
+one of them makes the test fail again. If all the simpler alternatives pass 
+the test, as a last resort, the original failing number is used.
 
-number, and then tries to make the number smaller. If all the 
-
-smaller numbers produced still keep our property failing, finally, shrinking 
-will return . The procedure 
-is similar for compound data structures such as strings and collections; 
-shrinking first tries to remove elemenents from them, and then shrink each 
-remaining element individually.
+The procedure is similar for compound data structures such as strings and 
+collections; shrinking tries to remove elemenents from them, and then shrink 
+each remaining element individually.
 
 The point of all this is to create a simpler versions of the failing input data
 without loosing the characteristic that makes the property fail. In the same 
