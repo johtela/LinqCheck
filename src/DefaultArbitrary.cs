@@ -120,9 +120,10 @@ namespace LinqCheck
 		private static IEnumerable<int> ShrinkInteger (int x)
 		{
 			yield return 0;
+			var absx = Math.Abs (x);
+			for (var i = absx / 2; absx - i < absx; i = i / 2)
+				yield return absx - i;
 			if (x < 0) yield return -x;
-			for (var i = x / 2; Math.Abs (x - i) < Math.Abs (x); i = i / 2)
-				yield return x - i;
 		}
 
 		private static IEnumerable<double> ShrinkDouble (double x)

@@ -214,8 +214,8 @@ namespace Examples
 		[Test]
 		public void TestAddition ()
 		{
-			//CheckAddition<int> ();
-			CheckAddition<char> ();
+			CheckAddition<int> ();
+			//CheckAddition<string> ();
 		}
 		/*
 		You should now see your checks pass and the names are now a bit easier 
