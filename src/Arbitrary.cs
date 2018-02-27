@@ -10,10 +10,13 @@ property based testing, then the _yang_ is shrinking.
 
 Shrinking, in practical terms, stands for the act of producing simpler versions 
 of a generated value, which causes a property to fail. For example, assuming 
-that number -123 causes our property to fail, shrinking first inverts it to 
-yield a positive number, and then tries to make the number smaller. If all the 
+that number -123 causes our property to fail, shrinking first tries the value 
+zero, which is arguably the simplest of all number. Then it tries positive 1 
+
+number, and then tries to make the number smaller. If all the 
+
 smaller numbers produced still keep our property failing, finally, shrinking 
-will return zero, which is arguably the simplest of all numbers. The procedure 
+will return . The procedure 
 is similar for compound data structures such as strings and collections; 
 shrinking first tries to remove elemenents from them, and then shrink each 
 remaining element individually.
@@ -43,10 +46,12 @@ namespace LinqCheck
 		Gen<T> Generate { get; }
 		/*
 		The `Shrink` method provides shrunk versions of a value given as 
-		parameter. The list of alternatives is returned as an IEnumerable. Each
-		returned alternative is progressively simpler than the previous one. 
-		The more complex the generated value is, the more alternatives 
-		`Shrink` typically returns.
+		parameter. The list of alternatives is returned as an IEnumerable. The 
+		first alternative is the simplest form, and the following ones are each
+		one step closer to the original. The original value is automatically 
+		appended at	the end of the result when QuickCheck is calling the method. 
+		So, there is no need to return it when implementing the IArbitrary 
+		interface.
 		*/
 		IEnumerable<T> Shrink (T value);
 	}

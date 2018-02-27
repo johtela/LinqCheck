@@ -205,7 +205,7 @@ namespace Examples
 			for in this check too.
 			*/
 			.Check (t => t.newSeq.Rest.IsEmpty () ||
-				t.newSeq.Rest.SequenceEqual (t.seq),
+				t.newSeq/*.Rest*/.SequenceEqual (t.seq),
 				label: "Rest of the sequence is same as the original.");
 		}
 		/*
@@ -214,8 +214,8 @@ namespace Examples
 		[Test]
 		public void TestAddition ()
 		{
-			CheckAddition<int> ();
-			CheckAddition<string> ();
+			//CheckAddition<int> ();
+			CheckAddition<char> ();
 		}
 		/*
 		You should now see your checks pass and the names are now a bit easier 
