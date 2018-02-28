@@ -105,8 +105,7 @@ namespace LinqCheck
 		private static IEnumerable<char> ShrinkChar (char c)
 		{
 			var candidates = new char[] 
-				{ 'a', 'b', 'c', 'A', 'B', 'C', '1', '2', '3', char.ToLower (c),
-				  ' ', '\t' };
+				{ 'a', 'b', 'A', 'B', '1', '2', char.ToLower (c), ' ' };
 
 			return candidates.Where (x => x.SimplerThan (c));
 		}
@@ -150,61 +149,63 @@ namespace LinqCheck
 		first remove as many items from the IEnumerable as we can, and then we
 		shrink each individual element at a time. The simplest case, and the 
 		first alternative returned, is the empty enumerable.
-
-		Enumerable shrinking is particularly tricky to implement because it
-		very much depends on the case whether removing items or simplifying
-		them individually provides simpler test data. It is difficult to rank 
-		the alternatives in the order of simplicity, since these two operations 
-		are mostly orthogonal. 
-		
-		The implementation below prefers shorter sequences over longer ones 
-		regardless of how shrunk their elements are. The shrinking will always
-		pick the first alternative which causes a property to fail, so it does 
-		not make sense to produce additional alternatives by combining removing
-		and shrinking elements in various ways. The concept of "simplicity" is 
-		a subjective one, and LinqCheck tries to define it in a reasonable 
-		manner.
 		*/
 		public static IEnumerable<IEnumerable<T>> ShrinkEnumerable<T> (
 			this IEnumerable<T> e)
 		{
-			return RemoveUntil (e)
+			return Shorter (e)
 				.SelectMany (Fun.Identity)
 				.Concat (ShrinkOne (e))
 				.Prepend (new T[0]);
 		}
 		/*
-		The shorter versions are produced by halfing the number of removed items 
-		on each iteration. We call the `RemoveK` method to get the combinations
-		of shorter.
+		The shorter versions are produced by removing decreasing number of 
+		elements from the enumerable. At first iteration we remove all but 
+		one element. After each round we decrease the variable _k_, which 
+		contains the number of elements removed, by one. Eventually we remove 
+		only one element. The elements of the shorter enumerables are 
+		simplified individually by the `ShrinkOne` method.
 		*/
-		private static IEnumerable<IEnumerable<IEnumerable<T>>> RemoveUntil<T> (
+		private static IEnumerable<IEnumerable<IEnumerable<T>>> Shorter<T> (
 			IEnumerable<T> e)
 		{
 			var len = e.Count ();
-			for (var k = len - 1; k > 0; k = k / 2)
-				yield return RemoveK (e, k, len);
+			for (var k = len - 1; k > 0; k--)
+			{
+				var shrunk = RemoveK (e, k, len);
+				foreach (var s in shrunk)
+					yield return ShrinkOne (s);
+				yield return shrunk;
+			}
 		}
-
-		private static IEnumerable<IEnumerable<T>> RemoveK<T> (IEnumerable<T> e, int k, int len)
+		/*
+		The `RemoveK` method removes _k_ elements from different positions and 
+		compiles a set of enumerables with the same length that have different 
+		elements removed.
+		*/
+		private static IEnumerable<IEnumerable<T>> RemoveK<T> (IEnumerable<T> e, 
+			int k, int len)
 		{
-			if (k > len) return new IEnumerable<T>[0];
+			if (k > len) return Enumerable.Empty<IEnumerable<T>> ();
 			var xs1 = e.Take (k);
 			var xs2 = e.Skip (k);
 			return (from r in RemoveK (xs2, k, len - k)
 					select xs1.Concat (r))
-					.Append (xs2);
+				.Append (xs2);
 		}
-
+		/*
+		The `ShrinkOne` method recursively shrinks each element at a time.
+		*/
 		private static IEnumerable<IEnumerable<T>> ShrinkOne<T> (IEnumerable<T> e)
 		{
-			if (e.None ()) return new IEnumerable<T>[0];
+			if (e.None ())
+				return Enumerable.Empty<IEnumerable<T>> ();
 			var first = e.First ();
 			var rest = e.Skip (1);
 			return (from x in Arbitrary.Get<T> ().Shrink (first)
-					select rest.Append(x)).Concat (
+					select rest.Prepend (x)).Concat (
 					from xs in ShrinkOne (e.Skip (1))
-					select xs.Append (first));
+					select xs.Prepend (first));
 		}
 
 		private class Enumerable<T> : ArbitraryBase<IEnumerable<T>>

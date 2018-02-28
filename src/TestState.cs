@@ -18,14 +18,14 @@
 			new SortedDictionary<string,int> ();
         public int CurrentValue;
         public readonly List<object> Values;
-        public readonly List<List<object>> ShrunkValues;
+        public readonly List<IEnumerable<object>> ShrunkValues;
 
         public TestState(TestPhase phase, int seed, int size, string label) :
             this (phase, seed, size, label, null, null)
         {}
 
         public TestState(TestPhase phase, int seed, int size, string label, 
-			List<object> values, List<List<object>> shrunkValues)
+			List<object> values, List<IEnumerable<object>> shrunkValues)
         {
             Phase = phase;
             Random = new Random(seed);

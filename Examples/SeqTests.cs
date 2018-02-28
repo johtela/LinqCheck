@@ -303,7 +303,7 @@ namespace Examples
 			*/
 			.Restrict (20)
 			.Check (t => !t.newSeq.Contains (t.item) ||
-				t.seq.Count (i => i.Equals (t.item)) > 1);
+				t.seq.Count (i => i.Equals (t.item)) > 2);
 		}
 		/*
 		Let's call our check with a few different item types.

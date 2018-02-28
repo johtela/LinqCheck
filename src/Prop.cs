@@ -59,7 +59,7 @@
 					value = (T)state.Values [state.CurrentValue++];
 					if (state.Phase == TestPhase.StartShrink)
 						state.ShrunkValues.Add (
-							new List<object> (arbitrary.Shrink (value).Append (value).Cast<object> ()));
+							arbitrary.Shrink (value).Append (value).Cast<object> ());
 				}
 				return Tuple.Create (TestResult.Succeeded, value);
 			};
@@ -156,39 +156,36 @@
 			return true;
 		}
 
-		private static List<object> GenerateValues (List<List<object>> shrunkValues, List<int> indices)
+		private static bool NextCandidate (List<IEnumerator<object>> current)
 		{
-			return new List<object> (shrunkValues.Select ((lst, i) => lst [indices [i]]));
-		}
-
-		private static bool NextCandidate (List<List<object>> shrunkValues, List<int> indices)
-		{
-			for (int i = 0; i < shrunkValues.Count; i++)
-			{
-				var ind = indices [i] + 1;
-				if (ind < shrunkValues[i].Count)
-				{
-					indices [i] = ind;
+			for (int i = 0; i < current.Count; i++)
+				if (current[i].MoveNext ())
 					return true;
-				}
-			}
 			return false;
 		}
 
 		private static List<object> Optimize<T> (Prop<T> prop, TestState state)
 		{
-			var current = new List<int> (
-				Enumerable.Repeat (0, state.ShrunkValues.Count));
+			var current = state.ShrunkValues
+				.Select (e => 
+				{
+					var res = e.GetEnumerator ();
+					res.MoveNext ();
+					return res;
+				})
+				.ToList ();
 			var values = state.Values;
 
-			while (NextCandidate (state.ShrunkValues, current))
+			while (NextCandidate (current))
 			{
-				values = GenerateValues (state.ShrunkValues, current);
+				values = current.Select (e => e.Current).ToList ();
 				try
 				{
-					if (!Test (prop, 1, new TestState (TestPhase.Shrink,
+					if (Test (prop, 1, new TestState (TestPhase.Shrink,
 						state.Seed, state.Size, state.Label, values,
 						state.ShrunkValues)))
+						Console.Write (".");
+					else
 						break;
 				}
 				catch (Exception) { }
@@ -212,7 +209,7 @@
 				Console.ForegroundColor = ConsoleColor.Red;
 				Console.Write ("Falsifiable after {0} tests. Shrinking input.", state.SuccessfulTests + 1);
 				state = new TestState (TestPhase.StartShrink, seed, size, label,
-					state.Values, new List<List<object>> ());
+					state.Values, new List<IEnumerable<object>> ());
 				Test (testProp, 1, state);
 				Debug.Assert (state.Values.Count == state.ShrunkValues.Count);
 				var optimized = Optimize (testProp, state);
