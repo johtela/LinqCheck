@@ -202,7 +202,7 @@ namespace LinqCheck
 				return Enumerable.Empty<IEnumerable<T>> ();
 			var first = e.First ();
 			var rest = e.Skip (1);
-			return (from x in Arbitrary.Get<T> ().Shrink (first)
+			return (from x in Arbitrary.Shrink (first)
 					select rest.Prepend (x)).Concat (
 					from xs in ShrinkOne (e.Skip (1))
 					select xs.Prepend (first));
