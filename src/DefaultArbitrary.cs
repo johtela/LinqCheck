@@ -173,8 +173,13 @@ namespace LinqCheck
 				.Concat (ShrinkOne (e))
 				.Prepend (new T[0]);
 		}
-
-		private static IEnumerable<IEnumerable<IEnumerable<T>>> RemoveUntil<T> (IEnumerable<T> e)
+		/*
+		The shorter versions are produced by halfing the number of removed items 
+		on each iteration. We call the `RemoveK` method to get the combinations
+		of shorter.
+		*/
+		private static IEnumerable<IEnumerable<IEnumerable<T>>> RemoveUntil<T> (
+			IEnumerable<T> e)
 		{
 			var len = e.Count ();
 			for (var k = len - 1; k > 0; k = k / 2)
