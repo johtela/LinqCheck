@@ -57,9 +57,9 @@
         file: src\DefaultArbitrary.cs
         desc: Implementation of arbitrary types included in LinqCheck.
 
-      - page: Registering Arbitrary Types
+      - page: Container for Arbitrary Implementations
         file: src\Container.cs
-        desc: Container class that stores the registered arbitrary types.
+        desc: Container class manages the registered arbitrary types.
 
       - page: Test State
         file: src\TestState.cs

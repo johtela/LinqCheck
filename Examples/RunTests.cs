@@ -30,8 +30,8 @@ namespace Examples
 			*/
 			Tester.RunTestsTimed (
 				new BasicTests (),
-				new SeqTests ()/*,
-				new CalculatorTests ()*/);
+				new SeqTests (),
+				new CalculatorTests ());
 		}
 	}
 }

@@ -145,15 +145,15 @@ namespace LinqCheck
 		}
 		/*
 		### Shrinking Enumerables
-		Enumerable type has the most involved shrinking procedure. We try to 
-		first remove as many items from the IEnumerable as we can, and then we
-		shrink each individual element at a time. The simplest case, and the 
-		first alternative returned, is the empty enumerable.
+		The IEnumerable type has the most involved shrinking procedure. We 
+		first try to remove as many items from the enumerable as we can, and 
+		then we	shrink each individual element at a time. The simplest case, 
+		and the first alternative returned, is the empty enumerable.
 		*/
 		public static IEnumerable<IEnumerable<T>> ShrinkEnumerable<T> (
 			this IEnumerable<T> e)
 		{
-			return Shorter (e)
+			return Shorten (e)
 				.SelectMany (Fun.Identity)
 				.Concat (ShrinkOne (e))
 				.Prepend (new T[0]);
@@ -166,7 +166,7 @@ namespace LinqCheck
 		only one element. The elements of the shorter enumerables are 
 		simplified individually by the `ShrinkOne` method.
 		*/
-		private static IEnumerable<IEnumerable<IEnumerable<T>>> Shorter<T> (
+		private static IEnumerable<IEnumerable<IEnumerable<T>>> Shorten<T> (
 			IEnumerable<T> e)
 		{
 			var len = e.Count ();
@@ -203,11 +203,23 @@ namespace LinqCheck
 			var first = e.First ();
 			var rest = e.Skip (1);
 			return (from x in Arbitrary.Shrink (first)
-					select rest.Prepend (x)).Concat (
+					select rest.Prepend (x))
+					.Concat (
 					from xs in ShrinkOne (e.Skip (1))
 					select xs.Prepend (first));
 		}
+		/*
+		## Arbitrary Collections
+		Having the ability to generate and shrink enumerables we can implement 
+		the IArbitrary interface for collection types. As the collections are
+		generic, their arbitrary counterparts need to be also parameterized by
+		the element type. Therefore we write separate arbitrary classes for 
+		collections. All of the classes inherit from ArbitraryBase.
 
+		### Arbitrary Enumerable
+		The implementation of arbitrary enumerable is trivial using the 
+		generator and shrinker we already defined.
+		*/
 		private class Enumerable<T> : ArbitraryBase<IEnumerable<T>>
 		{
 			public override Gen<IEnumerable<T>> Generate 
@@ -220,7 +232,10 @@ namespace LinqCheck
 				return ShrinkEnumerable (value);
 			}
 		}
-
+		/*
+		### Arbitrary Array
+		An arbitrary array is composed of arbitrary enumerable.
+		*/
 		private class Array<T> : ArbitraryBase<T[]>
 		{
 			public override Gen<T[]> Generate
@@ -230,10 +245,14 @@ namespace LinqCheck
 
 			public override IEnumerable<T[]> Shrink (T[] value)
 			{
-				return ShrinkEnumerable (value).Select (i => i.ToArray ());
+				return ShrinkEnumerable (value).Select (Enumerable.ToArray);
 			}
 		}
-
+		/*
+		### Arbitrary List
+		Building an arbitrary list is equally simple using the existing 
+		combinators.
+		*/
         private class AList<T> : ArbitraryBase<List<T>>
         {
             public override Gen<List<T>> Generate
