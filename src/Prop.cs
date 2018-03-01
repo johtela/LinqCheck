@@ -156,29 +156,30 @@
 			return true;
 		}
 
-		private static bool NextCandidate (List<IEnumerator<object>> current)
+		private static IEnumerable<List<object>> Candidates (
+			List<IEnumerable<object>> shrunkValues)
 		{
-			for (int i = 0; i < current.Count; i++)
-				if (current[i].MoveNext ())
-					return true;
-			return false;
-		}
-
-		private static List<object> Optimize<T> (Prop<T> prop, TestState state)
-		{
-			var current = state.ShrunkValues
-				.Select (e => 
+			var current = shrunkValues.Select (e =>
 				{
 					var res = e.GetEnumerator ();
 					res.MoveNext ();
 					return res;
 				})
 				.ToList ();
-			var values = state.Values;
+			List<object> GetCurrentValues () => 
+				current.Select (e => e.Current).ToList ();
+			yield return GetCurrentValues ();
 
-			while (NextCandidate (current))
+			for (int i = 0; i < current.Count; i++)
+				while (current[i].MoveNext ())
+					yield return GetCurrentValues ();
+		}
+
+		private static List<object> Optimize<T> (Prop<T> prop, 
+			TestState state)
+		{
+			foreach (var values in Candidates (state.ShrunkValues))
 			{
-				values = current.Select (e => e.Current).ToList ();
 				try
 				{
 					if (Test (prop, 1, new TestState (TestPhase.Shrink,
@@ -186,11 +187,11 @@
 						state.ShrunkValues)))
 						Console.Write (".");
 					else
-						break;
+						return values;
 				}
 				catch (Exception) { }
 			}
-			return values;
+			return state.Values;
 		}
 
 		public static Prop<T> Check<T> (this Prop<T> prop, Expression<Func<T, bool>> condition, 
