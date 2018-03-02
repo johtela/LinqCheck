@@ -1,4 +1,16 @@
-﻿namespace LinqCheck
+﻿/*
+# Properties
+
+Finally we can present the properties themselves. We define properties as 
+another incarnation of monads. They are generic functions that take the test 
+state as an argument and return a value of the generic type and information 
+about whether the execution was succesful or not.
+
+A property is essentially an abstract concept, which can be implemented in 
+various ways, and composed using combinators. Monadic operators provide us the 
+tools that allow easily extending the concept in whatever direction we choose.
+*/
+namespace LinqCheck
 {
 	using System;
 	using System.Collections.Generic;
@@ -6,43 +18,69 @@
 	using System.Linq.Expressions;
 	using System.Diagnostics;
 	using ExtensionCord;
-
-	/// <summary>
-	/// Result of a single test run. Test can either succeed, fail, or be discarded. When test
-	/// fails an TestFailed exception is thrown. Discarded test means that the precondition of
-	/// the test is not met.
-	/// </summary>
+	/*
+	## Test Result
+	If a property returns a value without throwing an exception, it has either 
+	succeeded or discarded the test case (when a specified precondition was 
+	not met). The `TestResult` enumeration specifies which case is in question. 
+	*/
 	public enum TestResult	{ Succeeded, Discarded };
+	/*
+	When a property fails, it throws an exception. The exception contains the
+	necessary information about the reason of the failure.
 
-	/// <summary>
-	/// The property monad wraps a function that tests some property. A property represents
-	/// arbitrarily complex expression that describes how the code to be tested should behave.
-	/// </summary>
+	## The Prop Delegate
+	Properties have the type `Prop<T>`, which is declared below. It is a 
+	monadic	delegate type that represents an arbitrarily complex expression. 
+	The expression is composed of various parts that generate random data, 
+	constrain it, compute derived variables, and classify test cases.
+
+	As with all monads we begin with simple constructs and build more complex
+	ones using the combinators. The recommended way of writing a property
+	expression is to use LINQ syntax, which makes the expresion easier to read
+	and write.
+	*/
 	public delegate Tuple<TestResult, T> Prop<T> (TestState state);
+	/*
+	A property returns a pair of values. The first one tells if the property is
+	passed or discarded, the second one contains the actual value that property
+	produced. The state of the test is passed along in the parameter. Monadic
+	operations hide the state from the user. So in practice, the user does not 
+	have to care about the state at all.
 
-	/// <summary>
-	/// The primitives and combinators dealing with properties.
-	/// </summary>
+	We define the monadic operations in a static class named `Prop`.
+	*/
 	public static class Prop
 	{
-		/// <summary>
-		/// Wrap a value in the Property monad.
-		/// </summary>
+		/*
+		## Transforming a Value to Property
+		The most basic monadic operation _return_, is named as `ToProp`. It 
+		takes a value and wraps it to the Prop delegate. The method cannot
+		fail, so it always returns `Succeeded`.
+		*/
 		public static Prop<T> ToProp<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Succeeded, value);
 		}
-
+		/*
+		A reverse operation of `ToProp` is `Fail`, which throws a 
+		`PropertyFailed<T>` exception. It can be used to explicitly fail a 
+		property.
+		*/
 		public static Prop<T> Fail<T> (this T value)
 		{
 			return state => throw new PropertyFailed<T> (state.Label, value);
 		}
-
+		/*
+		The third way to transform a value to property is to discard it.
+		*/
 		public static Prop<T> Discard<T> (this T value)
 		{
 			return state => Tuple.Create (TestResult.Discarded, value);
 		}
-
+		/*
+		## Generating an Arbitrary Value
+		*/
 		public static Prop<T> ForAll<T> (this IArbitrary<T> arbitrary)
 		{
 			return state => 

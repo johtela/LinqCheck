@@ -111,7 +111,7 @@
 	<li><a href="../src/Container.html">Container for Arbitrary Implementations</a></li>
 	<ul>
 	</ul>
-	<li><a href="../src/TestState.html">Test State</a></li>
+	<li><a href="../src/TestState.html">Test State and Phases</a></li>
 	<ul>
 	</ul>
 	<li><a href="../src/Prop.html" class="selected">Properties</a></li>
@@ -132,11 +132,19 @@
             </div>
 			<div class="col-md-9">
 				<ul class="pager">
-	<li class="previous"><a href="../src/TestState.html">Previous: Test State</a></li>
+	<li class="previous"><a href="../src/TestState.html">Previous: Test State and Phases</a></li>
 	<li class="next"><a href="../src/Tester.html">Next: Test Runner</a></li>
 </ul>
 				<div id="static-content" class="markdown">
-					<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
+					<h1 id="properties">Properties</h1>
+<p>Finally we can present the properties themselves. We define properties as
+another incarnation of monads. They are generic functions that take the test
+state as an argument and return a value of the generic type and information
+about whether the execution was succesful or not.</p>
+<p>A property is essentially an abstract concept, which can be implemented in
+various ways, and composed using combinators. Monadic operators provide us the
+tools that allow easily extending the concept in whatever direction we choose.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
 <span class="punctuation">{</span>
 	<span class="keyword">using</span> System<span class="punctuation">;</span>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Collections<span class="punctuation">.</span>Generic<span class="punctuation">;</span>
@@ -144,44 +152,60 @@
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">.</span>Expressions<span class="punctuation">;</span>
 	<span class="keyword">using</span> System<span class="punctuation">.</span>Diagnostics<span class="punctuation">;</span>
 	<span class="keyword">using</span> ExtensionCord<span class="punctuation">;</span>
-
-	 &lt;summary&gt;
-	/// Result of a single test run. Test can either succeed, fail, or be discarded. When test
-	/// fails an TestFailed exception is thrown. Discarded test means that the precondition of
-	/// the test is not met.
-	/// &lt;/summary&gt;
-	<span class="keyword" id="LinqCheck.TestResult">public</span> <span class="keyword">enum</span> <span class="typename">TestResult</span>	<span class="punctuation">{</span> <span id="LinqCheck.TestResult.Succeeded">Succeeded</span><span class="punctuation">,</span> <span id="LinqCheck.TestResult.Discarded">Discarded</span> <span class="punctuation">}</span><span class="punctuation">;</span>
-
-	 &lt;summary&gt;
-	/// The property monad wraps a function that tests some property. A property represents
-	/// arbitrarily complex expression that describes how the code to be tested should behave.
-	/// &lt;/summary&gt;
-	<span class="keyword" id="System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">public</span> <span class="keyword">delegate</span> <span class="typename" data-toggle="tooltip" title="System.Tuple<LinqCheck.TestResult, T>">Tuple</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult">TestResult</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="typename">Prop</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestState"><a href="../src/TestState.html#LinqCheck.TestState">TestState</a></span> state<span class="punctuation">)</span><span class="punctuation">;</span>
-
-	 &lt;summary&gt;
-	/// The primitives and combinators dealing with properties.
-	/// &lt;/summary&gt;
-	<span class="keyword" id="LinqCheck.Prop">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="typename">Prop</span>
+</code></pre>
+<h2 id="test-result">Test Result</h2>
+<p>If a property returns a value without throwing an exception, it has either
+succeeded or discarded the test case (when a specified precondition was
+not met). The <code>TestResult</code> enumeration specifies which case is in question.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.TestResult">public</span> <span class="keyword">enum</span> <span class="typename">TestResult</span>	<span class="punctuation">{</span> <span id="LinqCheck.TestResult.Succeeded">Succeeded</span><span class="punctuation">,</span> <span id="LinqCheck.TestResult.Discarded">Discarded</span> <span class="punctuation">}</span><span class="punctuation">;</span>
+</code></pre>
+<p>When a property fails, it throws an exception. The exception contains the
+necessary information about the reason of the failure.</p>
+<h2 id="the-prop-delegate">The Prop Delegate</h2>
+<p>Properties have the type <code>Prop&lt;T&gt;</code>, which is declared below. It is a
+monadic	delegate type that represents an arbitrarily complex expression.
+The expression is composed of various parts that generate random data,
+constrain it, compute derived variables, and classify test cases.</p>
+<p>As with all monads we begin with simple constructs and build more complex
+ones using the combinators. The recommended way of writing a property
+expression is to use LINQ syntax, which makes the expresion easier to read
+and write.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">public</span> <span class="keyword">delegate</span> <span class="typename" data-toggle="tooltip" title="System.Tuple<LinqCheck.TestResult, T>">Tuple</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult">TestResult</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="typename">Prop</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestState"><a href="../src/TestState.html#LinqCheck.TestState">TestState</a></span> state<span class="punctuation">)</span><span class="punctuation">;</span>
+</code></pre>
+<p>A property returns a pair of values. The first one tells if the property is
+passed or discarded, the second one contains the actual value that property
+produced. The state of the test is passed along in the parameter. Monadic
+operations hide the state from the user. So in practice, the user does not
+have to care about the state at all.</p>
+<p>We define the monadic operations in a static class named <code>Prop</code>.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.Prop">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="typename">Prop</span>
 	<span class="punctuation">{</span>
-		 &lt;summary&gt;
-		/// Wrap a value in the Property monad.
-		/// &lt;/summary&gt;
-		<span class="keyword" id="LinqCheck.Prop.ToProp<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">ToProp</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
+</code></pre>
+<h2 id="transforming-a-value-to-property">Transforming a Value to Property</h2>
+<p>The most basic monadic operation <em>return</em>, is named as <code>ToProp</code>. It
+takes a value and wraps it to the Prop delegate. The method cannot
+fail, so it always returns <code>Succeeded</code>.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Prop.ToProp<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.ToProp<T>(T)">ToProp</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> state <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span class="typename" data-toggle="tooltip" title="System.Tuple">Tuple</span><span class="punctuation" data-toggle="tooltip" title="System.Tuple.Create<LinqCheck.TestResult, T>(LinqCheck.TestResult, T)">.</span><span data-toggle="tooltip" title="System.Tuple.Create<LinqCheck.TestResult, T>(LinqCheck.TestResult, T)">Create</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult">TestResult</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.TestResult">.</span><span data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult.Succeeded">Succeeded</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">value</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="LinqCheck.Prop.Fail<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">Fail</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
+</code></pre>
+<p>A reverse operation of <code>ToProp</code> is <code>Fail</code>, which throws a
+<code>PropertyFailed&lt;T&gt;</code> exception. It can be used to explicitly fail a
+property.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Prop.Fail<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Fail<T>(T)">Fail</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> state <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.PropertyFailed<T>">new</span> <span class="typename"><a href="../src/Tester.html#LinqCheck.PropertyFailed<T>">PropertyFailed</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string"><a href="../src/TestState.html#LinqCheck.TestState.Label">Label</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">value</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="LinqCheck.Prop.Discard<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">Discard</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
+</code></pre>
+<p>The third way to transform a value to property is to discard it.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Prop.Discard<T>(T)" data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Discard<T>(T)">Discard</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span> value<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> state <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> <span class="typename" data-toggle="tooltip" title="System.Tuple">Tuple</span><span class="punctuation" data-toggle="tooltip" title="System.Tuple.Create<LinqCheck.TestResult, T>(LinqCheck.TestResult, T)">.</span><span data-toggle="tooltip" title="System.Tuple.Create<LinqCheck.TestResult, T>(LinqCheck.TestResult, T)">Create</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult">TestResult</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.TestResult">.</span><span data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../src/Prop.html#LinqCheck.TestResult.Discarded">Discarded</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">value</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
-
-		<span class="keyword" id="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">ForAll</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> arbitrary<span class="punctuation">)</span>
+</code></pre>
+<h2 id="generating-an-arbitrary-value">Generating an Arbitrary Value</h2>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<T>(LinqCheck.IArbitrary<T>)">ForAll</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../src/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> arbitrary<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
 			<span class="keyword">return</span> state <span class="punctuation" data-toggle="tooltip" title="lambda expression">=&gt;</span> 
 			<span class="punctuation">{</span>
@@ -381,7 +405,7 @@
 
 				</div>
 				<ul class="pager">
-	<li class="previous"><a href="../src/TestState.html">Previous: Test State</a></li>
+	<li class="previous"><a href="../src/TestState.html">Previous: Test State and Phases</a></li>
 	<li class="next"><a href="../src/Tester.html">Next: Test Runner</a></li>
 </ul>
 			</div>

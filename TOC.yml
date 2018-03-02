@@ -61,9 +61,9 @@
         file: src\Container.cs
         desc: Container class manages the registered arbitrary types.
 
-      - page: Test State
+      - page: Test State and Phases
         file: src\TestState.cs
-        desc: The state needed by the properties when they are executed.
+        desc: Defines the state of the properties and their execution phases.
 
       - page: Properties
         file: src\Prop.cs

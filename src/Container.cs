@@ -1,9 +1,9 @@
 ﻿/*
 # Container for Arbitrary Implementations
 
-To register and retrieve interface implementations at runtime we need a helper
-class to track them. Classes that use runtime type information to manage
-interface implementations are typically called _containers_ in 
+We need a helper class to register and retrieve interface implementations at 
+runtime. Classes that use runtime type information to manage interface 
+implementations are typically called _containers_ in 
 [IoC](https://en.wikipedia.org/wiki/Inversion_of_control) frameworks. We 
 define a simple container class that helps us dynamically create objects which
 implement the IArbitrary interface. The class we write supports any generic
