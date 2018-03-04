@@ -1,6 +1,6 @@
 ﻿.markdown {
   color: #333;
-  /*font-family: "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";*/
+  font-family: "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   font-size: 16px;
   line-height: 1.6;
 }
@@ -46,19 +46,19 @@
   font-size: 30px;
 }
 .markdown h2 {
-  font-size: 21px;
+  font-size: 24px;
 }
 .markdown h3 {
-  font-size: 16px;
+  font-size: 18px;
 }
 .markdown h4 {
-  font-size: 14px;
+  font-size: 16px;
 }
 .markdown h5 {
-  font-size: 12px;
+  font-size: 14px;
 }
 .markdown h6 {
-  font-size: 11px;
+  font-size: 12px;
 }
 .markdown blockquote {
   color: #666666;

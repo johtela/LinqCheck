@@ -95,6 +95,10 @@
   white-space: pre-wrap;
   word-wrap: break-word;
 }
+.markdown p em {
+  font-style: normal;
+  font-weight: 600;
+}
 .markdown b,
 .markdown strong {
   font-weight: bold;
@@ -147,7 +151,8 @@
   -ms-interpolation-mode: bicubic;
   vertical-align: middle;
   float: right;
-  margin: 12px;
+  margin: 0 0 12px 12px;
+  display: block;
 }
 .markdown table {
   border: none;
@@ -168,9 +173,4 @@
 }
 .markdown td {
   vertical-align: top;
-}
-.markdown svg {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
 }

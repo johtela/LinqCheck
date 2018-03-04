@@ -1,6 +1,6 @@
 ﻿---
 ProjectName: LinqCheck
-Logo: images/LinqCheck.svg
+Logo: images/LinqCheck2.svg
 GitHub: https://github.com/johtela/LinqCheck
 Footer: "Copyright © 2018 Tommi Johtela"
 License: License.html

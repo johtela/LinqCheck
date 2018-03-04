@@ -57,6 +57,8 @@
   <ItemGroup>
     <Content Include="docs\images\favicon.ico" />
     <Content Include="docs\images\LinqCheck.svg" />
+    <Content Include="docs\images\LinqCheck2.bmp" />
+    <Content Include="docs\images\LinqCheck2.svg" />
     <Content Include="docs\images\win7calculator.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

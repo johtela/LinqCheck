@@ -81,9 +81,9 @@ namespace LinqCheck
 		{
 			/*
 			To implement the method, we can use a functional programming 
-			technique commonly called as _following the types_. It entails 
-			realizing that we are implementing a pure method, so we can only 
-			return a value which we can construct from our parameters. 
+			technique commonly called as _following the types_. It entails
+			realizing that when implementing a pure method, we can only return 
+			a value which we can construct from our parameters. 
 			
 			The only parameter we get is a value of type `T`. We have to return 
 			a value of type `Gen<T>`, which is an alias for the delegate 
