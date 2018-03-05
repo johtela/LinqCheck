@@ -102,7 +102,7 @@ namespace LinqCheck
 		The generated variables are stored in the `Values` list. Note that all 
 		the values are essentially untyped; they are stored as objects. Since 
 		all properties have an associated type, we can cast the values to 
-		appropriate type when the properties need them.
+		appropriate type when properties need them.
 		*/
 		public readonly List<object> Values;
 		/*

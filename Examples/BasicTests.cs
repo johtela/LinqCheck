@@ -128,7 +128,7 @@ namespace Examples
 			 let sinx = Math.Sin (x)
 			 select new { x, sinx })
 			.Check (t => t.sinx.IsBetween (-1.0, 1.0))
-			.Check (t => t.sinx.ApproxEquals (Math.Cos (-Math.PI / 2 + t.x)));
+			.Check (t => t.sinx.ApproxEquals (Math.Cos (Math.PI / 2 + t.x)));
 		}
 		/*
 		In this case we generate random values of type `double`, and pass that
@@ -142,11 +142,11 @@ namespace Examples
 		However, when we run this test we get an error:
 		```
 		't.sinx.IsBetween(-1, 1)' passed 100 tests. Discarded: 0
-		Falsifiable after 1 tests. Shrinking input..
+		Falsifiable after 1 tests. Shrinking input.
 		Test 'TestSin' failed.
 		Reason: Property 't.sinx.ApproxEquals(Cos((1,5707963267949 + t.x)))' failed for input:
-		{ x = 3, sinx = 0,141120008059867 }
-		   at LinqCheck.Prop.<>c__DisplayClass7_0`2.<Bind>b__0(TestState state) in ...
+		{ x = 0, sinx = 0 }		   
+			at LinqCheck.Prop.<>c__DisplayClass7_0`2.<Bind>b__0(TestState state) in ...
 		```
 		When LinqCheck finds a failing input, it first shrinks the test case 
 		into a minimal example that still fails. This means that if we remove

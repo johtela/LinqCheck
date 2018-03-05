@@ -264,7 +264,7 @@ namespace LinqCheck
 		default 100 times) and returns true, if all the test iterations pass.
 		In case any round throws a PropertyFailed exception, the execution
 		immediately halts, and we return false. The method also counts the 
-		number of passed and discarded tests and maintains these numbers in 
+		number of passed and discarded tests and maintains these counters in 
 		the test state.
 		*/
         private static bool Test<T> (Prop<T> prop, int tries, TestState state)
@@ -424,11 +424,11 @@ namespace LinqCheck
 					state.Values, new List<IEnumerable<object>> ());
 				Test (testProp, 1, state);
 				/*
-				We make sure that the number of shrunk is correct. This is done
-				merely to verify that there are no issues with the shrinking
-				implementations. Then we move on the the `Shrink` phase by 
-				calling `Optimize`, which starts going through the shrunk test
-				cases.
+				We make sure that the number of shrunk variables is correct. 
+				This is done merely to verify that there are no issues with the 
+				shrinking implementations. Then we move on the the `Shrink` 
+				phase by calling `Optimize`, which starts going through the 
+				shrunk test cases.
 				*/
 				Debug.Assert (state.Values.Count == state.ShrunkValues.Count);
 				var optimized = Optimize (testProp, state);
@@ -444,13 +444,14 @@ namespace LinqCheck
 					optimized, null);
 				testProp (state);
 				/*
-				If we end up here, something went wrong, because the calling 
-				the property did not trigger the exception. This is usually a 
-				symptom of an undeterinistic property. Probably the property 
-				has some side-effect which hides the failure depending on 
-				external state. The only thing we can do, is to report this to 
-				the user as an exception, and try to hint at what might be 
-				wrong.
+				If we end up here, something went wrong because the calling 
+				the property again did not trigger the exception again. This 
+				is usually a symptom of an undeterministic property. If a 
+				property behaves differently sometimes when called with the 
+				same input, then it has side-effects. That is, its result 
+				depends on something else than its parameters. The only thing 
+				we can do is to report this to the user as an exception, and 
+				try to hint what might be wrong.
 				*/
 				throw new TestFailed (
 					"The failed property was re-evaluated, but the error did " +
@@ -459,7 +460,7 @@ namespace LinqCheck
 					"and make the test case undeterministic.");
 			}
 			/*
-			If all generated test cases passed, we end up here. We report the 
+			If all generated test cases pass, we end up here. We report the 
 			successful property and number of passed vs. discarded cases to the
 			user.
 			*/
@@ -467,9 +468,9 @@ namespace LinqCheck
 			Console.WriteLine ("'{0}' passed {1} tests. Discarded: {2}", 
 				state.Label, state.SuccessfulTests, state.DiscardedTests);
 			/*
-			If `OrderBy` combinator was used in the property, we have some data
+			If the `OrderBy` combinator was used in the property, we have data
 			in the `Classes` dictionary. We report the test case distribution to
-			the user in that case.
+			the user if that is the case.
 			*/
 			if (state.Classes.Count > 0)
 			{

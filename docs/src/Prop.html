@@ -374,7 +374,7 @@ at the end of this chapter.</p>
 default 100 times) and returns true, if all the test iterations pass.
 In case any round throws a PropertyFailed exception, the execution
 immediately halts, and we return false. The method also counts the
-number of passed and discarded tests and maintains these numbers in
+number of passed and discarded tests and maintains these counters in
 the test state.</p>
 <pre class="csharp"><code class="csharp">        <span class="keyword" id="LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)" data-toggle="tooltip" title="LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)">static</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)">Test</span><span class="punctuation">&lt;</span><span class="typename"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.Prop<T>"><a href="../src/Prop.html#System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">Prop</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../src/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> prop<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> tries<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.TestState"><a href="../src/TestState.html#LinqCheck.TestState">TestState</a></span> state<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
@@ -520,11 +520,11 @@ generating new ones.</p>
 					<span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<object>"><a href="../src/TestState.html#LinqCheck.TestState.Values">Values</a></span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.IEnumerable<object>>">new</span> <span class="typename">List</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<object>">IEnumerable</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">&gt;</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 				<span data-toggle="tooltip" title="LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)"><a href="../src/Prop.html#LinqCheck.Prop.Test<T>(LinqCheck.Prop<T>, int, LinqCheck.TestState)">Test</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.Prop<T>">testProp</span><span class="punctuation">,</span> <span class="number" data-toggle="tooltip" title="int">1</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
-<p>We make sure that the number of shrunk is correct. This is done
-merely to verify that there are no issues with the shrinking
-implementations. Then we move on the the <code>Shrink</code> phase by
-calling <code>Optimize</code>, which starts going through the shrunk test
-cases.</p>
+<p>We make sure that the number of shrunk variables is correct.
+This is done merely to verify that there are no issues with the
+shrinking implementations. Then we move on the the <code>Shrink</code>
+phase by calling <code>Optimize</code>, which starts going through the
+shrunk test cases.</p>
 <pre class="csharp"><code class="csharp">				<span class="typename" data-toggle="tooltip" title="System.Diagnostics.Debug">Debug</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Debug.Assert(bool)">.</span><span data-toggle="tooltip" title="System.Diagnostics.Debug.Assert(bool)">Assert</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<object>"><a href="../src/TestState.html#LinqCheck.TestState.Values">Values</a></span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Count</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.IEnumerable<object>>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.IEnumerable<object>>"><a href="../src/TestState.html#LinqCheck.TestState.ShrunkValues">ShrunkValues</a></span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Count</span><span class="punctuation">)</span><span class="punctuation">;</span>
 				<span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.List<object>">var</span> <span id="optimized">optimized</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="LinqCheck.Prop.Optimize<T>(LinqCheck.Prop<T>, LinqCheck.TestState)"><a href="../src/Prop.html#LinqCheck.Prop.Optimize<T>(LinqCheck.Prop<T>, LinqCheck.TestState)">Optimize</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.Prop<T>">testProp</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
@@ -538,13 +538,14 @@ caught by the unit testing framework.</p>
 					<span data-toggle="tooltip" title="System.Collections.Generic.List<object>">optimized</span><span class="punctuation">,</span> <span class="keyword">null</span><span class="punctuation">)</span><span class="punctuation">;</span>
 				<span data-toggle="tooltip" title="LinqCheck.Prop<T>">testProp</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
-<p>If we end up here, something went wrong, because the calling
-the property did not trigger the exception. This is usually a
-symptom of an undeterinistic property. Probably the property
-has some side-effect which hides the failure depending on
-external state. The only thing we can do, is to report this to
-the user as an exception, and try to hint at what might be
-wrong.</p>
+<p>If we end up here, something went wrong because the calling
+the property again did not trigger the exception again. This
+is usually a symptom of an undeterministic property. If a
+property behaves differently sometimes when called with the
+same input, then it has side-effects. That is, its result
+depends on something else than its parameters. The only thing
+we can do is to report this to the user as an exception, and
+try to hint what might be wrong.</p>
 <pre class="csharp"><code class="csharp">				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../src/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span>
 					<span class="string" data-toggle="tooltip" title="string">&quot;The failed property was re-evaluated, but the error did &quot;</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span>
 					<span class="string" data-toggle="tooltip" title="string">&quot; not reoccur. This probably means that the property has &quot;</span> <span class="punctuation" data-toggle="tooltip" title="string">+</span> 
@@ -552,16 +553,16 @@ wrong.</p>
 					<span class="string" data-toggle="tooltip" title="string">&quot;and make the test case undeterministic.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
 			<span class="punctuation">}</span>
 </code></pre>
-<p>If all generated test cases passed, we end up here. We report the
+<p>If all generated test cases pass, we end up here. We report the
 successful property and number of passed vs. discarded cases to the
 user.</p>
 <pre class="csharp"><code class="csharp">			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Gray</span><span class="punctuation">;</span>
 			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object, object, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object, object, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; passed {1} tests. Discarded: {2}&quot;</span><span class="punctuation">,</span> 
 				<span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string"><a href="../src/TestState.html#LinqCheck.TestState.Label">Label</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../src/TestState.html#LinqCheck.TestState.SuccessfulTests">SuccessfulTests</a></span><span class="punctuation">,</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int"><a href="../src/TestState.html#LinqCheck.TestState.DiscardedTests">DiscardedTests</a></span><span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
-<p>If <code>OrderBy</code> combinator was used in the property, we have some data
+<p>If the <code>OrderBy</code> combinator was used in the property, we have data
 in the <code>Classes</code> dictionary. We report the test case distribution to
-the user in that case.</p>
+the user if that is the case.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.SortedDictionary<string, int>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.SortedDictionary<string, int>"><a href="../src/TestState.html#LinqCheck.TestState.Classes">Classes</a></span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Count</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">)</span>
 			<span class="punctuation">{</span>
 				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">DarkGray</span><span class="punctuation">;</span>

@@ -225,7 +225,7 @@ random integer with appropriate range and using it as a character code.</p>
 		<span class="punctuation">}</span>
 </code></pre>
 <h3 id="shrinking-characters">Shrinking Characters</h3>
-<p>The rules of characters shrinking are a bit arbitrary but agreeable. We
+<p>The rules of character shrinking are a bit arbitrary but agreeable. We
 prefer to have lowercase letters over uppercase ones, and letters over
 numbers or whitespace.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.DefaultArbitrary.ShrinkChar(char)" data-toggle="tooltip" title="LinqCheck.DefaultArbitrary.ShrinkChar(char)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.DefaultArbitrary.ShrinkChar(char)">static</span> <span class="typename" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<char>">IEnumerable</span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="char">char</span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.DefaultArbitrary.ShrinkChar(char)">ShrinkChar</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="char">char</span> c<span class="punctuation">)</span>
@@ -284,7 +284,7 @@ and the first alternative returned, is the empty enumerable.</p>
 </code></pre>
 <p>The shorter versions are produced by removing decreasing number of
 elements from the enumerable. At first iteration we remove all but
-one element. After each round we decrease the variable <em>k</em>, which
+one element. After each round we decrement the variable <em>k</em>, which
 contains the number of elements removed, by one. Eventually we remove
 only one element. The elements of the shorter enumerables are
 simplified individually by the <code>ShrinkOne</code> method.</p>
@@ -330,7 +330,7 @@ elements removed.</p>
 		<span class="punctuation">}</span>
 </code></pre>
 <h2 id="arbitrary-collections">Arbitrary Collections</h2>
-<p>Having the ability to generate and shrink enumerables we can implement
+<p>With the ability to generate and shrink enumerables we can implement
 the IArbitrary interface for collection types. As the collections are
 generic, their arbitrary counterparts need to be also parameterized by
 the element type. Therefore we write separate arbitrary classes for

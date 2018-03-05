@@ -98,7 +98,7 @@ namespace LinqCheck
 		}
 		/*
 		### Shrinking Characters
-		The rules of characters shrinking are a bit arbitrary but agreeable. We 
+		The rules of character shrinking are a bit arbitrary but agreeable. We 
 		prefer to have lowercase letters over uppercase ones, and letters over 
 		numbers or whitespace.
 		*/
@@ -161,7 +161,7 @@ namespace LinqCheck
 		/*
 		The shorter versions are produced by removing decreasing number of 
 		elements from the enumerable. At first iteration we remove all but 
-		one element. After each round we decrease the variable _k_, which 
+		one element. After each round we decrement the variable _k_, which 
 		contains the number of elements removed, by one. Eventually we remove 
 		only one element. The elements of the shorter enumerables are 
 		simplified individually by the `ShrinkOne` method.
@@ -210,7 +210,7 @@ namespace LinqCheck
 		}
 		/*
 		## Arbitrary Collections
-		Having the ability to generate and shrink enumerables we can implement 
+		With the ability to generate and shrink enumerables we can implement 
 		the IArbitrary interface for collection types. As the collections are
 		generic, their arbitrary counterparts need to be also parameterized by
 		the element type. Therefore we write separate arbitrary classes for 

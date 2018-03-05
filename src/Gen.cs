@@ -2,7 +2,7 @@
 # Generators and Monads
 
 Most programming languages have a random number generator of some kind. The 
-Random class in the System namespace provides the default implementation for
+Random class in the System namespace provides the default implementation in
 .NET. It can produce random integers and floating point numbers. That is all
 well and good, but we need to generate many more types than just numbers. The 
 question is: how can we generalize the Random class to provide values of any 

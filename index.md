@@ -84,8 +84,8 @@ language.
 
 ## LinqCheck
 
-As you might have guessed LinqCheck is basically a port of QuickCheck for C#.
-It implements all of the concepts present in QuickCheck, and tries to provide 
+As you might have guessed LinqCheck is a port of QuickCheck for C#. It 
+implements all of the concepts present in QuickCheck, and tries to provide 
 an API which feels natural, not mimicking the original design too much. It 
 also aims to demonstrate how you can program in C# like it was a functional 
 programming language. You can write really elegant and simple code by following
@@ -109,15 +109,15 @@ the orginal implementation utilizes monads in many places.
 The easiest way to learn LinqCheck is by example. The first part of this 
 documentation covers several test examples and introduces the most important
 features of the library. If you are only interested in how to use the library, 
-you can read just those sections. But if you want to learn how the library works
-under the hood, you can continue reading the following sections which cover the
+you can read just those chapters. But if you want to learn how the library works
+under the hood, you can continue reading the following chapters which cover the
 whole implementation. 
 
-This documentation that is generated with the 
+This documentation is generated with the 
 [Literate Programming](https://johtela.github.io/LiterateProgramming/) tool,
 which I developed based on the ideas proposed by 
 [Donald Knuth](https://fi.wikipedia.org/wiki/Donald_Knuth). Literate programming 
-is a methodology which encourages writing documentation in tandem with the code.
+is a methodology that encourages writing documentation in tandem with code.
 It offers a way to provide comprehensive documentation for programs whose 
 workings you want to explicate to others and especially to yourself.
 
