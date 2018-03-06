@@ -1,7 +1,7 @@
 /*
 # Test Runner
 
-In essence, an unit testing framework is quite a simple apparatus. Its core
+In essence, a unit testing framework is quite a simple apparatus. Its core
 function is to discover and execute user-defined test methods. Testing 
 libraries typically contain a bunch of auxiliary methods that can be used to
 check various conditions inside tests. Another common feature is to provide 
@@ -14,7 +14,7 @@ conventions as other testing frameworks, so migrating to a more complete
 solution later on is easy.
 
 We don't write a full application but rather include minimal set of methods
-required to build a custom test bench.
+required to build a custom testbench.
 */
 namespace LinqCheck
 {
