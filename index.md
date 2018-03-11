@@ -1,24 +1,11 @@
-﻿---
-ProjectName: LinqCheck
-Logo: images/LinqCheck2.svg
-GitHub: https://github.com/johtela/LinqCheck
-Footer: "Copyright © 2018 Tommi Johtela"
-License: License.html
-BootstrapStyle: simplex
-MarkdownStyle: modern
-SyntaxHighlight: son-of-obsidian
-UseDiagrams: true
-DiagramStyle: mermaid
-UseMath: true
----
-# Property Based Testing with LINQ Expressions
+﻿# Property Based Testing with LINQ Expressions
 
 > There are two ways of constructing a software design: One way is to make it 
 > so simple that there are obviously no deficiencies, and the other way is to 
 > make it so complicated that there are no obvious deficiencies. The first 
 > method is far more difficult. 
 > 
-> _C.A.R. Hoare in his 1980 Turing Award Lecture_
+> C.A.R. Hoare in his 1980 Turing Award Lecture
 
 Although [Tony Hoare's](https://en.wikipedia.org/wiki/Tony_Hoare) famous quote 
 is undoubtedly correct, it is increasingly difficult nowadays to design software 

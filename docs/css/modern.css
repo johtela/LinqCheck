@@ -53,12 +53,12 @@
   margin-top: 0;
   border-bottom: solid;
   border-bottom-width: thick;
-  border-bottom-color: #f0f5ff;
+  border-bottom-color: #eee;
 }
 .markdown h2,
 .markdown h3 {
   margin-top: 1.5em;
-  background-color: #f0f5ff;
+  background-color: #eee;
   padding: 0.25em;
   border-radius: 4px;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19);
@@ -161,7 +161,7 @@
   margin-right: auto;
 }
 .markdown tbody tr:nth-child(odd) {
-  background-color: #f0f5ff;
+  background-color: #eee;
 }
 .markdown th,
 .markdown td {

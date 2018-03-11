@@ -48,6 +48,7 @@
     <Compile Include="src\TestState.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="defaults.yml" />
     <None Include="index.md" />
     <None Include="License.md" />
     <None Include="packages.config" />
