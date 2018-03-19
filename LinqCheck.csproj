@@ -57,7 +57,6 @@
   <ItemGroup />
   <ItemGroup>
     <None Include="docs\images\favicon.ico" />
-    <None Include="docs\images\LinqCheck.svg" />
     <None Include="docs\images\LinqCheck2.bmp" />
     <None Include="docs\images\LinqCheck2.svg" />
     <None Include="docs\images\win7calculator.gif" />
