@@ -1,4 +1,4 @@
-﻿$csweavedir = "..\LiterateProgramming\bin\Debug"
+﻿$csweavedir = "$env:LOCALAPPDATA\csweave"
 
 function GenerateDocs ()
 {

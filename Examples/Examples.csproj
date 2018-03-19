@@ -32,8 +32,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExtensionCord, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ExtensionCord.1.0.0\lib\net461\ExtensionCord.dll</HintPath>
+    <Reference Include="ExtensionCord, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ExtensionCord.1.0.2\lib\net461\ExtensionCord.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
