@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://johtela.github.io/LinqCheck/License.html</licenseUrl>
+    <projectUrl>https://johtela.github.io/LinqCheck/</projectUrl>
+    <iconUrl>https://johtela.github.io/LinqCheck/images/LinqCheck2.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>Initial release.</releaseNotes>
+    <copyright>Copyright 2015 © Tommi Johtela</copyright>
+    <tags>c# .net property-based-testing quickcheck</tags>
+  </metadata>
+</package>

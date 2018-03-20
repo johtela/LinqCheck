@@ -51,7 +51,9 @@
     <None Include="defaults.yml" />
     <None Include="index.md" />
     <None Include="License.md" />
+    <None Include="LinqCheck.nuspec" />
     <None Include="packages.config" />
+    <None Include="README.md" />
     <None Include="TOC.yml" />
   </ItemGroup>
   <ItemGroup />
