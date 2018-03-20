@@ -4,7 +4,7 @@
 
 LinqCheck is a property based testing library for C#. It implements all of the 
 concepts present in [QuickCheck](https://en.wikipedia.org/wiki/QuickCheck), but 
-using LINQ expressions to write the properties and generators.
+represents properties and generators as LINQ expressions.
 
 # Installation
 
