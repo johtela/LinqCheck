@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Tester - LinqCheck</title>
+
+	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+    
+
+
+
+<link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
+<link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="../sidebar/sidebar.min.css" />
+<link rel="stylesheet" href="../css/modern.min.css" />
+<link rel="stylesheet" href="../syntax-highlight/monokai.min.css" />
+<link rel="stylesheet" href="../mermaid/mermaid.css" />
+
+</head>
+
+<body>
+    
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="../index.html"><span><img src="../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="../index.html"><i class="fa fa-home" aria-hidden="true"></i> Home</a></li>
+					<li><a href="https://github.com/johtela/LinqCheck"><i class="fa fa-github" aria-hidden="true"></i> GitHub Repository</a></li>
+                    <li><a href="../License.html">License</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 hidden-xs hidden-sm">
+                
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>On This Page</h4>
+            </div>
+            <div id="header-menu" class="panel-body main-menu">
+                <ul></ul>
+            </div>
+        </div>  
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Table of Contents</h4>
+            </div>
+            <div class="panel-body main-menu">
+                <ul>
+	<li><a href="../index.html">Home</a></li>
+	<ul>
+	</ul>
+	<li>Usage</li>
+	<ul>
+<ul>
+	<li><a href="../Examples/BasicTests.html">Writing Simple Tests</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/SeqTests.html">Adding New Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/Calculator.html">Testing Programs with Mutable State</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/ModelCalculator.html">Implementing a Model</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/Automated.html">Using UI Automation</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/Win7Calculator.html">Windows 7 Calculator</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/Win10Calculator.html">Windows 10 Calculator</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/UITests/CalculatorTests.html">Testing the Calculator</a></li>
+	<ul>
+	</ul>
+	<li><a href="../Examples/RunTests.html">Running the Tests</a></li>
+	<ul>
+	</ul>
+</ul>
+	</ul>
+	<li>Implementation</li>
+	<ul>
+<ul>
+	<li><a href="../src/Gen.html">Generators and Monads</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Arbitrary.html">Generating and Shrinking Arbitrary Values</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/DefaultArbitrary.html">Built-In Arbitrary Types</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Container.html">Container for Arbitrary Implementations</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/TestState.html">Test State and Phases</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Prop.html">Properties</a></li>
+	<ul>
+	</ul>
+	<li><a href="../src/Tester.html">Test Runner</a></li>
+	<ul>
+	</ul>
+</ul>
+	</ul>
+	<li><a href="../License.html">License</a></li>
+	<ul>
+	</ul>
+	<li><a href="../README.html">README</a></li>
+	<ul>
+	</ul>
+</ul>
+            </div>
+        </div>
+
+            </div>
+			<div class="col-md-9">
+								<div id="static-content" class="markdown">
+					<h1 id="test-runner">Test Runner</h1>
+<p>In essence, a unit testing framework is quite a simple apparatus. Its core
+function is to discover and execute user-defined test methods. Testing
+libraries typically contain a bunch of auxiliary methods that can be used to
+check various conditions inside tests. Another common feature is to provide
+an application or Visual Studio add-in  which runs tests and reports their
+results.</p>
+<p>If you need a simple way to define and run your tests, LinqCheck comes
+&quot;batteries included&quot; with a simple test runner. The test runner uses the same
+conventions as other testing frameworks, so migrating to a more complete
+solution later on is easy.</p>
+<p>We don't write a full application but rather include minimal set of methods
+required to build a custom testbench.</p>
+<pre class="csharp"><code class="csharp"><span class="keyword" id="LinqCheck">namespace</span> LinqCheck
+<span class="punctuation">{</span>
+	<span class="keyword">using</span> System<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Diagnostics<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Linq<span class="punctuation">;</span>
+	<span class="keyword">using</span> System<span class="punctuation">.</span>Reflection<span class="punctuation">;</span>
+</code></pre>
+<h2 id="exception-classes">Exception Classes</h2>
+<p>We use two exception classes to recognize failed tests. The TestFailed
+class is a more general one that indicates any kind of failure. The
+<code>PropertyFailed&lt;T&gt;</code> class inherits from <code>TestFailed</code> and is thrown by the
+<code>Prop.Check</code> method whenever a property of type <code>Prop&lt;T&gt;</code> fails.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.TestFailed">public</span> <span class="keyword">class</span> <span class="typename">TestFailed</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span>
+	<span class="punctuation">{</span>
+		<span class="keyword" id="LinqCheck.TestFailed.TestFailed(string)" data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">public</span> <span data-toggle="tooltip" title="LinqCheck.TestFailed.TestFailed(string)">TestFailed</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> message<span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="void">:</span> <span class="keyword" data-toggle="tooltip" title="void">base</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">message</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+
+	<span class="keyword" id="LinqCheck.PropertyFailed<T>">public</span> <span class="keyword">class</span> <span class="typename">PropertyFailed</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.TestFailed"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span>
+	<span class="punctuation">{</span>
+		<span class="keyword">public</span> <span class="keyword">readonly</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> <span id="LinqCheck.PropertyFailed<T>.Input">Input</span><span class="punctuation">;</span>
+
+		<span class="keyword" id="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)" data-toggle="tooltip" title="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)">public</span> <span data-toggle="tooltip" title="LinqCheck.PropertyFailed<T>.PropertyFailed(string, T)">PropertyFailed</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> property<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> input<span class="punctuation">)</span>
+			<span class="punctuation" data-toggle="tooltip" title="void">:</span> <span class="keyword" data-toggle="tooltip" title="void">base</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+				<span class="string" data-toggle="tooltip" title="string">&quot;Property &#39;{0}&#39; failed for input:\n{1}&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="string">property</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">input</span><span class="punctuation">)</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#LinqCheck.PropertyFailed<T>.Input">Input</a></span> <span class="punctuation" data-toggle="tooltip" title="T">=</span> <span data-toggle="tooltip" title="T">input</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+</code></pre>
+<h2 id="test-attribute">Test Attribute</h2>
+<p>We define a single attribute <code>[Test]</code> to denote a test method. If you
+decorate a method with that attribute the test runner will find and
+run it.</p>
+<pre class="csharp"><code class="csharp">	<span class="punctuation">[</span><span class="typename" data-toggle="tooltip" title="System.AttributeUsageAttribute">AttributeUsage</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.AttributeTargets">AttributeTargets</span><span class="punctuation" data-toggle="tooltip" title="System.AttributeTargets">.</span><span data-toggle="tooltip" title="System.AttributeTargets">Method</span><span class="punctuation">)</span><span class="punctuation">]</span>
+	<span class="keyword" id="LinqCheck.TestAttribute">public</span> <span class="keyword">class</span> <span class="typename">TestAttribute</span> <span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.Attribute">Attribute</span>
+	<span class="punctuation">{</span>
+		<span class="keyword" id="LinqCheck.TestAttribute.TestAttribute()" data-toggle="tooltip" title="LinqCheck.TestAttribute.TestAttribute()">public</span> <span data-toggle="tooltip" title="LinqCheck.TestAttribute.TestAttribute()">TestAttribute</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+</code></pre>
+<p>Instead of defining another attribute to designate a test class or
+fixture, we take the instances of the test classes as arguments to the
+<em>RunTest*</em> methods.</p>
+<h2 id="checking-test-conditions">Checking Test Conditions</h2>
+<p>The static Check class contains few helper methods that check specified
+conditions inside tests. Since these methods do not return anything, they
+cannot be used in property expressions. They are designed to be used in
+traditional unit test methods, in case you want to include those in your
+tests.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.Check">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="typename">Check</span>
+	<span class="punctuation">{</span>
+</code></pre>
+<p><code>IsTrue</code> and <code>IsFalse</code> methods throw a TestFailed exception if the
+specified condition is true of false respectively.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Check.IsTrue(bool)" data-toggle="tooltip" title="LinqCheck.Check.IsTrue(bool)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.IsTrue(bool)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.IsTrue(bool)">IsTrue</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="bool">bool</span> condition<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="bool">condition</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Expected condition to be true.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+		
+		<span class="keyword" id="LinqCheck.Check.IsFalse(bool)" data-toggle="tooltip" title="LinqCheck.Check.IsFalse(bool)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.IsFalse(bool)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.IsFalse(bool)">IsFalse</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="bool">bool</span> condition<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">condition</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Expected condition to be false.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p><code>AreEqual</code> and <code>AreNotEqual</code> test if two values are equal or not equal.
+They use the <code>Object.Equals</code> method to determine the equality.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Check.AreEqual<T>(T, T)" data-toggle="tooltip" title="LinqCheck.Check.AreEqual<T>(T, T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.AreEqual<T>(T, T)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.AreEqual<T>(T, T)">AreEqual</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> x<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> y<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span data-toggle="tooltip" title="T">x</span><span class="punctuation" data-toggle="tooltip" title="object.Equals(object)">.</span><span data-toggle="tooltip" title="object.Equals(object)">Equals</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">y</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; and &#39;{1}&#39; should be equal.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">x</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">y</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Check.AreNotEqual<T>(T, T)" data-toggle="tooltip" title="LinqCheck.Check.AreNotEqual<T>(T, T)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.AreNotEqual<T>(T, T)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.AreNotEqual<T>(T, T)">AreNotEqual</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> x<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span> y<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">x</span><span class="punctuation" data-toggle="tooltip" title="object.Equals(object)">.</span><span data-toggle="tooltip" title="object.Equals(object)">Equals</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="T">y</span><span class="punctuation">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; and &#39;{1}&#39; should not be equal.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">x</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="T">y</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The following method checks that an object has a specified type.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Check.IsOfType<T>(object)" data-toggle="tooltip" title="LinqCheck.Check.IsOfType<T>(object)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.IsOfType<T>(object)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.IsOfType<T>(object)">IsOfType</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> x<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span data-toggle="tooltip" title="object">x</span> <span class="keyword" data-toggle="tooltip" title="bool">is</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; should be of type &#39;{1}&#39;.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object">x</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="System.Type">typeof</span><span class="punctuation" data-toggle="tooltip" title="System.Type">(</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Tester.html#T">T</a></span><span class="punctuation" data-toggle="tooltip" title="System.Type">)</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The names of <code>IsNull</code> and <code>IsNotNull</code> methods precisely describe what they do.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Check.IsNull(object)" data-toggle="tooltip" title="LinqCheck.Check.IsNull(object)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.IsNull(object)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.IsNull(object)">IsNull</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> x<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object">x</span> <span class="punctuation" data-toggle="tooltip" title="bool">!=</span> <span class="keyword">null</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object)">Format</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; should be null&#39;.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object">x</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+
+		<span class="keyword" id="LinqCheck.Check.IsNotNull(object)" data-toggle="tooltip" title="LinqCheck.Check.IsNotNull(object)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.IsNotNull(object)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.IsNotNull(object)">IsNotNull</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> x<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object">x</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span><span class="punctuation">)</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object)">Format</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;&#39;{0}&#39; should not be null&#39;.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object">x</span><span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>Lastly, we define a method which takes an action and fails, if it does
+<em>not</em> throw an exception of the specified type.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Check.Throws<E>(System.Action)" data-toggle="tooltip" title="LinqCheck.Check.Throws<E>(System.Action)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Check.Throws<E>(System.Action)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Check.Throws<E>(System.Action)">Throws</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Tester.html#E">E</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Action">Action</span> action<span class="punctuation">)</span> <span class="keyword">where</span> <span class="typename" data-toggle="tooltip" title="E"><a href="../LinqCheck/Tester.html#E">E</a></span><span class="punctuation">:</span> <span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span> <span id="caught">caught</span> <span class="punctuation">=</span> <span class="keyword">null</span><span class="punctuation">;</span>
+			<span class="keyword">try</span>
+			<span class="punctuation">{</span>
+				<span data-toggle="tooltip" title="System.Action">action</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">catch</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span> ex<span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span data-toggle="tooltip" title="System.Exception">caught</span> <span class="punctuation" data-toggle="tooltip" title="System.Exception">=</span> <span data-toggle="tooltip" title="System.Exception">ex</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Exception">caught</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span data-toggle="tooltip" title="System.Exception">caught</span> <span class="keyword" data-toggle="tooltip" title="bool">is</span> <span class="typename" data-toggle="tooltip" title="E"><a href="../LinqCheck/Tester.html#E">E</a></span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span class="keyword" data-toggle="tooltip" title="string">var</span> <span id="msg">msg</span> <span class="punctuation">=</span> <span class="keyword" data-toggle="tooltip" title="string">string</span><span class="punctuation" data-toggle="tooltip" title="string.Format(string, object, object)">.</span><span data-toggle="tooltip" title="string.Format(string, object, object)">Format</span> <span class="punctuation">(</span>
+					<span class="string" data-toggle="tooltip" title="string">&quot;Expected exception {0} to be thrown, but got {1}&quot;</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="System.Type">typeof</span><span class="punctuation" data-toggle="tooltip" title="System.Type">(</span><span class="typename" data-toggle="tooltip" title="E"><a href="../LinqCheck/Tester.html#E">E</a></span><span class="punctuation" data-toggle="tooltip" title="System.Type">)</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span><span class="punctuation">,</span>
+					<span data-toggle="tooltip" title="System.Exception">caught</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span> <span class="punctuation" data-toggle="tooltip" title="string">?</span> <span class="string" data-toggle="tooltip" title="string">&quot;no exception&quot;</span> <span class="punctuation" data-toggle="tooltip" title="string">:</span> <span data-toggle="tooltip" title="System.Exception">caught</span><span class="punctuation" data-toggle="tooltip" title="System.Exception.GetType()">.</span><span data-toggle="tooltip" title="System.Exception.GetType()">GetType</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span class="keyword">throw</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.TestFailed">new</span> <span class="typename"><a href="../LinqCheck/Tester.html#LinqCheck.TestFailed">TestFailed</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">msg</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+</code></pre>
+<h2 id="running-tests">Running Tests</h2>
+<p>The Tester class contains the last pieces of the puzzle. It defines two
+methods which can be used to run test fixtures. A fixture can be any .NET
+object - it does not have to implement anything or have a specific type.</p>
+<pre class="csharp"><code class="csharp">	<span class="keyword" id="LinqCheck.Tester">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="typename">Tester</span>
+	<span class="punctuation">{</span>
+</code></pre>
+<p>The basic version of the test runner takes an array of test fixtures
+and runs them without measuring the execution time</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.RunTests(object[])" data-toggle="tooltip" title="LinqCheck.Tester.RunTests(params object[])">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.RunTests(params object[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.RunTests(params object[])">RunTests</span> <span class="punctuation">(</span><span class="keyword">params</span> <span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">[</span><span class="punctuation">]</span> fixtures<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="LinqCheck.Tester.RunTests(object[], bool)"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.RunTests(object[], bool)">RunTests</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object[]">fixtures</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p><code>RunTestsTimed</code> works exactly as the <code>RunTests</code>, but it also measures
+the time each test method or fixture takes to execute.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.RunTestsTimed(object[])" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.RunTestsTimed(params object[])">RunTestsTimed</span> <span class="punctuation">(</span><span class="keyword">params</span> <span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">[</span><span class="punctuation">]</span> fixtures<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span data-toggle="tooltip" title="LinqCheck.Tester.RunTests(object[], bool)"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.RunTests(object[], bool)">RunTests</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object[]">fixtures</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">true</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The actual implementation of the test runners is in the private method
+below. It is fairly simple; we set up the stopwatch to measure time,
+if needed, run the tests in each fixture, and finally report the
+results to the user.</p>
+<p>As a last step, we call <code>GC.Collect</code> to run the garbage collection.
+This helps us verify that there are no major memory leaks in the code
+that was tested.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.RunTests(object[], bool)" data-toggle="tooltip" title="LinqCheck.Tester.RunTests(object[], bool)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.RunTests(object[], bool)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.RunTests(object[], bool)">RunTests</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">[</span><span class="punctuation">]</span> fixtures<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> timed<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="run">run</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="failed">failed</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">Stopwatch</span> <span id="stopWatch">stopWatch</span> <span class="punctuation">=</span> <span class="keyword">null</span><span class="punctuation">;</span>
+
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span> <span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">=</span> <span class="keyword" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">new</span> <span class="typename">Stopwatch</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">Reset</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">Start</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">foreach</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> fixture <span class="keyword">in</span> <span data-toggle="tooltip" title="object[]">fixtures</span><span class="punctuation">)</span>
+				<span data-toggle="tooltip" title="LinqCheck.Tester.TestFixture(object, bool, ref int, ref int)"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.TestFixture(object, bool, int, int)">TestFixture</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object">fixture</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">,</span> <span class="keyword">ref</span> <span data-toggle="tooltip" title="int">run</span><span class="punctuation">,</span> <span class="keyword">ref</span> <span data-toggle="tooltip" title="int">failed</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">)</span> <span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">Stop</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">failed</span> <span class="punctuation" data-toggle="tooltip" title="bool">&gt;</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">DarkRed</span><span class="punctuation">;</span>
+				System<span class="punctuation" data-toggle="tooltip" title="System.Console">.</span><span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;{0} out of {1} tests failed.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">failed</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">run</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="keyword">else</span>
+			<span class="punctuation">{</span>
+				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Green</span><span class="punctuation">;</span>
+				<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">)</span>
+					System<span class="punctuation" data-toggle="tooltip" title="System.Console">.</span><span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;All tests passed. {0} tests run in {1}.&quot;</span><span class="punctuation">,</span> 
+						<span data-toggle="tooltip" title="int">run</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.TimeSpan">.</span><span data-toggle="tooltip" title="System.TimeSpan">Elapsed</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span class="keyword">else</span>
+					System<span class="punctuation" data-toggle="tooltip" title="System.Console">.</span><span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;All tests passed. {0} tests run.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">run</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.ResetColor()">.</span><span data-toggle="tooltip" title="System.Console.ResetColor()">ResetColor</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.GC">GC</span><span class="punctuation" data-toggle="tooltip" title="System.GC.Collect()">.</span><span data-toggle="tooltip" title="System.GC.Collect()">Collect</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<h2 id="private-helpers">Private Helpers</h2>
+<p>The rest of the methods are helper functions used by <code>RunTests</code>. The
+first method checks if a method has the <code>[Test]</code> attribute defined.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.IsTest(System.Reflection.MethodInfo)" data-toggle="tooltip" title="LinqCheck.Tester.IsTest(System.Reflection.MethodInfo)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.IsTest(System.Reflection.MethodInfo)">static</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> <span data-toggle="tooltip" title="LinqCheck.Tester.IsTest(System.Reflection.MethodInfo)">IsTest</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="System.Reflection.MethodInfo">MethodInfo</span> mi<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="keyword">return</span> <span data-toggle="tooltip" title="System.Reflection.MethodInfo">mi</span><span class="punctuation" data-toggle="tooltip" title="System.Reflection.MemberInfo.IsDefined(System.Type, bool)">.</span><span data-toggle="tooltip" title="System.Reflection.MemberInfo.IsDefined(System.Type, bool)">IsDefined</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="System.Type">typeof</span> <span class="punctuation" data-toggle="tooltip" title="System.Type">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestAttribute"><a href="../LinqCheck/Tester.html#LinqCheck.TestAttribute">TestAttribute</a></span><span class="punctuation" data-toggle="tooltip" title="System.Type">)</span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">false</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The method below runs all tests in a test fixture, and reports back any
+failed tests. The only tricky part in the implementation is handling
+the exceptions thrown by test methods. Since we are using reflection to
+locate and call the test methods, we need to unwrap the actual
+exception thrown from a TargetInvocationException object.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.TestFixture(object, bool, int, int)" data-toggle="tooltip" title="LinqCheck.Tester.TestFixture(object, bool, ref int, ref int)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.TestFixture(object, bool, ref int, ref int)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.TestFixture(object, bool, ref int, ref int)">TestFixture</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="object">object</span> fixture<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> timed<span class="punctuation">,</span> <span class="keyword">ref</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> run<span class="punctuation">,</span> 
+			<span class="keyword">ref</span> <span class="keyword" data-toggle="tooltip" title="int">int</span> failed<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Blue</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Executing tests for fixture: {0}&quot;</span><span class="punctuation">,</span>
+				<span data-toggle="tooltip" title="object">fixture</span><span class="punctuation" data-toggle="tooltip" title="object.GetType()">.</span><span data-toggle="tooltip" title="object.GetType()">GetType</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span><span class="punctuation">)</span><span class="punctuation">;</span>
+
+			<span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Reflection.MethodInfo>">var</span> <span id="tests">tests</span> <span class="punctuation">=</span> <span class="keyword">from</span> m <span class="keyword">in</span> <span data-toggle="tooltip" title="object">fixture</span><span class="punctuation" data-toggle="tooltip" title="object.GetType()">.</span><span data-toggle="tooltip" title="object.GetType()">GetType</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="System.Type.GetMethods()">.</span><span data-toggle="tooltip" title="System.Type.GetMethods()">GetMethods</span> <span class="punctuation">(</span><span class="punctuation">)</span>
+						<span class="keyword">where</span> <span data-toggle="tooltip" title="System.Reflection.MethodInfo">m</span><span class="punctuation" data-toggle="tooltip" title="System.Reflection.MethodInfo.IsTest()">.</span><span data-toggle="tooltip" title="System.Reflection.MethodInfo.IsTest()"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.IsTest(System.Reflection.MethodInfo)">IsTest</a></span> <span class="punctuation">(</span><span class="punctuation">)</span>
+						<span class="keyword" data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Reflection.MethodInfo>">select</span> <span data-toggle="tooltip" title="System.Reflection.MethodInfo">m</span><span class="punctuation">;</span>
+			<span class="keyword" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">var</span> stopWatch <span class="punctuation">=</span> <span data-toggle="tooltip" title="bool">timed</span> <span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">?</span> <span class="keyword" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">new</span> <span class="typename">Stopwatch</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch">:</span> <span class="keyword">null</span><span class="punctuation">;</span>
+			
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.ResetColor()">.</span><span data-toggle="tooltip" title="System.Console.ResetColor()">ResetColor</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">foreach</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="System.Reflection.MethodInfo">var</span> test <span class="keyword">in</span> <span data-toggle="tooltip" title="System.Collections.Generic.IEnumerable<System.Reflection.MethodInfo>">tests</span><span class="punctuation">)</span>
+			<span class="punctuation">{</span>
+				<span class="keyword">try</span>
+				<span class="punctuation">{</span>
+					<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">)</span>
+					<span class="punctuation">{</span>
+						<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Reset()">Reset</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+						<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Start()">Start</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+					<span class="punctuation">}</span>
+					<span data-toggle="tooltip" title="System.Reflection.MethodInfo">test</span><span class="punctuation" data-toggle="tooltip" title="System.Reflection.MethodBase.Invoke(object, object[])">.</span><span data-toggle="tooltip" title="System.Reflection.MethodBase.Invoke(object, object[])">Invoke</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object">fixture</span><span class="punctuation">,</span> <span class="keyword">null</span><span class="punctuation">)</span><span class="punctuation">;</span>
+					<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="bool">timed</span><span class="punctuation">)</span>
+					<span class="punctuation">{</span>
+						<span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">.</span><span data-toggle="tooltip" title="System.Diagnostics.Stopwatch.Stop()">Stop</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+						<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, object, object)">WriteLine</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;{0} - {1}&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Diagnostics.Stopwatch">stopWatch</span><span class="punctuation" data-toggle="tooltip" title="System.TimeSpan">.</span><span data-toggle="tooltip" title="System.TimeSpan">Elapsed</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Reflection.MethodInfo">test</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span><span class="punctuation">)</span><span class="punctuation">;</span>
+					<span class="punctuation">}</span>
+					<span class="keyword">else</span>
+						<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.Write(string)">.</span><span data-toggle="tooltip" title="System.Console.Write(string)">Write</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;.&quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+				<span class="punctuation">}</span>
+				<span class="keyword">catch</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.Reflection.TargetInvocationException">TargetInvocationException</span> ex<span class="punctuation">)</span>
+				<span class="punctuation">{</span>
+					<span data-toggle="tooltip" title="LinqCheck.Tester.OutputFailure(string, System.Exception)"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.OutputFailure(string, System.Exception)">OutputFailure</a></span> <span class="punctuation">(</span><span data-toggle="tooltip" title="System.Reflection.MethodInfo">test</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Name</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Reflection.TargetInvocationException">ex</span><span class="punctuation" data-toggle="tooltip" title="System.Exception">.</span><span data-toggle="tooltip" title="System.Exception">InnerException</span><span class="punctuation">)</span><span class="punctuation">;</span>
+					<span data-toggle="tooltip" title="int">failed</span><span class="punctuation" data-toggle="tooltip" title="int">++</span><span class="punctuation">;</span>
+				<span class="punctuation">}</span>
+				<span data-toggle="tooltip" title="int">run</span><span class="punctuation" data-toggle="tooltip" title="int">++</span><span class="punctuation">;</span>
+			<span class="punctuation">}</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine()">.</span><span data-toggle="tooltip" title="System.Console.WriteLine()">WriteLine</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The following helper writes text to console in the specified color. It
+resets the color to default after that.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, object[])" data-toggle="tooltip" title="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, params object[])">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, params object[])">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, params object[])">WriteInColor</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span> color<span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> output<span class="punctuation">,</span>
+			<span class="keyword">params</span> <span class="keyword" data-toggle="tooltip" title="object">object</span><span class="punctuation">[</span><span class="punctuation">]</span> args<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span data-toggle="tooltip" title="System.ConsoleColor">color</span><span class="punctuation">;</span>
+			<span class="keyword">if</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="object[]">args</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="keyword">null</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span data-toggle="tooltip" title="object[]">args</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Length</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span class="number" data-toggle="tooltip" title="int">0</span><span class="punctuation">)</span>
+				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string)">WriteLine</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">output</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">else</span>
+				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string, params object[])">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string, params object[])">WriteLine</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string">output</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="object[]">args</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.ResetColor()">.</span><span data-toggle="tooltip" title="System.Console.ResetColor()">ResetColor</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+</code></pre>
+<p>The <code>OutputFailure</code> method prints the name of a failing test, the
+exception message, and the stack trace. It skips the first and last
+stack frame since those are always inside the test runner.</p>
+<pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Tester.OutputFailure(string, System.Exception)" data-toggle="tooltip" title="LinqCheck.Tester.OutputFailure(string, System.Exception)">private</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Tester.OutputFailure(string, System.Exception)">static</span> <span class="keyword" data-toggle="tooltip" title="void">void</span> <span data-toggle="tooltip" title="LinqCheck.Tester.OutputFailure(string, System.Exception)">OutputFailure</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="string">string</span> test<span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="System.Exception">Exception</span> ex<span class="punctuation">)</span>
+		<span class="punctuation">{</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine()">.</span><span data-toggle="tooltip" title="System.Console.WriteLine()">WriteLine</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, params object[])"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, object[])">WriteInColor</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Red</span><span class="punctuation">,</span> <span class="string" data-toggle="tooltip" title="string">&quot;Test &#39;{0}&#39; failed.&quot;</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="string">test</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.Write(string)">.</span><span data-toggle="tooltip" title="System.Console.Write(string)">Write</span> <span class="punctuation">(</span><span class="string" data-toggle="tooltip" title="string">&quot;Reason: &quot;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span data-toggle="tooltip" title="LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, params object[])"><a href="../LinqCheck/Tester.html#LinqCheck.Tester.WriteInColor(System.ConsoleColor, string, object[])">WriteInColor</a></span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Yellow</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="System.Exception">ex</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">Message</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword" data-toggle="tooltip" title="string[]">var</span> <span id="st">st</span> <span class="punctuation">=</span> <span data-toggle="tooltip" title="System.Exception">ex</span><span class="punctuation" data-toggle="tooltip" title="string">.</span><span data-toggle="tooltip" title="string">StackTrace</span><span class="punctuation" data-toggle="tooltip" title="string.Split(params char[])">.</span><span data-toggle="tooltip" title="string.Split(params char[])">Split</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="char">&#39;\n&#39;</span><span class="punctuation">)</span><span class="punctuation">;</span>
+			<span class="keyword">for</span> <span class="punctuation">(</span><span class="keyword" data-toggle="tooltip" title="int">int</span> <span id="i">i</span> <span class="punctuation">=</span> <span class="number" data-toggle="tooltip" title="int">1</span><span class="punctuation">;</span> <span data-toggle="tooltip" title="int">i</span> <span class="punctuation" data-toggle="tooltip" title="bool">&lt;</span> <span data-toggle="tooltip" title="string[]">st</span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Length</span> <span class="punctuation" data-toggle="tooltip" title="int">-</span> <span class="number" data-toggle="tooltip" title="int">2</span><span class="punctuation">;</span> <span data-toggle="tooltip" title="int">i</span><span class="punctuation" data-toggle="tooltip" title="int">++</span><span class="punctuation">)</span>
+				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.Console.WriteLine(string)">.</span><span data-toggle="tooltip" title="System.Console.WriteLine(string)">WriteLine</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="string[]">st</span> <span class="punctuation">[</span><span data-toggle="tooltip" title="int">i</span><span class="punctuation">]</span><span class="punctuation">)</span><span class="punctuation">;</span>
+		<span class="punctuation">}</span>
+	<span class="punctuation">}</span>
+<span class="punctuation">}</span>
+</code></pre>
+<h2 id="redirecting-output">Redirecting Output</h2>
+<p>If you want to get the output of the test runner to some other place than the
+console window, use the <code>Console.SetOut</code> method to redirect it to a file, for
+example.</p>
+
+				</div>
+							</div>
+        </div>
+    </div>
+    
+    <footer class="panel-footer text-center">
+        <div align="center">Copyright © 2018 Tommi Johtela</div>
+		<div align="right">
+			<small>
+				Documentation created with <a href="https://johtela.github.io/LiterateCS/">LiterateCS</a>.
+			</small>
+		</div>
+    </footer>
+
+
+    
+    <script src="../bootstrap/js/jquery.min.js"></script>
+    <script src="../bootstrap/js/bootstrap.min.js"></script>
+    <script src="../sidebar/sidebar.js"></script>
+    <script src="../syntax-highlight/syntax.js"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+        extensions: ["jsMath2jax.js"]
+        });
+    </script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
+	<script src="../mermaid/mermaid.min.js"></script>
+	<script>mermaid.initialize({startOnLoad:true});</script>
+</body>
+</html>

@@ -46,31 +46,31 @@
     desc: Literate documentation for the LinqCheck library.
     subs:
       - page: Generators and Monads
-        file: src\Gen.cs
+        file: LinqCheck\Gen.cs
         desc: Generalizing random numbers.
 
       - page: Generating and Shrinking Arbitrary Values
-        file: src\Arbitrary.cs
+        file: LinqCheck\Arbitrary.cs
         desc: An interface for arbitrary test data.
 
       - page: Built-In Arbitrary Types
-        file: src\DefaultArbitrary.cs
+        file: LinqCheck\DefaultArbitrary.cs
         desc: Implementation of arbitrary types included in LinqCheck.
 
       - page: Container for Arbitrary Implementations
-        file: src\Container.cs
+        file: LinqCheck\Container.cs
         desc: Container class manages the registered arbitrary types.
 
       - page: Test State and Phases
-        file: src\TestState.cs
+        file: LinqCheck\TestState.cs
         desc: Defines the state of the properties and their execution phases.
 
       - page: Properties
-        file: src\Prop.cs
+        file: LinqCheck\Prop.cs
         desc: Implmenting the properties as LINQ expressions.
 
       - page: Test Runner
-        file: src\Tester.cs
+        file: LinqCheck\Tester.cs
         desc: Built-in simple test runner.
 
   - page: License
