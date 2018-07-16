@@ -23,7 +23,7 @@ namespace LinqCheck
 		The runtime type handle is of the generic interface is stored in the
 		following field.
 		*/
-		private Type _interface;
+		private readonly Type _interface;
 		/*
 		The types implementing the interface are stored in a dictionary. The 
 		keys of the dictionary are the interface's generic type parameters, and 

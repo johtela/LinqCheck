@@ -3,16 +3,30 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinqCheck", "LinqCheck.csproj", "{8B11A61B-E672-4921-A290-82D9A25A7C4D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DFB87288-726E-4278-B244-1452D9378540}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		defaults.yml = defaults.yml
+		index.md = index.md
+		License.md = License.md
+		README.md = README.md
+		TOC.yml = TOC.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{5D470F37-BDEF-41C3-8159-15B0AF54E808}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LinqCheck", "LinqCheck\LinqCheck.csproj", "{35521539-4078-432D-A980-A64883402C14}"
 EndProject
-Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Scripts", "Scripts\Scripts.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "Examples\Examples.csproj", "{863F6E89-AE22-4A3C-9177-EAD38EBACF8E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{682E41C6-91FA-40F1-A8C2-6F0086CF7C7D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{47F7B304-EAEA-4DC3-80B7-666C31DC390E}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\favicon.ico = docs\images\favicon.ico
+		docs\images\LinqCheck2.bmp = docs\images\LinqCheck2.bmp
+		docs\images\LinqCheck2.png = docs\images\LinqCheck2.png
+		docs\images\LinqCheck2.svg = docs\images\LinqCheck2.svg
+		docs\images\win7calculator.gif = docs\images\win7calculator.gif
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,21 +34,20 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8B11A61B-E672-4921-A290-82D9A25A7C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8B11A61B-E672-4921-A290-82D9A25A7C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8B11A61B-E672-4921-A290-82D9A25A7C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8B11A61B-E672-4921-A290-82D9A25A7C4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D470F37-BDEF-41C3-8159-15B0AF54E808}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D470F37-BDEF-41C3-8159-15B0AF54E808}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D470F37-BDEF-41C3-8159-15B0AF54E808}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D470F37-BDEF-41C3-8159-15B0AF54E808}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35521539-4078-432D-A980-A64883402C14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35521539-4078-432D-A980-A64883402C14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35521539-4078-432D-A980-A64883402C14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35521539-4078-432D-A980-A64883402C14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{863F6E89-AE22-4A3C-9177-EAD38EBACF8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{863F6E89-AE22-4A3C-9177-EAD38EBACF8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{863F6E89-AE22-4A3C-9177-EAD38EBACF8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{863F6E89-AE22-4A3C-9177-EAD38EBACF8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{47F7B304-EAEA-4DC3-80B7-666C31DC390E} = {682E41C6-91FA-40F1-A8C2-6F0086CF7C7D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFAA16D8-674F-4C64-8F7F-25899D41A6F2}

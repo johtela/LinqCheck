@@ -128,7 +128,7 @@ namespace Examples
 			 let sinx = Math.Sin (x)
 			 select new { x, sinx })
 			.Check (t => t.sinx.IsBetween (-1.0, 1.0))
-			.Check (t => t.sinx.ApproxEquals (Math.Cos (Math.PI / 2 + t.x)));
+			.Check (t => t.sinx.ApproxEquals (Math.Cos (-Math.PI / 2 + t.x)));
 		}
 		/*
 		In this case we generate random values of type `double`, and pass that

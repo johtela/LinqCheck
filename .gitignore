@@ -1,7 +1,5 @@
 ﻿
 /.vs/
-/bin/
-/obj/
+bin/
+obj/
 /packages/
-/Examples/bin/
-/Examples/obj/
