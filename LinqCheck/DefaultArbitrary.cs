@@ -34,7 +34,7 @@ namespace LinqCheck
 				ShrinkChar));
 			/*
 			### Integral Types
-			Integral types `int` and `long` use the same helperes to generate 
+			Integral types `int` and `long` use the same helpers to generate 
 			and shrink the values. The maximum number generated depends on the
 			size parameter used by the generators.
 			*/

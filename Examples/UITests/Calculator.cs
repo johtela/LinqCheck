@@ -32,12 +32,12 @@ from the model:
 *	We gain insight into our program in the process of writing the model.
 
 *	We get a formal specification of our program that can be exploited in 
-	documenting and communicating its behaviour.
+	documenting and communicating its behavior.
 	
 *	Once we have the situation that the model and the real program work exactly 
 	the same way, we can start refactoring the program and changing its 
 	implementation - drastically if we want to. The model can be used to ensure 
-	that its behaviour is not changed, not even for the edge cases. Unit tests 
+	that its behavior is not changed, not even for the edge cases. Unit tests 
 	provide similar assurances, but the level of confidence you get from property 
 	based tests is much higher.
 
@@ -54,7 +54,7 @@ program with few possible states, it actually has more edge cases than one
 might guess. Third, we can demonstrate how property based testing can be
 utilized in conjunction with UI automation.
 
-## Modelling the Calculator
+## Modeling the Calculator
 Before we begin, we create a new namespace for our tests, and import the 
 required libraries.
 */
@@ -112,7 +112,7 @@ namespace Examples.UITests
 	and in the automation code that controls the Windows calculator. Since the
 	calculator application is different in Windows 7 and Windows 10 (nobody
 	uses Windows 8, right?), we will provide actually three implementations. 
-	By doing so we will be able also to compare, if the behaviour of the 
+	By doing so we will be able also to compare, if the behavior of the 
 	calculator has changed in the different versions of Windows.
 
 	## Input Data
@@ -122,7 +122,7 @@ namespace Examples.UITests
 	type. This follows from the requirement that all input types need to have 
 	an implementation of `IArbitrary<T>` interface where `T` is the input type.
 	
-	Let's first define a type representing a single method invokation or a push 
+	Let's first define a type representing a single method invocation or a push 
 	of a button. We name this type as Command. After we have defined that, we 
 	can exploit the built-in combinators in LinqCheck to generate a list of 
 	commands. This simplifies our job significantly, and lets us leverage the 
@@ -162,7 +162,7 @@ namespace Examples.UITests
 			}
 			/*
 			The input data should be printable, so that it can be shown in
-			error messages. That is why we need to implement the the `ToString`
+			error messages. That is why we need to implement the `ToString`
 			method as well.
 			*/
 			public override string ToString () => Value.ToString ();
@@ -273,7 +273,7 @@ namespace Examples.UITests
 			));
 		}
 		/*
-		Since static constructors are called quite undeterministically when a 
+		Since static constructors are called quite nondeterministically when a 
 		class is first used, we define a dummy method that we can call before 
 		generating any test data. This ensures that the implementation for 
 		`IArbitrary<Command>` is registered.

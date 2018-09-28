@@ -123,6 +123,6 @@ namespace Examples.UITests
 }
 /*
 ## Next Steps
-Finally we have all the calulator controllers and their model implemented. Now
+Finally we have all the calculator controllers and their model implemented. Now
 we can start testing them.
 */

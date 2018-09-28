@@ -11,11 +11,7 @@
     <title>Arbitrary - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html"><span><img src="../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../LinqCheck/Gen.html">Previous: Generators and Monads</a></li>
 	<li class="next"><a href="../LinqCheck/DefaultArbitrary.html">Next: Built-In Arbitrary Types</a></li>
@@ -157,7 +159,7 @@ test pass, then tries some numbers closer to zero and also the inverse until
 one of them makes the test fail again. If all the simpler alternatives pass
 the test, as a last resort, the original failing number is used.</p>
 <p>The procedure is similar for compound data structures such as strings and
-collections; shrinking tries to remove elemenents from them, and then shrink
+collections; shrinking tries to remove elements from them, and then shrink
 each remaining element individually.</p>
 <p>The point of all this is to create a simpler versions of the failing input data
 without loosing the characteristic that makes the property fail. In the same
@@ -315,7 +317,7 @@ implementations from existing ones. The <code>SuchThat</code> combinator restric
 generated values by filtering out the ones that do not match a given
 predicate. The method tries 100 times to generate a value before giving
 up and throwing an exception. The reason for this is to avoid entering
-an infinite loop, if the predicate is too restrictrive</p>
+an infinite loop, if the predicate is too restrictive.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)" data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">public</span> <span class="keyword" data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">static</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../LinqCheck/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span data-toggle="tooltip" title="LinqCheck.Arbitrary.SuchThat<T>(LinqCheck.IArbitrary<T>, System.Func<T, bool>)">SuchThat</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="keyword">this</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.IArbitrary<T>"><a href="../LinqCheck/Arbitrary.html#LinqCheck.IArbitrary<T>">IArbitrary</a></span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Arbitrary.html#T">T</a></span><span class="punctuation">&gt;</span> arbitrary<span class="punctuation">,</span> 
 			<span class="typename" data-toggle="tooltip" title="System.Func<T, bool>">Func</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Arbitrary.html#T">T</a></span><span class="punctuation">,</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span><span class="punctuation">&gt;</span> predicate<span class="punctuation">)</span>
 		<span class="punctuation">{</span>
@@ -384,5 +386,6 @@ versa.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

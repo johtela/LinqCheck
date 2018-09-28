@@ -11,11 +11,7 @@
     <title>ModelCalculator - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../../index.html"><span><img src="../../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../../Examples/UITests/Calculator.html">Previous: Testing Programs with Mutable State</a></li>
 	<li class="next"><a href="../../Examples/UITests/Automated.html">Next: Using UI Automation</a></li>
@@ -176,7 +178,7 @@ entered by the user.</p>
 <p>When the user presses <code>=</code> multiple times, then the previous operation
 is repeated. So, we need to remember what the previous operation was.
 We store the previously entered number in the <code>_prevVal</code> field and the
-previously peformed operation in the <code>_prevOper</code> field.</p>
+previously performed operation in the <code>_prevOper</code> field.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword">private</span> <span class="keyword" data-toggle="tooltip" title="double">double</span> <span id="Examples.UITests.ModelCalculator._prevVal">_prevVal</span><span class="punctuation">;</span>
 		<span class="keyword">private</span> <span class="typename" data-toggle="tooltip" title="Examples.UITests.ModelCalculator.Oper"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator.Oper">Oper</a></span> <span id="Examples.UITests.ModelCalculator._prevOper">_prevOper</span><span class="punctuation">;</span>
 </code></pre>
@@ -188,7 +190,7 @@ affects when we forget the previous operation.</p>
 the calculator state. Although in the UI there is just one value
 visible at any time, beneath the surface there is much more going on.
 For fun, let's define formally the set of possible states that our
-model can be in. The set is the cartesian product of:</p>
+model can be in. The set is the Cartesian product of:</p>
 <div class="math">\mathbb{R} \times \{ \mathbb{R} \cup \mathrm{null} \} \times \mathbb{R} 
 \times \{ \mathrm{None}, \mathrm{Add}, \mathrm{Sub}, \mathrm{Mul,} 
 \mathrm{Div} \} \times \{ \mathrm{true}, \mathrm{false} \}
@@ -327,7 +329,7 @@ state before entering the digit.</li>
 <h2 id="checking-if-a-result-is-available">Checking If a Result Is Available</h2>
 <p>If the accumulator does not contain a valid number, then we have
 performed a calculation that has led to an undefined state. The
-<code>ResultAvailable</code> function will retrn <code>false</code> in that case.</p>
+<code>ResultAvailable</code> function will return <code>false</code> in that case.</p>
 <pre class="csharp"><code class="csharp">		<span class="keyword" id="Examples.UITests.ModelCalculator.ResultAvailable">public</span> <span class="keyword" data-toggle="tooltip" title="bool">bool</span> ResultAvailable <span class="punctuation">=&gt;</span> 
 			<span class="punctuation" data-toggle="tooltip" title="bool">!</span><span class="punctuation" data-toggle="tooltip" title="bool">(</span><span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsNaN(double)">.</span><span data-toggle="tooltip" title="double.IsNaN(double)">IsNaN</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span> <span class="punctuation" data-toggle="tooltip" title="bool">||</span> <span class="keyword" data-toggle="tooltip" title="double">double</span><span class="punctuation" data-toggle="tooltip" title="double.IsInfinity(double)">.</span><span data-toggle="tooltip" title="double.IsInfinity(double)">IsInfinity</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="double"><a href="../../Examples/UITests/ModelCalculator.html#Examples.UITests.ModelCalculator._accum">_accum</a></span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="bool">)</span><span class="punctuation">;</span>
 </code></pre>
@@ -393,5 +395,6 @@ fixing your model.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

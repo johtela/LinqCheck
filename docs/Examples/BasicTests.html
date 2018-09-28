@@ -11,11 +11,7 @@
     <title>BasicTests - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html"><span><img src="../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../index.html">Previous: Home</a></li>
 	<li class="next"><a href="../Examples/SeqTests.html">Next: Adding New Arbitrary Types</a></li>
@@ -192,7 +194,7 @@ this time we are not generating a random value but just evaluating
 an expression, so we use the <code>let</code> clause instead of <code>from</code>.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword">let</span> minxy <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">x</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">y</span><span class="punctuation">)</span>
 </code></pre>
-<p>Let's still generate a thrird arbitrary integer <code>z</code> and calculate
+<p>Let's still generate a third arbitrary integer <code>z</code> and calculate
 the minimum of <code>x</code>, <code>y</code>, and <code>z</code>.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword">from</span> z <span class="keyword">in</span> <span class="typename" data-toggle="tooltip" title="LinqCheck.Prop"><a href="../LinqCheck/Prop.html#LinqCheck.Prop">Prop</a></span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()">.</span><span data-toggle="tooltip" title="LinqCheck.Prop.ForAll<int>()"><a href="../LinqCheck/Prop.html#LinqCheck.Prop.ForAll<T>()">ForAll</a></span><span class="punctuation">&lt;</span><span class="keyword" data-toggle="tooltip" title="int">int</span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="punctuation">)</span>
 			 <span class="keyword">let</span> minxyz <span class="punctuation">=</span> <span class="typename" data-toggle="tooltip" title="System.Math">Math</span><span class="punctuation" data-toggle="tooltip" title="System.Math.Min(int, int)">.</span><span data-toggle="tooltip" title="System.Math.Min(int, int)">Min</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="int">minxy</span><span class="punctuation">,</span> <span data-toggle="tooltip" title="int">z</span><span class="punctuation">)</span>
@@ -275,7 +277,7 @@ Reason: Property 't.sinx.ApproxEquals(Cos((1,5707963267949 + t.x)))' failed for 
 <p>When LinqCheck finds a failing input, it first shrinks the test case
 into a minimal example that still fails. This means that if we remove
 anything from the input, the test will pass. Then it reports the
-faling property, and the input which made the property false.</p>
+failing property, and the input which made the property false.</p>
 <p>In this case the problem is not in the function we are testing, but our
 property is wrong. Cosine is out of phase with sine not by
 <span class="math">\pi \over 2</span> but <span class="math">-\pi \over 2</span>. So, if we change the term to
@@ -327,5 +329,6 @@ additional features.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

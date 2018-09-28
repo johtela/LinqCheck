@@ -11,11 +11,7 @@
     <title>Calculator - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../../index.html"><span><img src="../../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../../Examples/SeqTests.html">Previous: Adding New Arbitrary Types</a></li>
 	<li class="next"><a href="../../Examples/UITests/ModelCalculator.html">Next: Implementing a Model</a></li>
@@ -173,12 +175,12 @@ from the model:</p>
 <li><p>We gain insight into our program in the process of writing the model.</p>
 </li>
 <li><p>We get a formal specification of our program that can be exploited in
-documenting and communicating its behaviour.</p>
+documenting and communicating its behavior.</p>
 </li>
 <li><p>Once we have the situation that the model and the real program work exactly
 the same way, we can start refactoring the program and changing its
 implementation - drastically if we want to. The model can be used to ensure
-that its behaviour is not changed, not even for the edge cases. Unit tests
+that its behavior is not changed, not even for the edge cases. Unit tests
 provide similar assurances, but the level of confidence you get from property
 based tests is much higher.</p>
 </li>
@@ -193,7 +195,7 @@ calculator, is still around with essentially the same user interface as in the
 program with few possible states, it actually has more edge cases than one
 might guess. Third, we can demonstrate how property based testing can be
 utilized in conjunction with UI automation.</p>
-<h2 id="modelling-the-calculator">Modelling the Calculator</h2>
+<h2 id="modeling-the-calculator">Modeling the Calculator</h2>
 <p>Before we begin, we create a new namespace for our tests, and import the
 required libraries.</p>
 <pre class="csharp"><code class="csharp"><span class="keyword" id="Examples.UITests">namespace</span> Examples<span class="punctuation">.</span>UITests
@@ -243,7 +245,7 @@ division by zero.</p>
 and in the automation code that controls the Windows calculator. Since the
 calculator application is different in Windows 7 and Windows 10 (nobody
 uses Windows 8, right?), we will provide actually three implementations.
-By doing so we will be able also to compare, if the behaviour of the
+By doing so we will be able also to compare, if the behavior of the
 calculator has changed in the different versions of Windows.</p>
 <h2 id="input-data">Input Data</h2>
 <p>The second thing we need to decide, is how to encode the input data. What
@@ -251,7 +253,7 @@ we need as an input is a sequence of method calls, and we could model that
 in various ways. Whatever we choose, we need to wrap it under a single
 type. This follows from the requirement that all input types need to have
 an implementation of <code>IArbitrary&lt;T&gt;</code> interface where <code>T</code> is the input type.</p>
-<p>Let's first define a type representing a single method invokation or a push
+<p>Let's first define a type representing a single method invocation or a push
 of a button. We name this type as Command. After we have defined that, we
 can exploit the built-in combinators in LinqCheck to generate a list of
 commands. This simplifies our job significantly, and lets us leverage the
@@ -286,7 +288,7 @@ the given calculator.</p>
 			<span class="punctuation">}</span>
 </code></pre>
 <p>The input data should be printable, so that it can be shown in
-error messages. That is why we need to implement the the <code>ToString</code>
+error messages. That is why we need to implement the <code>ToString</code>
 method as well.</p>
 <pre class="csharp"><code class="csharp">			<span class="keyword" id="Examples.UITests.Command._Digit.ToString()" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">public</span> <span class="keyword" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">override</span> <span class="keyword" data-toggle="tooltip" title="string">string</span> <span data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span> <span class="punctuation">=&gt;</span> <span data-toggle="tooltip" title="int"><a href="../../Examples/UITests/Calculator.html#Examples.UITests.Command._Digit.Value">Value</a></span><span class="punctuation" data-toggle="tooltip" title="int.ToString()">.</span><span data-toggle="tooltip" title="int.ToString()">ToString</span> <span class="punctuation">(</span><span class="punctuation">)</span><span class="punctuation" data-toggle="tooltip" title="Examples.UITests.Command._Digit.ToString()">;</span>
 		<span class="punctuation">}</span>
@@ -386,7 +388,7 @@ functionality we get out-of-the-box without any additional code.</p>
 			<span class="punctuation">)</span><span class="punctuation">)</span><span class="punctuation">;</span>
 		<span class="punctuation">}</span>
 </code></pre>
-<p>Since static constructors are called quite undeterministically when a
+<p>Since static constructors are called quite nondeterministically when a
 class is first used, we define a dummy method that we can call before
 generating any test data. This ensures that the implementation for
 <code>IArbitrary&lt;Command&gt;</code> is registered.</p>
@@ -431,5 +433,6 @@ ICalculator interface first for the model and then for the Windows apps.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

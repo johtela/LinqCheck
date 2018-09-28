@@ -40,7 +40,7 @@ namespace LinqCheck
 	parameter. Then it produces one combination of shrunk input parameters at
 	a time, and checks if that combination makes the property fail. If it does,
 	then that test case is reported to the user, and we are done. On the other
-	hand, if the propery does not fail, we go back and produce a new shrunk
+	hand, if the property does not fail, we go back and produce a new shrunk
 	alternative. 
 	
 	Eventually, if all the shrunk test cases pass, we use the case that caused 

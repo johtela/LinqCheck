@@ -38,7 +38,7 @@ namespace Examples.UITests
 		When the user presses `=` multiple times, then the previous operation 
 		is repeated. So, we need to remember what the previous operation was. 
 		We store the previously entered number in the `_prevVal` field and the 
-		previously peformed operation in the `_prevOper` field. 
+		previously performed operation in the `_prevOper` field. 
 		*/
 		private double _prevVal;
 		private Oper _prevOper;
@@ -52,7 +52,7 @@ namespace Examples.UITests
 		the calculator state. Although in the UI there is just one value 
 		visible at any time, beneath the surface there is much more going on.
 		For fun, let's define formally the set of possible states that our 
-		model can be in. The set is the cartesian product of:
+		model can be in. The set is the Cartesian product of:
 		$$
 		\mathbb{R} \times \{ \mathbb{R} \cup \mathrm{null} \} \times \mathbb{R} 
 		\times \{ \mathrm{None}, \mathrm{Add}, \mathrm{Sub}, \mathrm{Mul,} 
@@ -207,7 +207,7 @@ namespace Examples.UITests
 
 		If the accumulator does not contain a valid number, then we have
 		performed a calculation that has led to an undefined state. The
-		`ResultAvailable` function will retrn `false` in that case.
+		`ResultAvailable` function will return `false` in that case.
 		*/
 		public bool ResultAvailable => 
 			!(double.IsNaN (_accum) || double.IsInfinity (_accum));

@@ -17,7 +17,7 @@ one of them makes the test fail again. If all the simpler alternatives pass
 the test, as a last resort, the original failing number is used.
 
 The procedure is similar for compound data structures such as strings and 
-collections; shrinking tries to remove elemenents from them, and then shrink 
+collections; shrinking tries to remove elements from them, and then shrink 
 each remaining element individually.
 
 The point of all this is to create a simpler versions of the failing input data
@@ -192,7 +192,7 @@ namespace LinqCheck
 		generated values by filtering out the ones that do not match a given 
 		predicate. The method tries 100 times to generate a value before giving
 		up and throwing an exception. The reason for this is to avoid entering 
-		an infinite loop, if the predicate is too restrictrive
+		an infinite loop, if the predicate is too restrictive.
 		*/
 		public static IArbitrary<T> SuchThat<T> (this IArbitrary<T> arbitrary, 
 			Func<T, bool> predicate)

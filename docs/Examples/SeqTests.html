@@ -11,11 +11,7 @@
     <title>SeqTests - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html"><span><img src="../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../Examples/BasicTests.html">Previous: Writing Simple Tests</a></li>
 	<li class="next"><a href="../Examples/UITests/Calculator.html">Next: Testing Programs with Mutable State</a></li>
@@ -146,7 +148,7 @@
 					<h1 id="adding-new-arbitrary-types">Adding New Arbitrary Types</h1>
 <p>LinqCheck generates test input automatically for the common data types defined
 in the .NET framework. This includes primitive types such as <code>bool</code>, <code>char</code>,
-<code>int</code>, <code>long</code>, <code>float</code>, and <code>double</code> as well as compound data sructures like
+<code>int</code>, <code>long</code>, <code>float</code>, and <code>double</code> as well as compound data structures like
 arrays and IEnumerables. But often these are not enough. Your test data might
 contain user-defined classes, structures, or interfaces.</p>
 <p>The random data generation in LinqCheck is based on the idea of composing
@@ -300,7 +302,7 @@ previous example.</p>
 <p>Then we return all three in the test case.</p>
 <pre class="csharp"><code class="csharp">			 <span class="keyword" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>>">select</span> <span class="keyword" data-toggle="tooltip" title="<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>">new</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>">{</span> <span data-toggle="tooltip" title="ExtensionCord.Seq<T>">seq</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>">,</span> <span data-toggle="tooltip" title="T">item</span><span class="punctuation" data-toggle="tooltip" title="<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>">,</span> <span data-toggle="tooltip" title="ExtensionCord.Seq<T>">newSeq</span> <span class="punctuation" data-toggle="tooltip" title="<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>">}</span><span class="punctuation" data-toggle="tooltip" title="LinqCheck.Prop<<anonymous type: ExtensionCord.Seq<T> seq, T item, ExtensionCord.Seq<T> newSeq>>">)</span>
 </code></pre>
-<h3 id="labelling-the-checks">Labelling the Checks</h3>
+<h3 id="labeling-the-checks">Labeling the Checks</h3>
 <p>By default the name of the check is the expression itself. If you
 want to give a check more human-readable name, you can pass the
 optional <code>label</code> parameter to the <code>Check</code> method.</p>
@@ -463,7 +465,7 @@ For example, only one sequence with 5 items was generated.</p>
 <span class="punctuation">}</span>
 </code></pre>
 <h2 id="next-steps">Next Steps</h2>
-<p>We went through some simple but powerfull constructs of LinqCheck. Next we
+<p>We went through some simple but powerful constructs of LinqCheck. Next we
 will show how you can test code which has mutable state.</p>
 
 				</div>
@@ -498,5 +500,6 @@ will show how you can test code which has mutable state.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

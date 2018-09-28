@@ -3,7 +3,7 @@
 
 LinqCheck generates test input automatically for the common data types defined 
 in the .NET framework. This includes primitive types such as `bool`, `char`, 
-`int`, `long`, `float`, and `double` as well as compound data sructures like 
+`int`, `long`, `float`, and `double` as well as compound data structures like 
 arrays and IEnumerables. But often these are not enough. Your test data might 
 contain user-defined classes, structures, or interfaces.
 
@@ -179,7 +179,7 @@ namespace Examples
 			 */
 			 select new { seq, item, newSeq })
 			/*
-			### Labelling the Checks
+			### Labeling the Checks
 
 			By default the name of the check is the expression itself. If you 
 			want to give a check more human-readable name, you can pass the
@@ -364,6 +364,6 @@ namespace Examples
 }
 /*
 ## Next Steps
-We went through some simple but powerfull constructs of LinqCheck. Next we 
+We went through some simple but powerful constructs of LinqCheck. Next we 
 will show how you can test code which has mutable state.
 */

@@ -14,7 +14,7 @@ conventions as other testing frameworks, so migrating to a more complete
 solution later on is easy.
 
 We don't write a full application but rather include minimal set of methods
-required to build a custom testbench.
+required to build a custom test bench.
 */
 namespace LinqCheck
 {

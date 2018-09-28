@@ -4,7 +4,7 @@
 Finally we can present the properties themselves. We define properties as 
 another incarnation of monads. They are generic functions that take the test 
 state as an argument and return a value of the generic type and information 
-about whether the execution was succesful or not.
+about whether the execution was successful or not.
 
 A property is essentially an abstract concept, which can be implemented in 
 various ways, and composed using combinators. Monadic operators provide us the 
@@ -37,7 +37,7 @@ namespace LinqCheck
 
 	As with all monads we begin with simple constructs and build more complex
 	ones using the combinators. The recommended way of writing a property
-	expression is to use LINQ syntax, which makes the expresion easier to read
+	expression is to use LINQ syntax, which makes the expression easier to read
 	and write.
 	*/
 	public delegate Tuple<TestResult, T> Prop<T> (TestState state);
@@ -80,7 +80,7 @@ namespace LinqCheck
 		/*
 		## Implementing _bind_
 		Now we have three implementations for the _return_ operation, so next
-		we need to implment the monadic _bind_. It calls the first property and 
+		we need to implement the monadic _bind_. It calls the first property and 
 		checks that it succeeds. If it does, _bind_ passes the produced state 
 		to the next property and returns it result. 
 		
@@ -155,7 +155,7 @@ namespace LinqCheck
 		an item in the list.
 		
 		What we need is a method which, for a given TestState, always generates 
-		the same (pseudorandom) value. The `Any` method does just that. It 
+		the same (pseudo-random) value. The `Any` method does just that. It 
 		takes a generator and calls it with an instance of Random class, which 
 		is initialized with the seed stored in the test state. Thus it produces 
 		the same value in the generation and shrinking phase. This ensures that 
@@ -295,7 +295,7 @@ namespace LinqCheck
 		we shrink all the generated arbitrary values. This happens in the 
 		`StartShrinking` phase. After that we move on the actual `Shrink` phase
 		where we try to find the simplest combination of variables which fails
-		the propery.
+		the property.
 
 		The arbitrary implementations for each type should return the shrunk
 		values in the order of increasing complexity. We can stop right	away 
@@ -413,7 +413,7 @@ namespace LinqCheck
 				### Shrinking Phase
 				If `Test` returns false, we found a failing test case. That 
 				test case is stored in the test state. We report the failure to
-				the user, and move on the the `StartShrink` phase. Again we call
+				the user, and move on the `StartShrink` phase. Again we call
 				`Test`, but this time it shrinks the values instead of 
 				generating new ones.
 				*/
@@ -426,7 +426,7 @@ namespace LinqCheck
 				/*
 				We make sure that the number of shrunk variables is correct. 
 				This is done merely to verify that there are no issues with the 
-				shrinking implementations. Then we move on the the `Shrink` 
+				shrinking implementations. Then we move on the `Shrink` 
 				phase by calling `Optimize`, which starts going through the 
 				shrunk test cases.
 				*/
@@ -446,7 +446,7 @@ namespace LinqCheck
 				/*
 				If we end up here, something went wrong because the calling 
 				the property again did not trigger the exception again. This 
-				is usually a symptom of an undeterministic property. If a 
+				is usually a symptom of an indeterministic property. If a 
 				property behaves differently sometimes when called with the 
 				same input, then it has side-effects. That is, its result 
 				depends on something else than its parameters. The only thing 

@@ -56,7 +56,7 @@ namespace Examples
 			 */
 			 let minxy = Math.Min (x, y)
 			 /*
-			 Let's still generate a thrird arbitrary integer `z` and calculate 
+			 Let's still generate a third arbitrary integer `z` and calculate 
 			 the minimum of `x`, `y`, and `z`.
 			 */
 			 from z in Prop.ForAll<int> ()
@@ -151,7 +151,7 @@ namespace Examples
 		When LinqCheck finds a failing input, it first shrinks the test case 
 		into a minimal example that still fails. This means that if we remove
 		anything from the input, the test will pass. Then it reports the
-		faling property, and the input which made the property false.
+		failing property, and the input which made the property false.
 
 		In this case the problem is not in the function we are testing, but our
 		property is wrong. Cosine is out of phase with sine not by 

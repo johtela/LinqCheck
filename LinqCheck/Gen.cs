@@ -36,7 +36,7 @@ namespace LinqCheck
 	[_monad_](https://en.wikipedia.org/wiki/Monad_(functional_programming)).
 
 	## Monads
-	The internet is littered with articles and blog posts explaining monads 
+	The Internet is littered with articles and blog posts explaining monads 
 	through [category theory](https://en.wikipedia.org/wiki/Category_theory) or
 	using some (obscure) analogy. Leaving theoretical and pedagogical aspects 
 	aside, we will just show a real-world example of a monad implemented in C#. 

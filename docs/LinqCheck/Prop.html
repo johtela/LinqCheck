@@ -11,11 +11,7 @@
     <title>Prop - LinqCheck</title>
 
 	<link rel="icon" type="image/x-icon" href="../images/favicon.ico">
-    
-
-
-
-<link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
+    <link rel="stylesheet" href="../bootstrap/css/simplex/bootstrap.min.css" />
 <link rel="stylesheet" href="../font-awesome/css/font-awesome.min.css">
 <link rel="stylesheet" href="../sidebar/sidebar.min.css" />
 <link rel="stylesheet" href="../css/modern.min.css" />
@@ -26,8 +22,8 @@
 
 <body>
     
-    <nav class="navbar navbar-inverse">
-        <div class="container-fluid">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
                     <span class="sr-only">Toggle navigation</span>
@@ -35,7 +31,13 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="../index.html"><span><img src="../images/LinqCheck2.svg" height="24" />  LinqCheck</span></a>
+                <a class="navbar-brand" href="#sidebar-toggle" id="sidebar-toggle">
+					<span>
+						<img src="../images/LinqCheck2.svg" height="24" class="hidden-sm hidden-xs" />
+						<i id="sidebar-toggle-icon" class="hidden-md hidden-lg hidden-xl fa fa-angle-double-right" aria-hidden="true"></i>
+						LinqCheck
+					</span>
+				</a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
@@ -49,7 +51,7 @@
 
     <div class="container">
         <div class="row">
-            <div class="col-md-3 hidden-xs hidden-sm">
+            <div id="sidebar" class="col-md-3 hidden-sm hidden-xs">
                 
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -137,7 +139,7 @@
         </div>
 
             </div>
-			<div class="col-md-9">
+			<div id="contentarea" class="col-md-9 col-sm-12 col-sm-push-0 col-xs-12 col-xs-push-0">
 				<ul class="pager">
 	<li class="previous"><a href="../LinqCheck/TestState.html">Previous: Test State and Phases</a></li>
 	<li class="next"><a href="../LinqCheck/Tester.html">Next: Test Runner</a></li>
@@ -147,7 +149,7 @@
 <p>Finally we can present the properties themselves. We define properties as
 another incarnation of monads. They are generic functions that take the test
 state as an argument and return a value of the generic type and information
-about whether the execution was succesful or not.</p>
+about whether the execution was successful or not.</p>
 <p>A property is essentially an abstract concept, which can be implemented in
 various ways, and composed using combinators. Monadic operators provide us the
 tools that allow easily extending the concept in whatever direction we choose.</p>
@@ -175,7 +177,7 @@ The expression is composed of various parts that generate random data,
 constrain it, compute derived variables, and classify test cases.</p>
 <p>As with all monads we begin with simple constructs and build more complex
 ones using the combinators. The recommended way of writing a property
-expression is to use LINQ syntax, which makes the expresion easier to read
+expression is to use LINQ syntax, which makes the expression easier to read
 and write.</p>
 <pre class="csharp"><code class="csharp">	<span class="keyword" id="System.Tuple<LinqCheck.TestResult, T> LinqCheck.Prop<T>(LinqCheck.TestState)">public</span> <span class="keyword">delegate</span> <span class="typename" data-toggle="tooltip" title="System.Tuple<LinqCheck.TestResult, T>">Tuple</span><span class="punctuation">&lt;</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestResult"><a href="../LinqCheck/Prop.html#LinqCheck.TestResult">TestResult</a></span><span class="punctuation">,</span> <span class="typename" data-toggle="tooltip" title="T"><a href="../LinqCheck/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="typename">Prop</span><span class="punctuation">&lt;</span><span class="typename"><a href="../LinqCheck/Prop.html#T">T</a></span><span class="punctuation">&gt;</span> <span class="punctuation">(</span><span class="typename" data-toggle="tooltip" title="LinqCheck.TestState"><a href="../LinqCheck/TestState.html#LinqCheck.TestState">TestState</a></span> state<span class="punctuation">)</span><span class="punctuation">;</span>
 </code></pre>
@@ -212,7 +214,7 @@ It can be used to explicitly fail a property.</p>
 </code></pre>
 <h2 id="implementing-bind">Implementing <em>bind</em></h2>
 <p>Now we have three implementations for the <em>return</em> operation, so next
-we need to implment the monadic <em>bind</em>. It calls the first property and
+we need to implement the monadic <em>bind</em>. It calls the first property and
 checks that it succeeds. If it does, <em>bind</em> passes the produced state
 to the next property and returns it result.</p>
 <p>The implementation is a slightly complicated version of
@@ -280,7 +282,7 @@ and want to choose an item inside the list in random. In that case we
 cannot shrink the item, since the shrunk version will probably not be
 an item in the list.</p>
 <p>What we need is a method which, for a given TestState, always generates
-the same (pseudorandom) value. The <code>Any</code> method does just that. It
+the same (pseudo-random) value. The <code>Any</code> method does just that. It
 takes a generator and calls it with an instance of Random class, which
 is initialized with the seed stored in the test state. Thus it produces
 the same value in the generation and shrinking phase. This ensures that
@@ -411,7 +413,7 @@ the test state.</p>
 we shrink all the generated arbitrary values. This happens in the
 <code>StartShrinking</code> phase. After that we move on the actual <code>Shrink</code> phase
 where we try to find the simplest combination of variables which fails
-the propery.</p>
+the property.</p>
 <p>The arbitrary implementations for each type should return the shrunk
 values in the order of increasing complexity. We can stop right	away
 when we encounter the first value that causes our property to fail.
@@ -517,7 +519,7 @@ calling the <code>Test</code> helper method.</p>
 <h3 id="shrinking-phase">Shrinking Phase</h3>
 <p>If <code>Test</code> returns false, we found a failing test case. That
 test case is stored in the test state. We report the failure to
-the user, and move on the the <code>StartShrink</code> phase. Again we call
+the user, and move on the <code>StartShrink</code> phase. Again we call
 <code>Test</code>, but this time it shrinks the values instead of
 generating new ones.</p>
 <pre class="csharp"><code class="csharp">				<span class="typename" data-toggle="tooltip" title="System.Console">Console</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">ForegroundColor</span> <span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">=</span> <span class="typename" data-toggle="tooltip" title="System.ConsoleColor">ConsoleColor</span><span class="punctuation" data-toggle="tooltip" title="System.ConsoleColor">.</span><span data-toggle="tooltip" title="System.ConsoleColor">Red</span><span class="punctuation">;</span>
@@ -529,7 +531,7 @@ generating new ones.</p>
 </code></pre>
 <p>We make sure that the number of shrunk variables is correct.
 This is done merely to verify that there are no issues with the
-shrinking implementations. Then we move on the the <code>Shrink</code>
+shrinking implementations. Then we move on the <code>Shrink</code>
 phase by calling <code>Optimize</code>, which starts going through the
 shrunk test cases.</p>
 <pre class="csharp"><code class="csharp">				<span class="typename" data-toggle="tooltip" title="System.Diagnostics.Debug">Debug</span><span class="punctuation" data-toggle="tooltip" title="System.Diagnostics.Debug.Assert(bool)">.</span><span data-toggle="tooltip" title="System.Diagnostics.Debug.Assert(bool)">Assert</span> <span class="punctuation">(</span><span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<object>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<object>"><a href="../LinqCheck/TestState.html#LinqCheck.TestState.Values">Values</a></span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Count</span> <span class="punctuation" data-toggle="tooltip" title="bool">==</span> <span data-toggle="tooltip" title="LinqCheck.TestState">state</span><span class="punctuation" data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.IEnumerable<object>>">.</span><span data-toggle="tooltip" title="System.Collections.Generic.List<System.Collections.Generic.IEnumerable<object>>"><a href="../LinqCheck/TestState.html#LinqCheck.TestState.ShrunkValues">ShrunkValues</a></span><span class="punctuation" data-toggle="tooltip" title="int">.</span><span data-toggle="tooltip" title="int">Count</span><span class="punctuation">)</span><span class="punctuation">;</span>
@@ -547,7 +549,7 @@ caught by the unit testing framework.</p>
 </code></pre>
 <p>If we end up here, something went wrong because the calling
 the property again did not trigger the exception again. This
-is usually a symptom of an undeterministic property. If a
+is usually a symptom of an indeterministic property. If a
 property behaves differently sometimes when called with the
 same input, then it has side-effects. That is, its result
 depends on something else than its parameters. The only thing
@@ -624,5 +626,6 @@ in the last chapter.</p>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML'></script>
 	<script src="../mermaid/mermaid.min.js"></script>
 	<script>mermaid.initialize({startOnLoad:true});</script>
+
 </body>
 </html>

@@ -136,6 +136,7 @@ namespace Examples.UITests
 		protected InvokePattern GetInvokePattern (AutomationElement element)
 		{
 			WaitEnabled (element, 1000);
+
 			return element.GetCurrentPattern (InvokePattern.Pattern) as
 				InvokePattern;
 		}
